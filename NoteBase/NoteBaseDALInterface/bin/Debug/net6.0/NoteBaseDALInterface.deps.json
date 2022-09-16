@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "NoteBaseDALInterface/1.0.0": {
+        "runtime": {
+          "NoteBaseDALInterface.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "NoteBaseDALInterface/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

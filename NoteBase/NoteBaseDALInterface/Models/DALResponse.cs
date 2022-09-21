@@ -13,5 +13,10 @@
             Status = _status;
             Message = _message;
         }
+
+        public void AddItem(T _Item)
+        {
+            data.Add(_Item);
+        }
     }
 }

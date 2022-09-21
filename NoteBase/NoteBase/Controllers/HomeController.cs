@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using NoteBase.Models;
 using NoteBaseInterface;
 using NoteBaseLogicFactory;
+using NoteBaseLogicInterface.Models;
 using System.Diagnostics;
 
 namespace NoteBase.Controllers
@@ -20,8 +21,8 @@ namespace NoteBase.Controllers
 
         public IActionResult Index()
         {
-            string conn = _config.GetConnectionString("NoteBaseConnString");
-            INoteProcessor processor = Factory.CreateNoteProcessor(conn);
+            IProcessor<Tag> processor = Factory.CreateTagProcessor(_config.GetConnectionString("NoteBaseConnString"));
+            Response<Tag> response = processor.Get();
 
             return View();
         }

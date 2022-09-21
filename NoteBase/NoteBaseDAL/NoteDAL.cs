@@ -3,7 +3,7 @@ using NoteBaseDALInterface.Models;
 
 namespace NoteBaseDAL
 {
-    public class NoteDAL : INoteDAL
+    public class NoteDAL : IDAL<NoteDTO>
     {
         private readonly string ConnString;
 
@@ -12,27 +12,27 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public DALResponse<NoteDTO> CreateNote(NoteDTO _note)
+        public DALResponse<NoteDTO> Create(NoteDTO _note)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> DeleteNote(int _noteId)
+        public DALResponse<NoteDTO> Delete(int _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> GetNote(int _noteId)
+        public DALResponse<NoteDTO> Get(int _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> GetNote()
+        public DALResponse<NoteDTO> Get()
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> UpdateNote(int _noteId, NoteDTO _note)
+        public DALResponse<NoteDTO> Update(int _noteId, NoteDTO _note)
         {
             throw new NotImplementedException();
         }

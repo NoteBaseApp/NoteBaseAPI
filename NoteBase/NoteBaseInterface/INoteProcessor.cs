@@ -2,12 +2,12 @@
 
 namespace NoteBaseInterface
 {
-    public interface INoteProcessor
+    public interface IProcessor<T>
     {
-        public Response<Note> CreateNote(Note _note);
-        public Response<Note> GetNote(int _noteId);
-        public Response<Note> GetNote();
-        public Response<Note> UpdateNote(int _noteId, Note _note);
-        public Response<Note> DeleteNote(int _noteId);
+        public Response<T> Create(T _object);
+        public Response<T> Get(int _objectId);
+        public Response<T> Get();
+        public Response<T> Update(int _objectId, T _object);
+        public Response<T> Delete(int _objectId);
     }
 }

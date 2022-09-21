@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using NoteBase.Models;
 using NoteBaseInterface;
 using NoteBaseLogicFactory;
@@ -9,16 +10,19 @@ namespace NoteBase.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _config;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _config = configuration;
         }
 
         public IActionResult Index()
         {
-            //test 123
-            INoteProcessor processor = Factory.CreateNoteProcessor();
+            string conn = _config.GetConnectionString("NoteBaseConnString");
+            INoteProcessor processor = Factory.CreateNoteProcessor(conn);
+
             return View();
         }
 

@@ -4,9 +4,9 @@ namespace NoteBaseLogicFactory
 {
     public class Factory
     {
-        public static NoteProcessor CreateNoteProcessor()
+        public static NoteProcessor CreateNoteProcessor(string _connString)
         {
-            return new NoteProcessor();
+            return new NoteProcessor(_connString);
         }
     }
 }

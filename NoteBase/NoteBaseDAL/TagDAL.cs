@@ -38,7 +38,7 @@ namespace NoteBaseDAL
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
                     // * should be replaced with the collum names
-                    string query = @"Select * From Trip WHERE ID = @ID";
+                    string query = @"Select * From Tag WHERE ID = @ID";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -48,7 +48,7 @@ namespace NoteBaseDAL
                         SqlDataReader reader = command.ExecuteReader();
 
                         //while the read() returns a value repeat
-                        while (reader.Read())
+                        if (reader.Read())
                         {
                             TagDTO tripDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
 
@@ -60,7 +60,7 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(e.Number, e.Message);
+                response = new(e.Number, "TagDAL.Get(" + _tagId + ") ERROR: " + e.Message);
             }
 
             return response;
@@ -96,7 +96,7 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(e.Number, e.Message);
+                response = new(e.Number, "TagDAL.Get() ERROR: " + e.Message);
             }
 
             return response;

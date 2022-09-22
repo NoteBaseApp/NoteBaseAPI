@@ -132,7 +132,11 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(e.Number, "TagDAL.Get(" + _tagId + ") ERROR: " + e.Message);
+                response = new(e.Number, "TagDAL.Update(" + _tagId + ", TagDTO) ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "TagDAL.Update(" + _tagId + ",TagDTO) ERROR: " + e.Message);
             }
 
             return response;

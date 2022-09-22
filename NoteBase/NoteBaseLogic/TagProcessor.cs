@@ -50,7 +50,18 @@ namespace NoteBaseLogic
 
         public Response<Tag> Update(int _tagId, Tag _tag)
         {
-            throw new NotImplementedException();
+            TagDTO tagDTO = new(_tag.ID, _tag.Title);
+
+            DALResponse<TagDTO> DALreponse = TagDAL.Update(_tagId, tagDTO);
+
+            List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
+            Tag tag = new(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+
+            //create response
+            Response<Tag> response = new(DALreponse.Status, DALreponse.Message);
+            response.AddItem(tag);
+
+            return response;
         }
     }
 }

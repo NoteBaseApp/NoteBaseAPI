@@ -113,7 +113,42 @@ namespace NoteBaseDAL
 
         public DALResponse<TagDTO> Update(int _tagId, TagDTO _tag)
         {
-            throw new NotImplementedException();
+            DALResponse<TagDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    // * should be replaced with the collum names
+                    string query = @"UPDATE Tag SET Title = @Title WHERE ID = @Id";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", _tag.Title);
+                        command.Parameters.AddWithValue("@ID", _tagId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        //while the read() returns a value repeat
+                        if (reader.Read())
+                        {
+                            response.Message = reader.GetInt32(0).ToString();
+                        }
+                    }
+                }
+            }
+            //het opvangen van een mogelijke error
+            catch (SqlException e)
+            {
+                response = new(e.Number, "TagDAL.Update(" + _tagId + ", TagDTO) ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "TagDAL.Update(" + _tagId + ",TagDTO) ERROR: " + e.Message);
+            }
+
+            return response;
         }
     }
 }

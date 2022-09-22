@@ -62,11 +62,15 @@ namespace NoteBaseDAL
             {
                 response = new(e.Number, "TagDAL.Get(" + _tagId + ") ERROR: " + e.Message);
             }
+            catch (Exception e)
+            {
+                response = new(409, "TagDAL.Get(" + _tagId + ") ERROR: " + e.Message);
+            }
 
             return response;
         }
 
-        public DALResponse<TagDTO> Get()
+        public DALResponse<TagDTO> Get(string _userMail)
         {
             DALResponse<TagDTO> response = new(200, "");
 
@@ -75,10 +79,11 @@ namespace NoteBaseDAL
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
                     // * should be replaced with the collum names
-                    string query = @"Select * From Tag";
+                    string query = @"SELECT ID, Title FROM UserTags WHERE UserMail = @UserMail";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
+                        command.Parameters.AddWithValue("@UserMail", _userMail);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();
@@ -97,6 +102,10 @@ namespace NoteBaseDAL
             catch (SqlException e)
             {
                 response = new(e.Number, "TagDAL.Get() ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "TagDAL.Get() ERROR: " + e.Message);
             }
 
             return response;

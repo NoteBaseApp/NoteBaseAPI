@@ -1,7 +1,8 @@
+using App.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using NoteBase.Data;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-//adding google auth
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -20,12 +20,10 @@ builder.Services.AddAuthentication(options =>
         options.LoginPath = "/account/google-login"; // Must be lowercase
     })
     .AddGoogle(options =>
-    {
-        options.ClientId = "62407700538-2b2lfdtiutncmssv005sg6g04enogjdu.apps.googleusercontent.com";
-        options.ClientSecret = "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";
-    });
-
-
+{
+    options.ClientId = "62407700538-2b2lfdtiutncmssv005sg6g04enogjdu.apps.googleusercontent.com";
+    options.ClientSecret = "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";
+});
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();

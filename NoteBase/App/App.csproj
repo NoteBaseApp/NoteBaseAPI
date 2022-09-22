@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-NoteBase-96E9730A-CF25-4348-8C54-C22E9EB15CFF</UserSecretsId>
+    <UserSecretsId>aspnet-App-1C93010E-1350-431A-86AA-7737D2AD8C4B</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +14,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NoteBaseInterface\NoteBaseLogicInterface.csproj" />
+    <ProjectReference Include="..\NoteBaseLogicFactory\NoteBaseLogicFactory.csproj" />
   </ItemGroup>
 
 </Project>

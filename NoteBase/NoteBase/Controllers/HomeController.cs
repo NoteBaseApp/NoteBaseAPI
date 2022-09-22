@@ -1,32 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NoteBase.Models;
-using NoteBaseInterface;
-using NoteBaseLogicFactory;
-using NoteBaseLogicInterface.Models;
 using System.Diagnostics;
 
 namespace NoteBase.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IConfiguration _config;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            _config = configuration;
         }
 
         public IActionResult Index()
         {
-            IProcessor<Tag> processor = Factory.CreateTagProcessor(_config.GetConnectionString("NoteBaseConnString"));
-            Response<Tag> response = processor.Get();
-
             return View();
         }
 
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();

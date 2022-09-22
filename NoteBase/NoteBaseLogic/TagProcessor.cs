@@ -34,9 +34,9 @@ namespace NoteBaseLogic
             throw new NotImplementedException();
         }
 
-        public Response<Tag> Get()
+        public Response<Tag> Get(string _UserMail)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.Get();
+            DALResponse<TagDTO> DALreponse = TagDAL.Get(_UserMail);
             Response<Tag> response = new(DALreponse.Status, DALreponse.Message);
 
             foreach (TagDTO tagDTO in DALreponse.Data)

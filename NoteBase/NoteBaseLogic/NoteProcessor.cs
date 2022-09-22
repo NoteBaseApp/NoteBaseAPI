@@ -24,7 +24,7 @@ namespace NoteBaseLogic
             throw new NotImplementedException();
         }
 
-        public Response<Note> Get()
+        public Response<Note> Get(string _UserMail)
         {
             throw new NotImplementedException();
         }

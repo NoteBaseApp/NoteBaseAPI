@@ -27,7 +27,7 @@ namespace NoteBaseDAL
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> Get()
+        public DALResponse<NoteDTO> Get(string _userMail)
         {
             throw new NotImplementedException();
         }

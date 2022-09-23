@@ -26,7 +26,46 @@ namespace NoteBaseDAL
 
         public DALResponse<TagDTO> Delete(int _tagId)
         {
-            throw new NotImplementedException();
+            DALResponse<TagDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    // * should be replaced with the collum names
+                    string query = @"DELETE From Tag WHERE ID = @ID";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ID", _tagId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        //while the read() returns a value repeat
+                        if (reader.Read())
+                        {
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Status = 409;
+                                response.Message = "TagDAL.Delete(" + _tagId + ") ERROR: Could not delete Tag";
+                            }
+                        }
+                    }
+                }
+            }
+            //het opvangen van een mogelijke error
+            catch (SqlException e)
+            {
+                response = new(e.Number, "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message);
+            }
+
+            return response;
         }
 
         public DALResponse<TagDTO> Get(int _tagId)
@@ -133,7 +172,12 @@ namespace NoteBaseDAL
                         //while the read() returns a value repeat
                         if (reader.Read())
                         {
-                            response.Message = reader.GetInt32(0).ToString();
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Status = 409;
+                                response.Message = "TagDAL.Update(" + _tagId + ",TagDTO) ERROR: Could not update Tag";
+                            }
                         }
                     }
                 }

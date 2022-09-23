@@ -31,6 +31,12 @@
           <AssociatedConnUserName />
           <FullPath>TestData.sql</FullPath>
         </FileNode>
+        <FileNode Name="Views.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-AK9JEN2V:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LAPTOP-AK9JEN2V</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>Views.sql</FullPath>
+        </FileNode>
       </Items>
     </LogicalFolder>
     <LogicalFolder Name="Miscellaneous" Type="3" Sorted="true">

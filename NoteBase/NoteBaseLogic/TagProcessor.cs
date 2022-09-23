@@ -26,12 +26,30 @@ namespace NoteBaseLogic
 
         public Response<Tag> Delete(int _tagId)
         {
-            throw new NotImplementedException();
+            DALResponse<TagDTO> DALreponse = TagDAL.Delete(_tagId);
+
+            List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
+            Tag tag = new(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+
+            //create response
+            Response<Tag> response = new(DALreponse.Status, DALreponse.Message);
+            response.AddItem(tag);
+
+            return response;
         }
 
         public Response<Tag> Get(int _tagId)
         {
-            throw new NotImplementedException();
+            DALResponse<TagDTO> DALreponse = TagDAL.Get(_tagId);
+
+            List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
+            Tag tag = new(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+
+            //create response
+            Response<Tag> response = new(DALreponse.Status, DALreponse.Message);
+            response.AddItem(tag);
+
+            return response;
         }
 
         public Response<Tag> Get(string _UserMail)

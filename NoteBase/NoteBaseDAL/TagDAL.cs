@@ -21,7 +21,44 @@ namespace NoteBaseDAL
 
         public DALResponse<TagDTO> Create(TagDTO _tag)
         {
-            throw new NotImplementedException();
+            DALResponse<TagDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"INSERT INTO Tag (Title) VALUES (@Title)";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", _tag.Title);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Status = 409;
+                                response.Message = "TagDAL.Create(" + _tag.Title + ") ERROR: Could not Create Tag";
+                            }
+                        }
+                    }
+                }
+            }
+            //het opvangen van een mogelijke error
+            catch (SqlException e)
+            {
+                response = new(e.Number, "TagDAL.Create(" + _tag.Title + ") ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "TagDAL.Create(" + _tag.Title + ") ERROR: " + e.Message);
+            }
+
+            return response;
         }
 
         public DALResponse<TagDTO> Delete(int _tagId)
@@ -32,7 +69,6 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    // * should be replaced with the collum names
                     string query = @"DELETE From Tag WHERE ID = @ID";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
@@ -42,7 +78,6 @@ namespace NoteBaseDAL
 
                         SqlDataReader reader = command.ExecuteReader();
 
-                        //while the read() returns a value repeat
                         if (reader.Read())
                         {
                             int result = reader.GetInt32(0);
@@ -55,7 +90,6 @@ namespace NoteBaseDAL
                     }
                 }
             }
-            //het opvangen van een mogelijke error
             catch (SqlException e)
             {
                 response = new(e.Number, "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message);
@@ -76,8 +110,7 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    // * should be replaced with the collum names
-                    string query = @"Select * From Tag WHERE ID = @ID";
+                    string query = @"Select ID, Title From Tag WHERE ID = @ID";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -86,7 +119,6 @@ namespace NoteBaseDAL
 
                         SqlDataReader reader = command.ExecuteReader();
 
-                        //while the read() returns a value repeat
                         if (reader.Read())
                         {
                             TagDTO tripDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
@@ -96,7 +128,6 @@ namespace NoteBaseDAL
                     }
                 }
             }
-            //het opvangen van een mogelijke error
             catch (SqlException e)
             {
                 response = new(e.Number, "TagDAL.Get(" + _tagId + ") ERROR: " + e.Message);
@@ -117,7 +148,6 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    // * should be replaced with the collum names
                     string query = @"SELECT ID, Title FROM UserTags WHERE UserMail = @UserMail";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
@@ -127,7 +157,6 @@ namespace NoteBaseDAL
 
                         SqlDataReader reader = command.ExecuteReader();
 
-                        //while the read() returns a value repeat
                         while (reader.Read())
                         {
                             TagDTO tripDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
@@ -137,7 +166,6 @@ namespace NoteBaseDAL
                     }
                 }
             }
-            //het opvangen van een mogelijke error
             catch (SqlException e)
             {
                 response = new(e.Number, "TagDAL.Get() ERROR: " + e.Message);
@@ -158,8 +186,7 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    // * should be replaced with the collum names
-                    string query = @"UPDATE Tag SET Title = @Title WHERE ID = @Id";
+                    string query = @"UPDATE Tag SET Title = @Title WHERE ID = @ID";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -169,7 +196,6 @@ namespace NoteBaseDAL
 
                         SqlDataReader reader = command.ExecuteReader();
 
-                        //while the read() returns a value repeat
                         if (reader.Read())
                         {
                             int result = reader.GetInt32(0);
@@ -182,7 +208,6 @@ namespace NoteBaseDAL
                     }
                 }
             }
-            //het opvangen van een mogelijke error
             catch (SqlException e)
             {
                 response = new(e.Number, "TagDAL.Update(" + _tagId + ", TagDTO) ERROR: " + e.Message);

@@ -14,6 +14,11 @@ namespace NoteBaseLogic
             NoteDAL = Factory.CreateNoteDAL(_connString);
         }
 
+        public NoteProcessor(IDAL<NoteDTO> _noteDAL)
+        {
+            NoteDAL = _noteDAL;
+        }
+
         public Response<Note> Create(Note _note)
         {
             throw new NotImplementedException();

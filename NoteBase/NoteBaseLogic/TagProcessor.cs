@@ -3,11 +3,6 @@ using NoteBaseDALInterface.Models;
 using NoteBaseDALInterface;
 using NoteBaseInterface;
 using NoteBaseLogicInterface.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NoteBaseLogic
 {
@@ -19,11 +14,14 @@ namespace NoteBaseLogic
             TagDAL = Factory.CreateTagDAL(_connString);
         }
 
+        public TagProcessor(IDAL<TagDTO> _tagDAL)
+        {
+            TagDAL = _tagDAL;
+        }
+
         public Response<Tag> Create(Tag _tag)
         {
-            TagDTO tagDTO = new(_tag.ID, _tag.Title);
-
-            DALResponse<TagDTO> DALreponse = TagDAL.Create( tagDTO);
+            DALResponse<TagDTO> DALreponse = TagDAL.Create(_tag.ToDTO());
 
             //create response
             Response<Tag> response = new(DALreponse.Status, DALreponse.Message);
@@ -36,7 +34,7 @@ namespace NoteBaseLogic
             DALResponse<TagDTO> DALreponse = TagDAL.Delete(_tagId);
 
             List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
-            Tag tag = new(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+            IModel<TagDTO> tag = new Tag(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
 
             //create response
             Response<Tag> response = new(DALreponse.Status, DALreponse.Message);

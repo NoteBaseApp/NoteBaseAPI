@@ -1,6 +1,8 @@
-﻿namespace NoteBaseLogicInterface.Models
+﻿using NoteBaseDALInterface.Models;
+
+namespace NoteBaseLogicInterface.Models
 {
-    public class Tag
+    public class Tag: IModel<TagDTO>
     {
         public int ID { get; }
         public string Title { get; private set; }
@@ -9,6 +11,11 @@
         {
             ID = _id;
             Title = _title;
+        }
+
+        public TagDTO ToDTO()
+        {
+            return new TagDTO(ID, Title);
         }
     }
 }

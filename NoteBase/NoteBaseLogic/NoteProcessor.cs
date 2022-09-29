@@ -1,4 +1,5 @@
-﻿using NoteBaseDALFactory;
+﻿using NoteBaseDAL;
+using NoteBaseDALFactory;
 using NoteBaseDALInterface;
 using NoteBaseDALInterface.Models;
 using NoteBaseInterface;
@@ -31,7 +32,25 @@ namespace NoteBaseLogic
 
         public Response<Note> Get(string _UserMail)
         {
-            throw new NotImplementedException();
+            DALResponse<NoteDTO> DALreponse = NoteDAL.Get(_UserMail);
+            Response<Note> response = new(DALreponse.Status, DALreponse.Message);
+
+            foreach (NoteDTO noteDTO in DALreponse.Data)
+            {
+                Category cat = new(noteDTO.Category.ID, noteDTO.Category.Title);
+                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.MainBody, cat);
+
+                foreach (TagDTO tagDTO in noteDTO.TagList)
+                {
+                    Tag tag = new(tagDTO.ID, tagDTO.Title);
+
+                    note.TryAddTag(tag);
+                }
+
+                response.AddItem(note);
+            }
+
+            return response;
         }
 
         public Response<Note> Update(int _noteId, Note _note)

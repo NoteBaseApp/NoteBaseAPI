@@ -148,11 +148,49 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"SELECT ID, Title FROM UserTags WHERE UserMail = @UserMail";
+                    string query = @"SELECT ID, Title FROM NoteTags WHERE UserMail = @UserMail";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@UserMail", _userMail);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            TagDTO tripDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
+
+                            response.AddItem(tripDTO);
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(e.Number, "TagDAL.Get() ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "TagDAL.Get() ERROR: " + e.Message);
+            }
+
+            return response;
+        }
+
+        public DALResponse<TagDTO> GetFromNote(int _noteId)
+        {
+            DALResponse<TagDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"SELECT ID, Title FROM NoteTags WHERE NoteID = @NoteId";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@NoteId", _noteId);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();

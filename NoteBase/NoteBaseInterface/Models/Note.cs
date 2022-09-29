@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NoteBaseDALInterface.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NoteBaseLogicInterface.Models
 {
-    public class Note
+    public class Note: IModel
     {
         private readonly List<Tag> tagList = new();
 
@@ -14,7 +15,7 @@ namespace NoteBaseLogicInterface.Models
         public string Title { get; private set; }
         public string MainBody { get; private set; }
         public Category Category { get; private set; }
-        public IEnumerable<Tag> TagList { get { return tagList; } }
+        public IReadOnlyList<Tag> TagList { get { return tagList; } }
 
         public Note(int _id, string _title, string _mainBody, Category _category)
         {
@@ -22,6 +23,31 @@ namespace NoteBaseLogicInterface.Models
             Title = _title;
             MainBody = _mainBody;
             Category = _category;
+        }
+
+        public NoteDTO ToDTO()
+        {
+            CategoryDTO catDTO = new(Category.ID, Category.Title);
+
+            NoteDTO noteDTO = new NoteDTO(ID, Title, MainBody, catDTO);
+
+            foreach (Tag tag in tagList)
+            {
+                TagDTO tagDTO = new(tag.ID, tag.Title);
+
+                noteDTO.TryAddTagDTO(tagDTO);
+            }
+
+            return noteDTO;
+        }
+
+        public void TryAddTag(Tag _tag)
+        {
+            if (tagList.Contains(_tag))
+            {
+                throw new Exception("Tag already in list");
+            }
+            tagList.Add(_tag);
         }
     }
 }

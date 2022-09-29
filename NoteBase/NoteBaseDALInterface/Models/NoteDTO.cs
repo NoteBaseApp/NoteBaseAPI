@@ -8,7 +8,7 @@
         public string Title { get; private set; }
         public string MainBody { get; private set; }
         public CategoryDTO Category { get; private set; }
-        public IEnumerable<TagDTO> TagList { get { return tagList; } }
+        public IReadOnlyList<TagDTO> TagList { get { return tagList; } }
 
         public NoteDTO(int _id, string _title, string _mainBody, CategoryDTO _category)
         {
@@ -16,6 +16,16 @@
             Title = _title;
             MainBody = _mainBody;
             Category = _category;
+        }
+
+        public void TryAddTagDTO(TagDTO _tagDTO)
+        {
+            if (tagList.Contains(_tagDTO))
+            {
+                throw new Exception("Tag already in List");
+            }
+
+            tagList.Add(_tagDTO);
         }
     }
 }

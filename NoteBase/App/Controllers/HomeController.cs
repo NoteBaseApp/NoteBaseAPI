@@ -5,6 +5,7 @@ using NoteBaseInterface;
 using NoteBaseLogicFactory;
 using System.Diagnostics;
 using NoteBaseLogicInterface.Models;
+using System.Collections.Generic;
 
 namespace App.Controllers
 {
@@ -12,26 +13,29 @@ namespace App.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _config;
+        private readonly string connString;
 
 
         public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _config = configuration;
+            connString = _config.GetConnectionString("NoteBaseConnString");
         }
 
+        [Authorize]
         public IActionResult Index()
         {
+            IProcessor<Note> processor = Factory.CreateNoteProcessor(connString);
+            Response<Note> response = processor.Get(_UserMail: User.Identity.Name);
+            List<Note> notes = (List<Note>)response.Data;
+            ViewBag.Data = notes;
             return View();
         }
 
         [Authorize]
         public IActionResult Privacy()
         {
-            IProcessor<Tag> processor = Factory.CreateTagProcessor(_config.GetConnectionString("NoteBaseConnString"));
-            //IProcessor<Tag> processor = Factory.CreateTagProcessor("Data Source=LAPTOP-AK9JEN2V;Initial Catalog=NoteBase;Integrated Security=True;Connect Timeout=300;");
-            Response<Tag> response = processor.Get(_UserMail: User.Identity.Name);
-
             return View();
         }
 

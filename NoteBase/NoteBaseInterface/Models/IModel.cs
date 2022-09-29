@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace NoteBaseLogicInterface.Models
 {
-    public interface IModel<T>
+    public interface IModel
     {
-        public T ToDTO();
+        
     }
 }

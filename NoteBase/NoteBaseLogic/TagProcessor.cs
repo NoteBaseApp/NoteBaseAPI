@@ -34,7 +34,7 @@ namespace NoteBaseLogic
             DALResponse<TagDTO> DALreponse = TagDAL.Delete(_tagId);
 
             List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
-            IModel<TagDTO> tag = new Tag(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+            Tag tag = new Tag(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
 
             //create response
             Response<Tag> response = new(DALreponse.Status, DALreponse.Message);

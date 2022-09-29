@@ -11,11 +11,11 @@ namespace NoteBaseLogicInterface.Models
 {
     public class Response<T>
     {
-        private readonly List<IModel<T>> data = new();
+        private readonly List<T> data = new();
 
         public int Status { get; set; }
         public string? Message { get; set; }
-        public IReadOnlyList<IModel<T>> Data { get { return data; } }
+        public IReadOnlyList<T> Data { get { return data; } }
 
         public Response(int _status, string? _message)
         {
@@ -23,7 +23,7 @@ namespace NoteBaseLogicInterface.Models
             Message = _message;
         }
 
-        public void AddItem(IModel<T> _Item)
+        public void AddItem(T _Item)
         {
             data.Add(_Item);
         }

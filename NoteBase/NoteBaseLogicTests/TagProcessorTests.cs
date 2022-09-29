@@ -44,7 +44,7 @@ namespace NoteBaseLogic.Tests
 
         [DataTestMethod()]
         [DynamicData(nameof(GetTest1))]
-        public void GetTest(Response<Tag> _expected, DALResponse<TagDTO> _Args, string _userMail)
+        public void Get_All_Test(Response<Tag> _expected, DALResponse<TagDTO> _Args, string _userMail)
         {
             //Arrange
             var serviceMock = new Mock<IDAL<TagDTO>>();

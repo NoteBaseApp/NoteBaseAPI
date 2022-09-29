@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoteBaseDALInterface", "Not
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "App\App.csproj", "{3AD046D2-1111-4A16-A172-F133204D4737}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoteBaseLogicTests", "NoteBaseLogicTests\NoteBaseLogicTests.csproj", "{FDD277D3-F601-41E7-88C6-F26AE43FAA95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteBaseDALTests", "NoteBaseDALTests\NoteBaseDALTests.csproj", "{A40DB1EA-D3F8-4182-A928-5CBB19FAAAAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{3AD046D2-1111-4A16-A172-F133204D4737}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AD046D2-1111-4A16-A172-F133204D4737}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AD046D2-1111-4A16-A172-F133204D4737}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDD277D3-F601-41E7-88C6-F26AE43FAA95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDD277D3-F601-41E7-88C6-F26AE43FAA95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDD277D3-F601-41E7-88C6-F26AE43FAA95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDD277D3-F601-41E7-88C6-F26AE43FAA95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A40DB1EA-D3F8-4182-A928-5CBB19FAAAAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A40DB1EA-D3F8-4182-A928-5CBB19FAAAAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A40DB1EA-D3F8-4182-A928-5CBB19FAAAAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A40DB1EA-D3F8-4182-A928-5CBB19FAAAAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

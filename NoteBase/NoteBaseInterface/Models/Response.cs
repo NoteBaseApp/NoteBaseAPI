@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NoteBaseDALInterface.Models;
+using NoteBaseLogicInterface.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,7 +15,7 @@ namespace NoteBaseLogicInterface.Models
 
         public int Status { get; set; }
         public string? Message { get; set; }
-        public IEnumerable<T> Data { get { return data; } }
+        public IReadOnlyList<T> Data { get { return data; } }
 
         public Response(int _status, string? _message)
         {

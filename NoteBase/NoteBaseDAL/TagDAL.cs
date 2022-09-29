@@ -110,7 +110,7 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"Select ID, Title From Tag WHERE ID = @ID";
+                    string query = @"SELECT ID, Title From Tag WHERE ID = @ID";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {

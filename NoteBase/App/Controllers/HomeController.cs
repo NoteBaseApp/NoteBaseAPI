@@ -36,6 +36,11 @@ namespace App.Controllers
         [Authorize]
         public IActionResult Privacy()
         {
+            IProcessor<Note> processor = Factory.CreateNoteProcessor(connString);
+            Note note = new(100, "AddingTagTest", "Dit is een #test voor het toevoegen van een #notitie met #TaGs", new(1, "School"));
+            note.UserMail = User.Identity.Name;
+
+            Response<Note> response = processor.Create(note);
             return View();
         }
 

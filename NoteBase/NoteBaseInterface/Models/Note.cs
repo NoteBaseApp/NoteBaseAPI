@@ -16,6 +16,7 @@ namespace NoteBaseLogicInterface.Models
         public string MainBody { get; private set; }
         public Category Category { get; private set; }
         public IReadOnlyList<Tag> TagList { get { return tagList; } }
+        public string UserMail { get; set; }
 
         public Note(int _id, string _title, string _mainBody, Category _category)
         {
@@ -30,10 +31,11 @@ namespace NoteBaseLogicInterface.Models
             CategoryDTO catDTO = new(Category.ID, Category.Title);
 
             NoteDTO noteDTO = new NoteDTO(ID, Title, MainBody, catDTO);
+            noteDTO.UserMail = UserMail;
 
             foreach (Tag tag in tagList)
             {
-                TagDTO tagDTO = new(tag.ID, tag.Title);
+                TagDTO tagDTO = tag.ToDTO();
 
                 noteDTO.TryAddTagDTO(tagDTO);
             }

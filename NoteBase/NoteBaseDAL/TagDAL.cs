@@ -257,5 +257,42 @@ namespace NoteBaseDAL
 
             return response;
         }
+        public DALResponse<TagDTO> GetByTitle(string _Title)
+        {
+            DALResponse<TagDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"SELECT ID, Title From Tag WHERE Title = @Title";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", _Title);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            TagDTO tripDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
+
+                            response.AddItem(tripDTO);
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(e.Number, "TagDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "TagDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
+            }
+
+            return response;
+        }
     }
 }

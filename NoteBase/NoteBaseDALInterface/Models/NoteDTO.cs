@@ -9,6 +9,7 @@
         public string MainBody { get; private set; }
         public CategoryDTO Category { get; private set; }
         public IReadOnlyList<TagDTO> TagList { get { return tagList; } }
+        public string UserMail { get; set; }
 
         public NoteDTO(int _id, string _title, string _mainBody, CategoryDTO _category)
         {

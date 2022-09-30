@@ -9,20 +9,56 @@ namespace NoteBaseLogic
 {
     public class NoteProcessor : IProcessor<Note>
     {
-        private readonly IDAL<NoteDTO> NoteDAL;
+        private readonly NoteDAL NoteDAL;
+        private readonly TagDAL TagDAL;
         public NoteProcessor(string _connString)
         {
             NoteDAL = Factory.CreateNoteDAL(_connString);
+            TagDAL = Factory.CreateTagDAL(_connString);
         }
 
-        public NoteProcessor(IDAL<NoteDTO> _noteDAL)
+        public NoteProcessor(NoteDAL _noteDAL, TagDAL _tagDAL)
         {
             NoteDAL = _noteDAL;
+            TagDAL = _tagDAL;
         }
 
         public Response<Note> Create(Note _note)
         {
-            throw new NotImplementedException();
+            _note = AddTags(_note);
+            DALResponse<NoteDTO> noteDALreponse = NoteDAL.Create(_note.ToDTO());
+            string tempMessage = noteDALreponse.Message;
+            noteDALreponse = NoteDAL.GetByTitle(_note.Title);
+            noteDALreponse.Message = tempMessage;
+
+            foreach (Tag tag in _note.TagList)
+            {
+                TagDAL.Create(tag.ToDTO());
+
+                DALResponse<TagDTO> tagDALresponse = TagDAL.GetByTitle(tag.Title);
+
+                NoteDAL.CreateNoteTag(noteDALreponse.Data[0].ID, tagDALresponse.Data[0].ID);
+            }
+
+            Response<Note> response = new(noteDALreponse.Status, noteDALreponse.Message);
+
+            return response;
+        }
+
+        public Note AddTags(Note _note)
+        {
+            string[] allWords = _note.MainBody.Split(" ");
+            for (int i = 0; i < allWords.Length; i++)
+            {
+                string word = allWords[i];
+                if (word.StartsWith("#"))
+                {
+                    Tag tag = new(i, word.Substring(1).ToLower());
+                    _note.TryAddTag(tag);
+                }
+            }
+
+            return _note;
         }
 
         public Response<Note> Get(int _noteId)

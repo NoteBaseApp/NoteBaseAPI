@@ -6,8 +6,8 @@ namespace NoteBaseDALInterface
     {
         public DALResponse<NoteDTO> Create(NoteDTO _note);
         public DALResponse<NoteDTO> CreateNoteTag(int _noteId, int _tagId);
-        public DALResponse<NoteDTO> Get(int _noteId);
-        public DALResponse<NoteDTO> Get(string _userId);
+        public DALResponse<NoteDTO> GetById(int _noteId);
+        public DALResponse<NoteDTO> GetByPerson(int _personId);
         public DALResponse<NoteDTO> GetByTitle(string _Title);
         public DALResponse<NoteDTO> Update(int _noteId, NoteDTO _note);
         public DALResponse<NoteDTO> Delete(int _noteId);

@@ -14,5 +14,10 @@ namespace NoteBaseDALFactory
         {
             return new TagDAL(_connString);
         }
+
+        public static PersonDAL CreatePersonDAL(string _connString)
+        {
+            return new PersonDAL(_connString);
+        }
     }
 }

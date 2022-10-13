@@ -3,6 +3,7 @@ using NoteBaseDALFactory;
 using NoteBaseDALInterface;
 using NoteBaseDALInterface.Models;
 using NoteBaseInterface;
+using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
 
 namespace NoteBaseLogic
@@ -25,16 +26,30 @@ namespace NoteBaseLogic
             noteDALreponse = NoteDAL.GetByTitle(_note.Title);
             noteDALreponse.Message = tempMessage;
 
+            Response<Note> response = new(noteDALreponse.Status, noteDALreponse.Message);
+
             foreach (Tag tag in _note.TagList)
             {
                 TagDAL.Create(tag.ToDTO());
 
                 DALResponse<TagDTO> tagDALresponse = TagDAL.GetByTitle(tag.Title);
 
+                if (tagDALresponse.Data.Count  == 0)
+                {
+                    response.Status = tagDALresponse.Status;
+                    response.Message = tagDALresponse.Message;
+
+                    return response;
+                }
+                else if (noteDALreponse.Data.Count == 0)
+                {
+                    response.Status = noteDALreponse.Status;
+                    response.Message = noteDALreponse.Message;
+
+                    return response;
+                }
                 NoteDAL.CreateNoteTag(noteDALreponse.Data[0].ID, tagDALresponse.Data[0].ID);
             }
-
-            Response<Note> response = new(noteDALreponse.Status, noteDALreponse.Message);
 
             return response;
         }
@@ -60,9 +75,9 @@ namespace NoteBaseLogic
             throw new NotImplementedException();
         }
 
-        public Response<Note> Get(string _UserMail)
+        public Response<Note> GetByPerson(int _personId)
         {
-            DALResponse<NoteDTO> DALreponse = NoteDAL.Get(_UserMail);
+            DALResponse<NoteDTO> DALreponse = NoteDAL.GetByPerson(_personId);
             Response<Note> response = new(DALreponse.Status, DALreponse.Message);
 
             foreach (NoteDTO noteDTO in DALreponse.Data)

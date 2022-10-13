@@ -16,5 +16,10 @@ namespace NoteBaseLogicFactory
         {
             return new TagProcessor(_tagDAL);
         }
+
+        public static PersonProcessor CreatePersonProcessor(IPersonDAL _personDAL)
+        {
+            return new PersonProcessor(_personDAL);
+        }
     }
 }

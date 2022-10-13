@@ -23,14 +23,14 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"INSERT INTO Note (Title, MainBody, CategoryID, UserMail) VALUES (@Title, @MainBody, @CategoryID, @UserMail)";
+                    string query = @"INSERT INTO Note (Title, MainBody, CategoryID, PersonId) VALUES (@Title, @MainBody, @CategoryID, @PersonId)";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Title", _note.Title);
                         command.Parameters.AddWithValue("@MainBody", _note.MainBody);
                         command.Parameters.AddWithValue("@CategoryID", _note.Category.ID);
-                        command.Parameters.AddWithValue("@UserMail", _note.UserMail);
+                        command.Parameters.AddWithValue("@PersonId", _note.PersonId);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();
@@ -41,7 +41,7 @@ namespace NoteBaseDAL
                             if (result == 0)
                             {
                                 response.Status = 409;
-                                response.Message = "NoteDAL.Create(" + _note.Title + ") ERROR: Could not Create Tag";
+                                response.Message = "NoteDAL.Create(" + _note.Title + ") ERROR: Could not Create Note";
                             }
                         }
                     }
@@ -103,12 +103,12 @@ namespace NoteBaseDAL
             return response;
         }
 
-        public DALResponse<NoteDTO> Get(int _noteId)
+        public DALResponse<NoteDTO> GetById(int _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> Get(string _userId)
+        public DALResponse<NoteDTO> GetByPerson(int _personId)
         {
             DALResponse<NoteDTO> response = new(200, "");
 
@@ -116,11 +116,11 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"SELECT ID, Title, MainBody, CategoryID From Note WHERE UserMail = @UserMail";
+                    string query = @"SELECT ID, Title, MainBody, CategoryId FROM Note WHERE PersonId = @PersonId";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@UserMail", _userId);
+                        command.Parameters.AddWithValue("@PersonId", _personId);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();
@@ -143,11 +143,11 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(e.Number, "NoteDAL.Get(" + _userId + ") ERROR: " + e.Message);
+                response = new(e.Number, "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message);
             }
             catch (Exception e)
             {
-                response = new(409, "NoteDAL.Get(" + _userId + ") ERROR: " + e.Message);
+                response = new(409, "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message);
             }
 
             return response;

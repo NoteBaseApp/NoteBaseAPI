@@ -2,7 +2,7 @@
 
 namespace NoteBaseLogicInterface.Models
 {
-    public class Tag: IModel
+    public class Tag
     {
         public int ID { get; }
         public string Title { get; private set; }

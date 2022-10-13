@@ -14,7 +14,12 @@
     </head>
     <main>
         <h1>Alle jou notities</h1>
-        @foreach (Note note in ViewBag.Data) {
+        @if (ViewBag.Data.Status != 200)
+        {
+            <p>er is iets mis gegaan: @ViewBag.Data.Message</p>
+        }
+        else
+        @foreach (Note note in ViewBag.Data.Data) {
             <div>
                 <h4>@note.Title</h4>
                 <h3>@note.Category.Title</h3>

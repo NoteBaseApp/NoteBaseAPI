@@ -3,7 +3,7 @@ using NoteBaseDALInterface.Models;
 
 namespace NoteBaseDALFactory
 {
-    public class Factory
+    public class DALFactory
     {
         public static NoteDAL CreateNoteDAL(string _connString)
         {

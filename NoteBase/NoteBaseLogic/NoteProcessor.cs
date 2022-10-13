@@ -7,17 +7,11 @@ using NoteBaseLogicInterface.Models;
 
 namespace NoteBaseLogic
 {
-    public class NoteProcessor : IProcessor<Note>
+    public class NoteProcessor : INoteProcessor
     {
-        private readonly NoteDAL NoteDAL;
-        private readonly TagDAL TagDAL;
-        public NoteProcessor(string _connString)
-        {
-            NoteDAL = Factory.CreateNoteDAL(_connString);
-            TagDAL = Factory.CreateTagDAL(_connString);
-        }
-
-        public NoteProcessor(NoteDAL _noteDAL, TagDAL _tagDAL)
+        private readonly INoteDAL NoteDAL;
+        private readonly ITagDAL TagDAL;
+        public NoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL)
         {
             NoteDAL = _noteDAL;
             TagDAL = _tagDAL;

@@ -6,15 +6,11 @@ using NoteBaseLogicInterface.Models;
 
 namespace NoteBaseLogic
 {
-    public class TagProcessor : IProcessor<Tag>
+    public class TagProcessor : ITagProcessor
     {
-        private readonly IDAL<TagDTO> TagDAL;
-        public TagProcessor(string _connString)
-        {
-            TagDAL = Factory.CreateTagDAL(_connString);
-        }
+        private readonly ITagDAL TagDAL;
 
-        public TagProcessor(IDAL<TagDTO> _tagDAL)
+        public TagProcessor(ITagDAL _tagDAL)
         {
             TagDAL = _tagDAL;
         }

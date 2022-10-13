@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 
 namespace NoteBaseDAL
 {
-    public class NoteDAL : IDAL<NoteDTO>
+    public class NoteDAL : INoteDAL
     {
         private readonly string ConnString;
         private TagDAL tagDAL;
@@ -103,17 +103,12 @@ namespace NoteBaseDAL
             return response;
         }
 
-        public DALResponse<NoteDTO> Delete(int _noteId)
-        {
-            throw new NotImplementedException();
-        }
-
         public DALResponse<NoteDTO> Get(int _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> Get(string _userMail)
+        public DALResponse<NoteDTO> Get(string _userId)
         {
             DALResponse<NoteDTO> response = new(200, "");
 
@@ -125,7 +120,7 @@ namespace NoteBaseDAL
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@UserMail", _userMail);
+                        command.Parameters.AddWithValue("@UserMail", _userId);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();
@@ -148,11 +143,11 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(e.Number, "NoteDAL.Get(" + _userMail + ") ERROR: " + e.Message);
+                response = new(e.Number, "NoteDAL.Get(" + _userId + ") ERROR: " + e.Message);
             }
             catch (Exception e)
             {
-                response = new(409, "NoteDAL.Get(" + _userMail + ") ERROR: " + e.Message);
+                response = new(409, "NoteDAL.Get(" + _userId + ") ERROR: " + e.Message);
             }
 
             return response;
@@ -204,6 +199,11 @@ namespace NoteBaseDAL
         }
 
         public DALResponse<NoteDTO> Update(int _noteId, NoteDTO _note)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DALResponse<NoteDTO> Delete(int _noteId)
         {
             throw new NotImplementedException();
         }

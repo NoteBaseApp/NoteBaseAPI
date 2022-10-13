@@ -6,6 +6,7 @@ using NoteBaseLogicFactory;
 using System.Diagnostics;
 using NoteBaseLogicInterface.Models;
 using System.Collections.Generic;
+using NoteBaseDALFactory;
 
 namespace App.Controllers
 {
@@ -26,17 +27,16 @@ namespace App.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            IProcessor<Note> processor = Factory.CreateNoteProcessor(connString);
+            INoteProcessor processor = ProcessorFactory.CreateNoteProcessor(DALFactory.CreateNoteDAL(connString), DALFactory.CreateTagDAL(connString));
             Response<Note> response = processor.Get(_UserMail: User.Identity.Name);
-            List<Note> notes = (List<Note>)response.Data;
-            ViewBag.Data = notes;
+            ViewBag.Data = response;
             return View();
         }
 
         [Authorize]
         public IActionResult Privacy()
         {
-            IProcessor<Note> processor = Factory.CreateNoteProcessor(connString);
+            INoteProcessor processor = ProcessorFactory.CreateNoteProcessor(DALFactory.CreateNoteDAL(connString), DALFactory.CreateTagDAL(connString));
             Note note = new(100, "AddingTagTest", "Dit is een #test voor het toevoegen van een #notitie met #TaGs", new(1, "School"));
             note.UserMail = User.Identity.Name;
 

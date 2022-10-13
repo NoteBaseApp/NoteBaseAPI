@@ -53,7 +53,7 @@ namespace NoteBaseLogic.Tests
             .Returns(_Args)//If called as expected what result to return
             .Verifiable();//expected service behavior can be verified
 
-            IProcessor<Tag> processor = Factory.CreateTagProcessor(serviceMock.Object);
+            IProcessor<Tag> processor = ProcessorFactory.CreateTagProcessor(serviceMock.Object);
 
             //Act
             Response<Tag> actual = processor.Get(_userMail);

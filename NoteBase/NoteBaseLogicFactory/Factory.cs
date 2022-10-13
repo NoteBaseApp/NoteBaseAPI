@@ -5,24 +5,14 @@ using NoteBaseDAL;
 
 namespace NoteBaseLogicFactory
 {
-    public class Factory
+    public class ProcessorFactory
     {
-        public static NoteProcessor CreateNoteProcessor(string _connString)
-        {
-            return new NoteProcessor(_connString);
-        }
-
-        public static NoteProcessor CreateNoteProcessor(NoteDAL _noteDAL, TagDAL _tagDAL)
+        public static NoteProcessor CreateNoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL)
         {
             return new NoteProcessor(_noteDAL, _tagDAL);
         }
 
-        public static TagProcessor CreateTagProcessor(string _connString)
-        {
-            return new TagProcessor(_connString);
-        }
-
-        public static TagProcessor CreateTagProcessor(IDAL<TagDTO> _tagDAL)
+        public static TagProcessor CreateTagProcessor(ITagDAL _tagDAL)
         {
             return new TagProcessor(_tagDAL);
         }

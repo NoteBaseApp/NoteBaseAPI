@@ -65,7 +65,7 @@ namespace NoteBaseLogic.Tests
         {
             //Arrage
             Note note = new(1, "test", "Dit is een #Test voor mijn #Tag selector en het toevoegen van een #Note", new(1, "TestCategory"));
-            NoteProcessor processor = Factory.CreateNoteProcessor("");
+            NoteProcessor processor = ProcessorFactory.CreateNoteProcessor("");
 
             List<Tag> expected = new() { new Tag(0, "test"), new Tag(1, "tag") , new Tag(2, "note") };
             //Act

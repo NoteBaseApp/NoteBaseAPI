@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace NoteBaseDAL
 {
-    public class TagDAL : IDAL<TagDTO>
+    public class TagDAL : ITagDAL
     {
         private readonly string ConnString;
 

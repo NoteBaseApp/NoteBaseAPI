@@ -5,10 +5,10 @@
         private readonly List<T> data = new();
 
         public int Status { get; set; }
-        public string? Message { get; set; }
+        public string Message { get; set; }
         public IReadOnlyList<T> Data { get { return data; } }
 
-        public DALResponse(int _status, string? _message)
+        public DALResponse(int _status, string _message)
         {
             Status = _status;
             Message = _message;

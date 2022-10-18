@@ -35,21 +35,12 @@ namespace App.Controllers
 
             INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(DALFactory.CreateNoteDAL(connString), DALFactory.CreateTagDAL(connString));
             Response<Note> noteResponse = noteProcessor.GetByPerson(person.ID);
-            ViewBag.Data = noteResponse;
-            return View();
+            return View(noteResponse);
         }
 
         [Authorize]
         public IActionResult Privacy()
         {
-            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-            person = personResponse.Data[0];
-
-            INoteProcessor processor = ProcessorFactory.CreateNoteProcessor(DALFactory.CreateNoteDAL(connString), DALFactory.CreateTagDAL(connString));
-            Note note = new(100, "AddingTagTest", "Dit is een #test voor het toevoegen van een #notitie met #TaGs", new(1, "School"));
-            note.PersonId = person.ID;
-
-            Response<Note> response = processor.Create(note);
             return View();
         }
 

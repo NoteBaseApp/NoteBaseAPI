@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Response<Note>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 @using Microsoft.AspNetCore.Identity
@@ -7,24 +9,20 @@
 @inject UserManager<IdentityUser> UserManager
 
 <div class="text-center">
-    <head>
-        <header>
-
-        </header>
-    </head>
     <main>
         <h1>Alle jou notities</h1>
-        @if (ViewBag.Data.Status != 200)
+        @if (Model.Status != 200)
         {
-            <p>er is iets mis gegaan: @ViewBag.Data.Message</p>
+            <p>er is iets mis gegaan: @Model.Message</p>
         }
         else
-        @foreach (Note note in ViewBag.Data.Data) {
+            @foreach (Note note in Model.Data)
+            {
             <div>
                 <h4>@note.Title</h4>
                 <h3>@note.Category.Title</h3>
                 <p>@note.MainBody</p>
-                <br></br>
+                <br>
                 <p>
                     @for (int i = 0; i < note.TagList.Count() - 1; i++)
                     {

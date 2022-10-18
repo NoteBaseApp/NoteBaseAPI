@@ -6,16 +6,16 @@
 
         public int ID { get; }
         public string Title { get; private set; }
-        public string MainBody { get; private set; }
+        public string Text { get; private set; }
         public CategoryDTO Category { get; private set; }
         public IReadOnlyList<TagDTO> TagList { get { return tagList; } }
         public int PersonId { get; set; }
 
-        public NoteDTO(int _id, string _title, string _mainBody, CategoryDTO _category)
+        public NoteDTO(int _id, string _title, string _text, CategoryDTO _category)
         {
             ID = _id;
             Title = _title;
-            MainBody = _mainBody;
+            Text = _text;
             Category = _category;
             //PersonId = _PersonId;
         }

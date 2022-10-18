@@ -6,9 +6,9 @@ namespace NoteBaseDALInterface
     {
         DALResponse<CategoryDTO> Create(CategoryDTO _cat);
         DALResponse<CategoryDTO> Delete(int _catId);
-        DALResponse<CategoryDTO> Get(int _catId);
-        DALResponse<CategoryDTO> Get(string _userId);
+        DALResponse<CategoryDTO> GetById(int _catId);
+        DALResponse<CategoryDTO> GetByPerson(int _personId);
         DALResponse<CategoryDTO> GetByTitle(string _Title);
-        DALResponse<CategoryDTO> Update(int _catId, CategoryDTO _cat);
+        DALResponse<CategoryDTO> Update(CategoryDTO _cat);
     }
 }

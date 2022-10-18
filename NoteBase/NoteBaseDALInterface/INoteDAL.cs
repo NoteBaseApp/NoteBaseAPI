@@ -9,7 +9,7 @@ namespace NoteBaseDALInterface
         public DALResponse<NoteDTO> GetById(int _noteId);
         public DALResponse<NoteDTO> GetByPerson(int _personId);
         public DALResponse<NoteDTO> GetByTitle(string _Title);
-        public DALResponse<NoteDTO> Update(int _noteId, NoteDTO _note);
+        public DALResponse<NoteDTO> Update(NoteDTO _note);
         public DALResponse<NoteDTO> Delete(int _noteId);
     }
 }

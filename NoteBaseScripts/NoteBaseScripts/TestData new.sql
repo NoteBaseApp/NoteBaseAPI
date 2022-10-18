@@ -15,7 +15,7 @@ INSERT INTO Category(Title, PersonId)
 		('Games', 1),
 		('Muziek', 2)
 
-INSERT INTO Note(Title, MainBody, CategoryID, PersonId)
+INSERT INTO Note(Title, Text, CategoryID, PersonId)
 	VALUES ('nieuwe school', 'ik heb mij ingeschreven bij #Fontys', 1, 1),
 		('Game avond', 'zaterdag avond #Minecraft spelen met #Vrienden', 2, 1),
 		('bladmuziek', 'ik maak bladmuziek met #Bach', 3, 2)
@@ -26,7 +26,7 @@ INSERT INTO NoteTag(NoteID, TagID)
 		(2,3),
 		(3,4)	
 
-SELECT N.ID, N.Title, N.MainBody, C.Title AS Category, P.Name AS 'Person name', T.Title AS Tag 
+SELECT N.ID, N.Title, N.Text, C.Title AS Category, P.Name AS 'Person name', T.Title AS Tag 
 FROM Note AS N
 JOIN Person AS P
 	ON P.ID = N.PersonID

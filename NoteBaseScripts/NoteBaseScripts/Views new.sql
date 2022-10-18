@@ -11,24 +11,26 @@ JOIN Note AS N
 /*DROP VIEW NoteTags*/
 
 CREATE VIEW PersonNotes AS
-SELECT N.ID, N.Title, N.MainBody, N.CategoryID, P.Email
+SELECT N.ID, N.Title, N.Text, N.CategoryID, P.Email
 FROM Note AS N
 JOIN Person AS P
 	ON P.ID = N.PersonID
 /*DROP VIEW UserNotes*/
 
 CREATE VIEW PersonCategories AS
-SELECT DISTINCT  C.ID, C.Title, P.Email
+SELECT DISTINCT  C.ID, C.Title, P.ID AS PersonId
 FROM Category AS C
 JOIN Person AS P
 	ON C.PersonId = P.ID
-/*DROP VIEW UserCategories*/
+/*DROP VIEW PersonCategories*/
 
 SELECT ID, Title FROM NoteTags
 WHERE PersonId = 1;
 
-SELECT ID, Title, MainBody, CategoryID FROM PersonNotes
+SELECT ID, Title, Text, CategoryID FROM PersonNotes
 WHERE Email = 'JoeyJoeyRemmers@gmail.com';
 
 SELECT ID, Title  FROM PersonCategories
-WHERE Email = 'JoeyJoeyRemmers@gmail.com';
+WHERE PersonID = 1;
+
+UPDATE Category SET Title = '' WHERE ID = 1

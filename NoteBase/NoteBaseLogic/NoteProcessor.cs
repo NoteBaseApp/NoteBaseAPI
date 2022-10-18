@@ -56,7 +56,7 @@ namespace NoteBaseLogic
 
         public Note AddTags(Note _note)
         {
-            string[] allWords = _note.MainBody.Split(" ");
+            string[] allWords = _note.Text.Split(" ");
             for (int i = 0; i < allWords.Length; i++)
             {
                 string word = allWords[i];
@@ -82,8 +82,8 @@ namespace NoteBaseLogic
 
             foreach (NoteDTO noteDTO in DALreponse.Data)
             {
-                Category cat = new(noteDTO.Category.ID, noteDTO.Category.Title);
-                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.MainBody, cat);
+                Category cat = new(noteDTO.Category.ID, noteDTO.Category.Title, noteDTO.Category.PersonId);
+                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, cat);
 
                 foreach (TagDTO tagDTO in noteDTO.TagList)
                 {

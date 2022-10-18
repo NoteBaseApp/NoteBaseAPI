@@ -2,6 +2,7 @@
 using NoteBaseDALInterface.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,31 +20,243 @@ namespace NoteBaseDAL
 
         public DALResponse<CategoryDTO> Create(CategoryDTO _cat)
         {
-            throw new NotImplementedException();
+            DALResponse<CategoryDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new(ConnString))
+                {
+                    string query = @"INSERT INTO Category (Title, PersonId) VALUES (@Title, @PersonId)";
+
+                    using (SqlCommand command = new(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", _cat.Title);
+                        command.Parameters.AddWithValue("@PersonId", _cat.PersonId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Status = 409;
+                                response.Message = "CategoryDAL.Create(" + _cat.Title + ") ERROR: Could not Create Category";
+                            }
+                        }
+                    }
+                }
+            }
+            //het opvangen van een mogelijke error
+            catch (SqlException e)
+            {
+                response = new(e.Number, "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message);
+            }
+
+            return response;
         }
-        public DALResponse<CategoryDTO> Get(int _catId)
+        public DALResponse<CategoryDTO> GetById(int _catId)
         {
-            throw new NotImplementedException();
+            DALResponse<CategoryDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"SELECT ID, Title, PersonId FROM Category WHERE ID = @catId";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@catId", _catId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
+
+                            response.AddItem(categoryDTO);
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(e.Number, "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message);
+            }
+
+            return response;
         }
 
-        public DALResponse<CategoryDTO> Get(string _userId)
+        public DALResponse<CategoryDTO> GetByPerson(int _personId)
         {
-            throw new NotImplementedException();
+            DALResponse<CategoryDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"SELECT ID, Title, PersonId FROM PersonCategories WHERE PersonId = @PersonId";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@PersonId", _personId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
+
+                            response.AddItem(categoryDTO);
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(e.Number, "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message);
+            }
+
+            return response;
         }
 
         public DALResponse<CategoryDTO> GetByTitle(string _Title)
         {
-            throw new NotImplementedException();
+            DALResponse<CategoryDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"SELECT ID, Title, PersonId FROM Category WHERE Title = @Title";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", _Title);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
+
+                            response.AddItem(categoryDTO);
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(e.Number, "CategoryDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "CategoryDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
+            }
+
+            return response;
         }
 
-        public DALResponse<CategoryDTO> Update(int _catId, CategoryDTO _cat)
+        public DALResponse<CategoryDTO> Update(CategoryDTO _cat)
         {
-            throw new NotImplementedException();
+            DALResponse<CategoryDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new(ConnString))
+                {
+                    string query = @"UPDATE Category SET Title = @Title WHERE ID = @catId";
+
+                    using (SqlCommand command = new(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", _cat.Title);
+                        command.Parameters.AddWithValue("@catId", _cat.ID);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Status = 409;
+                                response.Message = "CategoryDAL.Update(" + _cat.ID + ") ERROR: Could not Update Category";
+                            }
+                        }
+                    }
+                }
+            }
+            //het opvangen van een mogelijke error
+            catch (SqlException e)
+            {
+                response = new(e.Number, "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message);
+            }
+
+            return response;
         }
 
         public DALResponse<CategoryDTO> Delete(int _catId)
         {
-            throw new NotImplementedException();
+            DALResponse<CategoryDTO> response = new(200, "");
+
+            try
+            {
+                using (SqlConnection connection = new(ConnString))
+                {
+                    string query = @"DELETE FROM Category WHERE ID = @catId";
+
+                    using (SqlCommand command = new(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@catId", _catId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Status = 409;
+                                response.Message = "CategoryDAL.Delete(" + _catId + ") ERROR: Could not Delete Category";
+                            }
+                        }
+                    }
+                }
+            }
+            //het opvangen van een mogelijke error
+            catch (SqlException e)
+            {
+                response = new(e.Number, "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                response = new(409, "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message);
+            }
+
+            return response;
         }
 
     }

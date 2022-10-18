@@ -23,12 +23,12 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"INSERT INTO Note (Title, MainBody, CategoryID, PersonId) VALUES (@Title, @MainBody, @CategoryID, @PersonId)";
+                    string query = @"INSERT INTO Note (Title, Text, CategoryID, PersonId) VALUES (@Title, @Text, @CategoryID, @PersonId)";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Title", _note.Title);
-                        command.Parameters.AddWithValue("@MainBody", _note.MainBody);
+                        command.Parameters.AddWithValue("@Text", _note.Text);
                         command.Parameters.AddWithValue("@CategoryID", _note.Category.ID);
                         command.Parameters.AddWithValue("@PersonId", _note.PersonId);
                         connection.Open();
@@ -54,7 +54,7 @@ namespace NoteBaseDAL
             }
             catch (Exception e)
             {
-                response = new(409, "TagDAL.Create(" + _note.Title + ") ERROR: " + e.Message);
+                response = new(409, "NoteDAL.Create(" + _note.Title + ") ERROR: " + e.Message);
             }
 
             return response;
@@ -97,7 +97,7 @@ namespace NoteBaseDAL
             }
             catch (Exception e)
             {
-                response = new(409, "TagDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message);
+                response = new(409, "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message);
             }
 
             return response;
@@ -116,7 +116,7 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"SELECT ID, Title, MainBody, CategoryId FROM Note WHERE PersonId = @PersonId";
+                    string query = @"SELECT ID, Title, Text, CategoryId FROM Note WHERE PersonId = @PersonId";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -127,7 +127,7 @@ namespace NoteBaseDAL
 
                         while (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, ""));
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, "", 0));
 
                             DALResponse<TagDTO> DALResponse = tagDAL.GetFromNote(noteDTO.ID);
 
@@ -161,7 +161,7 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"SELECT ID, Title, MainBody, CategoryID From Note WHERE Title = @Title";
+                    string query = @"SELECT ID, Title, Text, CategoryID From Note WHERE Title = @Title";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -172,7 +172,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, ""));
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, "", 0));
 
                             DALResponse<TagDTO> DALResponse = tagDAL.GetFromNote(noteDTO.ID);
 
@@ -198,7 +198,7 @@ namespace NoteBaseDAL
             return response;
         }
 
-        public DALResponse<NoteDTO> Update(int _noteId, NoteDTO _note)
+        public DALResponse<NoteDTO> Update(NoteDTO _note)
         {
             throw new NotImplementedException();
         }

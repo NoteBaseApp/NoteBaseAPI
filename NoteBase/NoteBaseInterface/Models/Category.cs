@@ -1,4 +1,6 @@
-﻿namespace NoteBaseLogicInterface.Models
+﻿using NoteBaseDALInterface.Models;
+
+namespace NoteBaseLogicInterface.Models
 {
     public class Category
     {
@@ -11,6 +13,13 @@
             ID = _id;
             Title = _title;
             PersonId = _personId;
+        }
+
+        public CategoryDTO ToDTO()
+        {
+            CategoryDTO categoryDTO = new(ID, Title, PersonId);
+
+            return categoryDTO;
         }
     }
 }

@@ -11,7 +11,7 @@
 <div class="text-center">
     <main>
         <h1>Alle jou notities</h1>
-        @if (Model.Status != 200)
+        @if (Model.Succeeded != true)
         {
             <p>er is iets mis gegaan: @Model.Message</p>
         }

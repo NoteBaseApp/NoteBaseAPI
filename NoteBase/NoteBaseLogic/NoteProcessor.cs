@@ -26,7 +26,7 @@ namespace NoteBaseLogic
             noteDALreponse = NoteDAL.GetByTitle(_note.Title);
             noteDALreponse.Message = tempMessage;
 
-            Response<Note> response = new(noteDALreponse.Status, noteDALreponse.Message);
+            Response<Note> response = new(noteDALreponse.Succeeded, noteDALreponse.Message);
 
             foreach (Tag tag in _note.TagList)
             {
@@ -36,14 +36,14 @@ namespace NoteBaseLogic
 
                 if (tagDALresponse.Data.Count  == 0)
                 {
-                    response.Status = tagDALresponse.Status;
+                    response.Succeeded = tagDALresponse.Succeeded;
                     response.Message = tagDALresponse.Message;
 
                     return response;
                 }
                 else if (noteDALreponse.Data.Count == 0)
                 {
-                    response.Status = noteDALreponse.Status;
+                    response.Succeeded = noteDALreponse.Succeeded;
                     response.Message = noteDALreponse.Message;
 
                     return response;
@@ -78,7 +78,7 @@ namespace NoteBaseLogic
         public Response<Note> GetByPerson(int _personId)
         {
             DALResponse<NoteDTO> DALreponse = NoteDAL.GetByPerson(_personId);
-            Response<Note> response = new(DALreponse.Status, DALreponse.Message);
+            Response<Note> response = new(DALreponse.Succeeded, DALreponse.Message);
 
             foreach (NoteDTO noteDTO in DALreponse.Data)
             {

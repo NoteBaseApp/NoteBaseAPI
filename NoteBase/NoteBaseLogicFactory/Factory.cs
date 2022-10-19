@@ -21,5 +21,10 @@ namespace NoteBaseLogicFactory
         {
             return new PersonProcessor(_personDAL);
         }
+
+        public static CategoryProcessor CreateCategoryProcessor(ICategoryDAL _categoryDAL)
+        {
+            return new CategoryProcessor(_categoryDAL);
+        }
     }
 }

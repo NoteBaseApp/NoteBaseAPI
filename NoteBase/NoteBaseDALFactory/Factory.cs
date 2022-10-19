@@ -19,5 +19,10 @@ namespace NoteBaseDALFactory
         {
             return new PersonDAL(_connString);
         }
+
+        public static CategoryDAL CreateCategoryDAL(string _connString)
+        {
+            return new CategoryDAL(_connString);
+        }
     }
 }

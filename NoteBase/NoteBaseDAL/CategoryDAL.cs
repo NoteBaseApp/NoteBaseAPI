@@ -20,7 +20,7 @@ namespace NoteBaseDAL
 
         public DALResponse<CategoryDTO> Create(CategoryDTO _cat)
         {
-            DALResponse<CategoryDTO> response = new(200, "");
+            DALResponse<CategoryDTO> response = new(true, "");
 
             try
             {
@@ -41,7 +41,7 @@ namespace NoteBaseDAL
                             int result = reader.GetInt32(0);
                             if (result == 0)
                             {
-                                response.Status = 409;
+                                response.Succeeded = false;
                                 response.Message = "CategoryDAL.Create(" + _cat.Title + ") ERROR: Could not Create Category";
                             }
                         }
@@ -51,18 +51,19 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(e.Number, "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message);
+                response.Code = e.Number;
             }
             catch (Exception e)
             {
-                response = new(409, "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message);
             }
 
             return response;
         }
         public DALResponse<CategoryDTO> GetById(int _catId)
         {
-            DALResponse<CategoryDTO> response = new(200, "");
+            DALResponse<CategoryDTO> response = new(true, "");
 
             try
             {
@@ -88,11 +89,12 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(e.Number, "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message);
+                response.Code = e.Number;
             }
             catch (Exception e)
             {
-                response = new(409, "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message);
             }
 
             return response;
@@ -100,13 +102,13 @@ namespace NoteBaseDAL
 
         public DALResponse<CategoryDTO> GetByPerson(int _personId)
         {
-            DALResponse<CategoryDTO> response = new(200, "");
+            DALResponse<CategoryDTO> response = new(true, "");
 
             try
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"SELECT ID, Title, PersonId FROM PersonCategories WHERE PersonId = @PersonId";
+                    string query = @"SELECT ID, Title, PersonId FROM Category WHERE PersonId = @PersonId";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -126,17 +128,18 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(e.Number, "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message);
+                response.Code = e.Number;
             }
             catch (Exception e)
             {
-                response = new(409, "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message);
             }
 
             return response;
         }
 
-        public DALResponse<CategoryDTO> GetByTitle(string _Title)
+        /* public DALResponse<CategoryDTO> GetByTitle(string _Title)
         {
             DALResponse<CategoryDTO> response = new(200, "");
 
@@ -172,11 +175,11 @@ namespace NoteBaseDAL
             }
 
             return response;
-        }
+        } */
 
         public DALResponse<CategoryDTO> Update(CategoryDTO _cat)
         {
-            DALResponse<CategoryDTO> response = new(200, "");
+            DALResponse<CategoryDTO> response = new(true, "");
 
             try
             {
@@ -197,7 +200,7 @@ namespace NoteBaseDAL
                             int result = reader.GetInt32(0);
                             if (result == 0)
                             {
-                                response.Status = 409;
+                                response.Succeeded = false;
                                 response.Message = "CategoryDAL.Update(" + _cat.ID + ") ERROR: Could not Update Category";
                             }
                         }
@@ -207,11 +210,12 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(e.Number, "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message);
+                response.Code = e.Number;
             }
             catch (Exception e)
             {
-                response = new(409, "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message);
             }
 
             return response;
@@ -219,7 +223,7 @@ namespace NoteBaseDAL
 
         public DALResponse<CategoryDTO> Delete(int _catId)
         {
-            DALResponse<CategoryDTO> response = new(200, "");
+            DALResponse<CategoryDTO> response = new(false, "");
 
             try
             {
@@ -239,7 +243,7 @@ namespace NoteBaseDAL
                             int result = reader.GetInt32(0);
                             if (result == 0)
                             {
-                                response.Status = 409;
+                                response.Succeeded = false;
                                 response.Message = "CategoryDAL.Delete(" + _catId + ") ERROR: Could not Delete Category";
                             }
                         }
@@ -249,11 +253,12 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(e.Number, "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message);
+                response.Code = e.Number;
             }
             catch (Exception e)
             {
-                response = new(409, "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message);
+                response = new(false, "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message);
             }
 
             return response;

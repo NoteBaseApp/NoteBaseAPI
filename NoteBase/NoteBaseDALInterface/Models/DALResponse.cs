@@ -4,13 +4,14 @@
     {
         private readonly List<T> data = new();
 
-        public int Status { get; set; }
+        public bool Succeeded { get; set; }
+        public int Code { get; set; }
         public string Message { get; set; }
         public IReadOnlyList<T> Data { get { return data; } }
 
-        public DALResponse(int _status, string _message)
+        public DALResponse(bool _succeeded, string _message)
         {
-            Status = _status;
+            Succeeded = _succeeded;
             Message = _message;
         }
 

@@ -20,7 +20,7 @@ namespace NoteBaseDAL
 
         public DALResponse<PersonDTO> Create(PersonDTO _person)
         {
-            DALResponse<PersonDTO> response = new(200, "");
+            DALResponse<PersonDTO> response = new(true, "");
 
             try
             {
@@ -41,7 +41,7 @@ namespace NoteBaseDAL
                             int result = reader.GetInt32(0);
                             if (result == 0)
                             {
-                                response.Status = 409;
+                                response.Succeeded = false;
                                 response.Message = "PersonDAL.Create(" + _person.ID + ") ERROR: Could not Create Person";
                             }
                         }
@@ -51,11 +51,12 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(e.Number, "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message);
+                response = new(false, "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message);
+                response.Code = e.Number;
             }
             catch (Exception e)
             {
-                response = new(409, "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message);
+                response = new(false, "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message);
             }
 
             return response;
@@ -63,7 +64,7 @@ namespace NoteBaseDAL
 
         public DALResponse<PersonDTO> GetByEmail(string _personEmail)
         {
-            DALResponse<PersonDTO> response = new(200, "");
+            DALResponse<PersonDTO> response = new(true, "");
 
             try
             {
@@ -89,11 +90,12 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(e.Number, "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message);
+                response = new(false, "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message);
+                response.Code = e.Number;
             }
             catch (Exception e)
             {
-                response = new(409, "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message);
+                response = new(false, "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message);
             }
 
             return response;

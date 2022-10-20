@@ -12,10 +12,12 @@ namespace NoteBaseLogic
     {
         private readonly INoteDAL NoteDAL;
         private readonly ITagDAL TagDAL;
-        public NoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL)
+        private readonly ICategoryDAL CategoryDAL;
+        public NoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL, ICategoryDAL categoryDAL)
         {
             NoteDAL = _noteDAL;
             TagDAL = _tagDAL;
+            CategoryDAL = categoryDAL;
         }
 
         public Response<Note> Create(Note _note)
@@ -91,7 +93,8 @@ namespace NoteBaseLogic
 
             foreach (NoteDTO noteDTO in noteDALreponse.Data)
             {
-                Category cat = new(noteDTO.Category.ID, noteDTO.Category.Title, noteDTO.Category.PersonId);
+                DALResponse<CategoryDTO> categoryDALResponse = CategoryDAL.GetById(noteDTO.ID);
+                Category cat = new(categoryDALResponse.Data[0].ID, categoryDALResponse.Data[0].Title, categoryDALResponse.Data[0].PersonId);
                 Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, cat);
 
                 foreach (TagDTO tagDTO in noteDTO.TagList)

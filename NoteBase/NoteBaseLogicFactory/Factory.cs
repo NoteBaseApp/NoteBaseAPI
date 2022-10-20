@@ -7,9 +7,9 @@ namespace NoteBaseLogicFactory
 {
     public class ProcessorFactory
     {
-        public static NoteProcessor CreateNoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL)
+        public static NoteProcessor CreateNoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL, ICategoryDAL _categoryDAL)
         {
-            return new NoteProcessor(_noteDAL, _tagDAL);
+            return new NoteProcessor(_noteDAL, _tagDAL, _categoryDAL);
         }
 
         public static TagProcessor CreateTagProcessor(ITagDAL _tagDAL)

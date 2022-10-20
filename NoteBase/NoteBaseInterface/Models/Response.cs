@@ -18,10 +18,10 @@ namespace NoteBaseLogicInterface.Models
         public string Message { get; set; }
         public IReadOnlyList<T> Data { get { return data; } }
 
-        public Response(bool _succeeded, string _message)
+        public Response(bool _succeeded)
         {
             Succeeded = _succeeded;
-            Message = _message;
+            Message = "";
         }
 
         public void AddItem(T _Item)

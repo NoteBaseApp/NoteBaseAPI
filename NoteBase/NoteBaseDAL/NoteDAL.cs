@@ -17,7 +17,7 @@ namespace NoteBaseDAL
 
         public DALResponse<NoteDTO> Create(NoteDTO _note)
         {
-            DALResponse<NoteDTO> response = new(true, "");
+            DALResponse<NoteDTO> response = new(true);
 
             try
             {
@@ -50,12 +50,18 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false, "NoteDAL.Create(" + _note.Title + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "NoteDAL.Create(" + _note.Title + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "NoteDAL.Create(" + _note.Title + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "NoteDAL.Create(" + _note.Title + ") ERROR: " + e.Message
+                };
             }
 
             return response;
@@ -63,7 +69,7 @@ namespace NoteBaseDAL
 
         public DALResponse<NoteDTO> CreateNoteTag(int _noteId, int _tagId)
         {
-            DALResponse<NoteDTO> response = new(true, "");
+            DALResponse<NoteDTO> response = new(true);
 
             try
             {
@@ -94,12 +100,18 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false, "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message
+                };
             }
 
             return response;
@@ -112,7 +124,7 @@ namespace NoteBaseDAL
 
         public DALResponse<NoteDTO> GetByPerson(int _personId)
         {
-            DALResponse<NoteDTO> response = new(true, "");
+            DALResponse<NoteDTO> response = new(true);
 
             try
             {
@@ -145,12 +157,18 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false, "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message
+                };
             }
 
             return response;
@@ -158,7 +176,7 @@ namespace NoteBaseDAL
 
         public DALResponse<NoteDTO> GetByTitle(string _Title)
         {
-            DALResponse<NoteDTO> response = new(true, "");
+            DALResponse<NoteDTO> response = new(true);
 
             try
             {
@@ -191,12 +209,18 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false, "NoteDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "NoteDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "NoteDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "NoteDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message,
+                };
             }
 
             return response;

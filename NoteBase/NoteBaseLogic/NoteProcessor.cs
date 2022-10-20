@@ -26,7 +26,11 @@ namespace NoteBaseLogic
             noteDALreponse = NoteDAL.GetByTitle(_note.Title);
             noteDALreponse.Message = tempMessage;
 
-            Response<Note> response = new(noteDALreponse.Succeeded, noteDALreponse.Message);
+            Response<Note> response = new(noteDALreponse.Succeeded)
+            {
+                Message = noteDALreponse.Message,
+                Code = noteDALreponse.Code
+            };
 
             foreach (Tag tag in _note.TagList)
             {
@@ -77,10 +81,15 @@ namespace NoteBaseLogic
 
         public Response<Note> GetByPerson(int _personId)
         {
-            DALResponse<NoteDTO> DALreponse = NoteDAL.GetByPerson(_personId);
-            Response<Note> response = new(DALreponse.Succeeded, DALreponse.Message);
+            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByPerson(_personId);
 
-            foreach (NoteDTO noteDTO in DALreponse.Data)
+            Response<Note> response = new(noteDALreponse.Succeeded)
+            {
+                Message = noteDALreponse.Message,
+                Code = noteDALreponse.Code
+            };
+
+            foreach (NoteDTO noteDTO in noteDALreponse.Data)
             {
                 Category cat = new(noteDTO.Category.ID, noteDTO.Category.Title, noteDTO.Category.PersonId);
                 Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, cat);

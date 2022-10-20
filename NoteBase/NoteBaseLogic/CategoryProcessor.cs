@@ -22,9 +22,22 @@ namespace NoteBaseLogic
 
         public Response<Category> Create(Category _cat)
         {
+            Response<Category> response = new(false);
+
+            if (_cat.Title == "")
+            {
+                response.Message = "Title cant be empty";
+
+                return response;
+            }
+
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Create(_cat.ToDTO());
 
-            Response<Category> response = new(catDALreponse.Succeeded, catDALreponse.Message);
+            response = new(catDALreponse.Succeeded)
+            {
+                Message = catDALreponse.Message,
+                Code = catDALreponse.Code
+            };
 
             return response;
         }
@@ -33,7 +46,11 @@ namespace NoteBaseLogic
         {
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Delete(_catId);
 
-            Response<Category> response = new(catDALreponse.Succeeded, catDALreponse.Message);
+            Response<Category> response = new(catDALreponse.Succeeded)
+            {
+                Message = catDALreponse.Message,
+                Code = catDALreponse.Code
+            };
 
             return response;
         }
@@ -42,7 +59,11 @@ namespace NoteBaseLogic
         {
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
 
-            Response<Category> response = new(catDALreponse.Succeeded, catDALreponse.Message);
+            Response<Category> response = new(catDALreponse.Succeeded)
+            {
+                Message = catDALreponse.Message,
+                Code = catDALreponse.Code
+            };
 
             response.AddItem(new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId));
 
@@ -53,7 +74,11 @@ namespace NoteBaseLogic
         {
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByPerson(_personId);
 
-            Response<Category> response = new(catDALreponse.Succeeded, catDALreponse.Message);
+            Response<Category> response = new(catDALreponse.Succeeded)
+            {
+                Message = catDALreponse.Message,
+                Code = catDALreponse.Code
+            };
 
             foreach (CategoryDTO item in catDALreponse.Data)
             {
@@ -78,7 +103,11 @@ namespace NoteBaseLogic
         {
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Update(_cat.ToDTO());
 
-            Response<Category> response = new(catDALreponse.Succeeded, catDALreponse.Message);
+            Response<Category> response = new(catDALreponse.Succeeded)
+            {
+                Message = catDALreponse.Message,
+                Code = catDALreponse.Code
+            };
 
             return response;
         }

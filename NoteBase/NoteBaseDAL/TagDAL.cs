@@ -21,7 +21,7 @@ namespace NoteBaseDAL
 
         public DALResponse<TagDTO> Create(TagDTO _tag)
         {
-            DALResponse<TagDTO> response = new(true, "");
+            DALResponse<TagDTO> response = new(true);
 
             try
             {
@@ -51,12 +51,18 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false, "TagDAL.Create(" + _tag.Title + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "TagDAL.Create(" + _tag.Title + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "TagDAL.Create(" + _tag.Title + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "TagDAL.Create(" + _tag.Title + ") ERROR: " + e.Message
+                };
             }
 
             return response;
@@ -64,7 +70,7 @@ namespace NoteBaseDAL
 
         public DALResponse<TagDTO> Delete(int _tagId)
         {
-            DALResponse<TagDTO> response = new(true, "");
+            DALResponse<TagDTO> response = new(true);
 
             try
             {
@@ -93,12 +99,18 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false, "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message,
+                };
             }
 
             return response;
@@ -106,7 +118,7 @@ namespace NoteBaseDAL
 
         public DALResponse<TagDTO> Get(int _tagId)
         {
-            DALResponse<TagDTO> response = new(true, "");
+            DALResponse<TagDTO> response = new(true);
 
             try
             {
@@ -132,12 +144,18 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false, "TagDAL.Get(" + _tagId + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "TagDAL.Get(" + _tagId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "TagDAL.Get(" + _tagId + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "TagDAL.Get(" + _tagId + ") ERROR: " + e.Message
+                };
             }
 
             return response;
@@ -145,7 +163,7 @@ namespace NoteBaseDAL
 
         public DALResponse<TagDTO> Get(string _userMail)
         {
-            DALResponse<TagDTO> response = new(true, "");
+            DALResponse<TagDTO> response = new(true);
 
             try
             {
@@ -171,12 +189,18 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false, "TagDAL.Get() ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "TagDAL.Get(" + _userMail + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "TagDAL.Get() ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "TagDAL.Get(" + _userMail + ") ERROR: " + e.Message,
+                };
             }
 
             return response;
@@ -184,7 +208,7 @@ namespace NoteBaseDAL
 
         public DALResponse<TagDTO> GetFromNote(int _noteId)
         {
-            DALResponse<TagDTO> response = new(true, "");
+            DALResponse<TagDTO> response = new(true);
 
             try
             {
@@ -210,12 +234,18 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false, "TagDAL.Get() ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "TagDAL.Get(" + _noteId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "TagDAL.Get() ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "TagDAL.Get(" + _noteId + ") ERROR: " + e.Message
+                };
             }
 
             return response;
@@ -223,7 +253,7 @@ namespace NoteBaseDAL
 
         public DALResponse<TagDTO> Update(int _tagId, TagDTO _tag)
         {
-            DALResponse<TagDTO> response = new(true, "");
+            DALResponse<TagDTO> response = new(true);
 
             try
             {
@@ -253,19 +283,25 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false, "TagDAL.Update(" + _tagId + ", TagDTO) ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "TagDAL.Update(" + _tagId + ", TagDTO) ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "TagDAL.Update(" + _tagId + ",TagDTO) ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "TagDAL.Update(" + _tagId + ", TagDTO) ERROR: " + e.Message
+                };
             }
 
             return response;
         }
         public DALResponse<TagDTO> GetByTitle(string _Title)
         {
-            DALResponse<TagDTO> response = new(true, "");
+            DALResponse<TagDTO> response = new(true);
 
             try
             {
@@ -291,12 +327,18 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false, "TagDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "TagDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "TagDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "TagDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message
+                };
             }
 
             return response;

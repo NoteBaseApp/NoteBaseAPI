@@ -27,7 +27,11 @@ namespace NoteBaseLogic
         public Response<Person> GetByEmail(string _email)
         {
             DALResponse<PersonDTO> DALreponse = PersonDAL.GetByEmail(_email);
-            Response<Person> response = new(DALreponse.Succeeded, DALreponse.Message);
+
+            Response<Person> response = new(DALreponse.Succeeded)
+            {
+                Message = DALreponse.Message
+            };
 
             Person person = new(DALreponse.Data[0].ID, DALreponse.Data[0].Name, DALreponse.Data[0].Email);
             response.AddItem(person);

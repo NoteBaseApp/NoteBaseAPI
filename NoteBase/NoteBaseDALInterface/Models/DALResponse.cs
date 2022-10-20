@@ -9,10 +9,9 @@
         public string Message { get; set; }
         public IReadOnlyList<T> Data { get { return data; } }
 
-        public DALResponse(bool _succeeded, string _message)
+        public DALResponse(bool _succeeded)
         {
             Succeeded = _succeeded;
-            Message = _message;
         }
 
         public void AddItem(T _Item)

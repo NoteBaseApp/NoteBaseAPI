@@ -23,25 +23,7 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = NoteBaseLogicFactory.ProcessorFactory.CreateCategoryProcessor(categoryDAL);
             Category category = new(0, "Test", 1);
 
-            Response<Category> expected = new(true, "");
-
-            //act
-            Response<Category> actual = categoryProcessor.Create(category);
-
-            //assert
-            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
-            Assert.AreEqual(expected.Message, actual.Message);
-        }
-
-        [TestMethod()]
-        public void CreateTest_Failed_NoTitle()
-        {
-            //arrange
-            ICategoryDAL categoryDAL = new CreateTest_SucceedDAL();
-            ICategoryProcessor categoryProcessor = NoteBaseLogicFactory.ProcessorFactory.CreateCategoryProcessor(categoryDAL);
-            Category category = new(0, "", 1);
-
-            Response<Category> expected = new(false, "Title cant be empty");
+            Response<Category> expected = new(true);
 
             //act
             Response<Category> actual = categoryProcessor.Create(category);
@@ -59,7 +41,7 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = NoteBaseLogicFactory.ProcessorFactory.CreateCategoryProcessor(categoryDAL);
             Category category = new(0, "", 1);
 
-            Response<Category> expected = new(false, "");
+            Response<Category> expected = new(false);
             expected.Code = 2627;
 
             //act
@@ -68,6 +50,27 @@ namespace NoteBaseLogic.Tests
             //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Code, actual.Code);
+        }
+
+        [TestMethod()]
+        public void CreateTest_Failed_NoTitle()
+        {
+            //arrange
+            ICategoryDAL categoryDAL = new CreateTest_SucceedDAL();
+            ICategoryProcessor categoryProcessor = NoteBaseLogicFactory.ProcessorFactory.CreateCategoryProcessor(categoryDAL);
+            Category category = new(0, "", 1);
+
+            Response<Category> expected = new(false)
+            {
+                Message = "Title cant be empty"
+            };
+
+            //act
+            Response<Category> actual = categoryProcessor.Create(category);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Assert.AreEqual(expected.Message, actual.Message);
         }
     }
 }

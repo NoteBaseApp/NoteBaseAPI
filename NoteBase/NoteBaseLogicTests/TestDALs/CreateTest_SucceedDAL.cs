@@ -12,7 +12,7 @@ namespace NoteBaseLogicTests.TestDALs
     {
         public DALResponse<CategoryDTO> Create(CategoryDTO _cat)
         {
-            return new(true, "");
+            return new(true);
         }
 
         public DALResponse<CategoryDTO> Delete(int _catId)

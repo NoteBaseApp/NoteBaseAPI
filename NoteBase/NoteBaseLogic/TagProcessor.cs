@@ -20,7 +20,10 @@ namespace NoteBaseLogic
             DALResponse<TagDTO> DALreponse = TagDAL.Create(_tag.ToDTO());
 
             //create response
-            Response<Tag> response = new(DALreponse.Succeeded, DALreponse.Message);
+            Response<Tag> response = new(DALreponse.Succeeded)
+            {
+                Message = DALreponse.Message
+            };
 
             return response;
         }
@@ -33,7 +36,10 @@ namespace NoteBaseLogic
             Tag tag = new Tag(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
 
             //create response
-            Response<Tag> response = new(DALreponse.Succeeded, DALreponse.Message);
+            Response<Tag> response = new(DALreponse.Succeeded)
+            {
+                Message = DALreponse.Message
+            };
             response.AddItem(tag);
 
             return response;
@@ -47,7 +53,10 @@ namespace NoteBaseLogic
             Tag tag = new(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
 
             //create response
-            Response<Tag> response = new(DALreponse.Succeeded, DALreponse.Message);
+            Response<Tag> response = new(DALreponse.Succeeded)
+            {
+                Message = DALreponse.Message
+            };
             response.AddItem(tag);
 
             return response;
@@ -56,7 +65,10 @@ namespace NoteBaseLogic
         public Response<Tag> Get(string _UserMail)
         {
             DALResponse<TagDTO> DALreponse = TagDAL.Get(_UserMail);
-            Response<Tag> response = new(DALreponse.Succeeded, DALreponse.Message);
+            Response<Tag> response = new(DALreponse.Succeeded)
+            {
+                Message = DALreponse.Message
+            };
 
             foreach (TagDTO tagDTO in DALreponse.Data)
             {
@@ -76,7 +88,10 @@ namespace NoteBaseLogic
             List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
 
             //create response
-            Response<Tag> response = new(DALreponse.Succeeded, DALreponse.Message);
+            Response<Tag> response = new(DALreponse.Succeeded)
+            {
+                Message = DALreponse.Message
+            };
 
             return response;
         }

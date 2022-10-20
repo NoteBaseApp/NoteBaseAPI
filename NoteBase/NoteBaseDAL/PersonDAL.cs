@@ -20,7 +20,7 @@ namespace NoteBaseDAL
 
         public DALResponse<PersonDTO> Create(PersonDTO _person)
         {
-            DALResponse<PersonDTO> response = new(true, "");
+            DALResponse<PersonDTO> response = new(true);
 
             try
             {
@@ -51,12 +51,18 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false, "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message
+                };
             }
 
             return response;
@@ -64,7 +70,7 @@ namespace NoteBaseDAL
 
         public DALResponse<PersonDTO> GetByEmail(string _personEmail)
         {
-            DALResponse<PersonDTO> response = new(true, "");
+            DALResponse<PersonDTO> response = new(true);
 
             try
             {
@@ -90,12 +96,18 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false, "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message);
-                response.Code = e.Number;
+                response = new(false)
+                {
+                    Message = "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(false, "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message
+                };
             }
 
             return response;

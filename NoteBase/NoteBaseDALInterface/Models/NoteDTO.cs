@@ -22,12 +22,17 @@
 
         public void TryAddTagDTO(TagDTO _tagDTO)
         {
-            if (tagList.Contains(_tagDTO))
+            if (!IsTagCompatible(_tagDTO))
             {
                 throw new Exception("Tag already in List");
             }
 
             tagList.Add(_tagDTO);
+        }
+
+        public bool IsTagCompatible(TagDTO _tag)
+        {
+            return !tagList.Contains(_tag);
         }
     }
 }

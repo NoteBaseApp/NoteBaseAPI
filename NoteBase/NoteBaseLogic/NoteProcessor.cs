@@ -69,7 +69,10 @@ namespace NoteBaseLogic
                 if (word.StartsWith("#"))
                 {
                     Tag tag = new(i, word.Substring(1).ToLower());
-                    _note.TryAddTag(tag);
+                    if (_note.IsTagCompatible(tag))
+                    {
+                        _note.TryAddTag(tag);
+                    }
                 }
             }
 
@@ -101,7 +104,10 @@ namespace NoteBaseLogic
                 {
                     Tag tag = new(tagDTO.ID, tagDTO.Title);
 
-                    note.TryAddTag(tag);
+                    if (note.IsTagCompatible(tag))
+                    {
+                        note.TryAddTag(tag);
+                    }
                 }
 
                 response.AddItem(note);

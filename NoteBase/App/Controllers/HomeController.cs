@@ -6,6 +6,7 @@ using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
 using System.Diagnostics;
+using System.Dynamic;
 
 namespace App.Controllers
 {
@@ -35,7 +36,15 @@ namespace App.Controllers
 
             INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(DALFactory.CreateNoteDAL(connString), DALFactory.CreateTagDAL(connString), DALFactory.CreateCategoryDAL(connString));
             Response<Note> noteResponse = noteProcessor.GetByPerson(person.ID);
-            return View(noteResponse);
+
+            ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(DALFactory.CreateCategoryDAL(connString));
+            Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
+
+            dynamic data = new ExpandoObject();
+            data.noteResponse = noteResponse;
+            data.categoryResponse = categoryResponse;
+
+            return View(data);
         }
 
         [Authorize]

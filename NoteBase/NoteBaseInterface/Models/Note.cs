@@ -45,11 +45,16 @@ namespace NoteBaseLogicInterface.Models
 
         public void TryAddTag(Tag _tag)
         {
-            if (tagList.Contains(_tag))
+            if (!IsTagCompatible(_tag))
             {
                 throw new Exception("Tag already in list");
             }
             tagList.Add(_tag);
+        }
+
+        public bool IsTagCompatible(Tag _tag)
+        {
+            return !tagList.Contains(_tag);
         }
     }
 }

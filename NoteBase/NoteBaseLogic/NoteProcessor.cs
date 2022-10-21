@@ -1,8 +1,5 @@
-﻿using NoteBaseDAL;
-using NoteBaseDALFactory;
-using NoteBaseDALInterface;
+﻿using NoteBaseDALInterface;
 using NoteBaseDALInterface.Models;
-using NoteBaseInterface;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
 

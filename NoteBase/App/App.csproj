@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NoteBaseDALFactory\NoteBaseDALFactory.csproj" />
     <ProjectReference Include="..\NoteBaseInterface\NoteBaseLogicInterface.csproj" />
     <ProjectReference Include="..\NoteBaseLogicFactory\NoteBaseLogicFactory.csproj" />
   </ItemGroup>

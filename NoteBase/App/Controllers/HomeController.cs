@@ -1,7 +1,6 @@
 ﻿using App.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NoteBaseDALFactory;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
@@ -25,7 +24,7 @@ namespace App.Controllers
             _config = configuration;
             connString = _config.GetConnectionString("NoteBaseConnString");
 
-            personProcessor = ProcessorFactory.CreatePersonProcessor(DALFactory.CreatePersonDAL(connString));
+            personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
         }
 
         [Authorize]
@@ -34,10 +33,10 @@ namespace App.Controllers
             Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
             person = personResponse.Data[0];
 
-            INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(DALFactory.CreateNoteDAL(connString), DALFactory.CreateTagDAL(connString), DALFactory.CreateCategoryDAL(connString));
+            INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
             Response<Note> noteResponse = noteProcessor.GetByPerson(person.ID);
 
-            ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(DALFactory.CreateCategoryDAL(connString));
+            ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
             Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
 
             dynamic data = new ExpandoObject();

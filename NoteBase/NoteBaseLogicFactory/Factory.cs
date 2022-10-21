@@ -1,30 +1,28 @@
-﻿using NoteBaseDALInterface.Models;
-using NoteBaseDALInterface;
+﻿using NoteBaseDAL;
 using NoteBaseLogic;
-using NoteBaseDAL;
 
 namespace NoteBaseLogicFactory
 {
     public class ProcessorFactory
     {
-        public static NoteProcessor CreateNoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL, ICategoryDAL _categoryDAL)
+        public static NoteProcessor CreateNoteProcessor(string _connstring)
         {
-            return new NoteProcessor(_noteDAL, _tagDAL, _categoryDAL);
+            return new NoteProcessor(new NoteDAL(_connstring), new TagDAL(_connstring), new CategoryDAL(_connstring));
         }
 
-        public static TagProcessor CreateTagProcessor(ITagDAL _tagDAL)
+        public static TagProcessor CreateTagProcessor(string _connstring)
         {
-            return new TagProcessor(_tagDAL);
+            return new TagProcessor(new TagDAL(_connstring));
         }
 
-        public static PersonProcessor CreatePersonProcessor(IPersonDAL _personDAL)
+        public static PersonProcessor CreatePersonProcessor(string _connstring)
         {
-            return new PersonProcessor(_personDAL);
+            return new PersonProcessor(new PersonDAL(_connstring));
         }
 
-        public static CategoryProcessor CreateCategoryProcessor(ICategoryDAL _categoryDAL)
+        public static CategoryProcessor CreateCategoryProcessor(string _connstring)
         {
-            return new CategoryProcessor(_categoryDAL);
+            return new CategoryProcessor(new CategoryDAL(_connstring));
         }
     }
 }

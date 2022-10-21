@@ -1,14 +1,7 @@
-﻿using NoteBaseDAL;
-using NoteBaseDALInterface;
+﻿using NoteBaseDALInterface;
 using NoteBaseDALInterface.Models;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace NoteBaseLogic
 {
     public class PersonProcessor: IPersonProcessor

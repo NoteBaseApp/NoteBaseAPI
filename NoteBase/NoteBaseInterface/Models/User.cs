@@ -1,5 +1,7 @@
-﻿using System;
+﻿using NoteBaseDALInterface.Models;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,9 +10,12 @@ namespace NoteBaseLogicInterface.Models
 {
     public class User
     {
+        private readonly List<Category> categoryList = new();
+
         public int ID { get; }
         public string Name { get; private set; }
         public string Email { get; private set; }
+        public IReadOnlyList<Category> CategoryList { get { return categoryList; } }
 
         public User(int _id, string _name, string _email)
         {

@@ -2,14 +2,15 @@
 using NoteBaseDALInterface;
 using NoteBaseLogic;
 using NoteBaseDAL;
+using NoteBaseLogicInterface;
 
 namespace NoteBaseLogicFactory
 {
     public class ProcessorFactory
     {
-        public static NoteProcessor CreateNoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL, ICategoryDAL _categoryDAL)
+        public static NoteProcessor CreateNoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL)
         {
-            return new NoteProcessor(_noteDAL, _tagDAL, _categoryDAL);
+            return new NoteProcessor(_noteDAL, _tagDAL);
         }
 
         public static TagProcessor CreateTagProcessor(ITagDAL _tagDAL)
@@ -22,9 +23,9 @@ namespace NoteBaseLogicFactory
             return new PersonProcessor(_personDAL);
         }
 
-        public static CategoryProcessor CreateCategoryProcessor(ICategoryDAL _categoryDAL)
+        public static CategoryProcessor CreateCategoryProcessor(ICategoryDAL _categoryDAL, INoteProcessor _noteProcessor)
         {
-            return new CategoryProcessor(_categoryDAL);
+            return new CategoryProcessor(_categoryDAL, _noteProcessor);
         }
     }
 }

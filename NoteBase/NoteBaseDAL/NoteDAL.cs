@@ -29,7 +29,7 @@ namespace NoteBaseDAL
                     {
                         command.Parameters.AddWithValue("@Title", _note.Title);
                         command.Parameters.AddWithValue("@Text", _note.Text);
-                        command.Parameters.AddWithValue("@CategoryID", _note.Category.ID);
+                        command.Parameters.AddWithValue("@CategoryID", _note.CategoryId);
                         command.Parameters.AddWithValue("@PersonId", _note.PersonId);
                         connection.Open();
 
@@ -122,7 +122,7 @@ namespace NoteBaseDAL
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> GetByPerson(int _personId)
+        public DALResponse<NoteDTO> GetByCategory(int _categoryId)
         {
             DALResponse<NoteDTO> response = new(true);
 
@@ -130,18 +130,18 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryId FROM Note WHERE PersonId = @PersonId";
+                    string query = @"SELECT ID, Title, Text, CategoryId FROM Note WHERE CategoryId = @CategoryId";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@PersonId", _personId);
+                        command.Parameters.AddWithValue("@CategoryId", _categoryId);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, "", 0));
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3));
 
                             DALResponse<TagDTO> DALResponse = tagDAL.GetFromNote(noteDTO.ID);
 
@@ -159,7 +159,7 @@ namespace NoteBaseDAL
             {
                 response = new(false)
                 {
-                    Message = "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message,
+                    Message = "NoteDAL.Get(" + _categoryId + ") ERROR: " + e.Message,
                     Code = e.Number
                 };
             }
@@ -167,7 +167,7 @@ namespace NoteBaseDAL
             {
                 response = new(false)
                 {
-                    Message = "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message
+                    Message = "NoteDAL.Get(" + _categoryId + ") ERROR: " + e.Message
                 };
             }
 
@@ -193,7 +193,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, "", 0));
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3));
 
                             DALResponse<TagDTO> DALResponse = tagDAL.GetFromNote(noteDTO.ID);
 

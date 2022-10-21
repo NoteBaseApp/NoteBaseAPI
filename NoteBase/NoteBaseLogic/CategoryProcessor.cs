@@ -15,9 +15,11 @@ namespace NoteBaseLogic
     public class CategoryProcessor : ICategoryProcessor
     {
         private readonly ICategoryDAL CategoryDAL;
-        public CategoryProcessor(ICategoryDAL _categoryDAL)
+        private readonly INoteProcessor NoteProcessor;
+        public CategoryProcessor(ICategoryDAL _categoryDAL, INoteProcessor _noteProcessor)
         {
             CategoryDAL = _categoryDAL;
+            NoteProcessor = _noteProcessor;
         }
 
         public Response<Category> Create(Category _cat)
@@ -59,33 +61,57 @@ namespace NoteBaseLogic
         {
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
 
-            Response<Category> response = new(catDALreponse.Succeeded)
+            Response<Category> categoryResponse = new(catDALreponse.Succeeded)
             {
                 Message = catDALreponse.Message,
                 Code = catDALreponse.Code
             };
 
-            response.AddItem(new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId));
+            Category category = new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId);
 
-            return response;
+            Response<Note> noteProcessorReponse = NoteProcessor.GetByCategory(_catId);
+
+            foreach (Note note in noteProcessorReponse.Data)
+            {
+                if (category.IsNoteCompatible(note))
+                {
+                    category.TryAddNote(note);
+                }
+            }
+
+            categoryResponse.AddItem(category);
+
+            return categoryResponse;
         }
 
         public Response<Category> GetByPerson(int _personId)
         {
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByPerson(_personId);
 
-            Response<Category> response = new(catDALreponse.Succeeded)
+            Response<Category> categoryResponse = new(catDALreponse.Succeeded)
             {
                 Message = catDALreponse.Message,
                 Code = catDALreponse.Code
             };
 
-            foreach (CategoryDTO item in catDALreponse.Data)
+            foreach (CategoryDTO categoryDTO in catDALreponse.Data)
             {
-                response.AddItem(new(item.ID, item.Title, item.PersonId));
+                Category category = new(categoryDTO.ID, categoryDTO.Title, categoryDTO.PersonId);
+
+                Response<Note> noteProcessorReponse = NoteProcessor.GetByCategory(category.ID);
+
+                foreach (Note note in noteProcessorReponse.Data)
+                {
+                    if (category.IsNoteCompatible(note))
+                    {
+                        category.TryAddNote(note);
+                    }
+                }
+
+                categoryResponse.AddItem(category);
             }
 
-            return response;
+            return categoryResponse;
         }
 
         /* public Response<Category> GetByTitle(string _title)

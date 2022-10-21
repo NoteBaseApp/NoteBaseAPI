@@ -33,9 +33,12 @@ namespace App.Controllers
             Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
             person = personResponse.Data[0];
 
-            INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(DALFactory.CreateNoteDAL(connString), DALFactory.CreateTagDAL(connString), DALFactory.CreateCategoryDAL(connString));
-            Response<Note> noteResponse = noteProcessor.GetByPerson(person.ID);
-            return View(noteResponse);
+
+            INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(DALFactory.CreateNoteDAL(connString), DALFactory.CreateTagDAL(connString));
+            ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(DALFactory.CreateCategoryDAL(connString), noteProcessor);
+
+            Response<Category> categoryresponse = categoryProcessor.GetByPerson(person.ID);
+            return View(categoryresponse);
         }
 
         [Authorize]

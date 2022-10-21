@@ -12,12 +12,10 @@ namespace NoteBaseLogic
     {
         private readonly INoteDAL NoteDAL;
         private readonly ITagDAL TagDAL;
-        private readonly ICategoryDAL CategoryDAL;
-        public NoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL, ICategoryDAL categoryDAL)
+        public NoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL)
         {
             NoteDAL = _noteDAL;
             TagDAL = _tagDAL;
-            CategoryDAL = categoryDAL;
         }
 
         public Response<Note> Create(Note _note)
@@ -81,9 +79,9 @@ namespace NoteBaseLogic
             throw new NotImplementedException();
         }
 
-        public Response<Note> GetByPerson(int _personId)
+        public Response<Note> GetByCategory(int _categoryId)
         {
-            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByPerson(_personId);
+            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByCategory(_categoryId);
 
             Response<Note> response = new(noteDALreponse.Succeeded)
             {
@@ -93,9 +91,7 @@ namespace NoteBaseLogic
 
             foreach (NoteDTO noteDTO in noteDALreponse.Data)
             {
-                DALResponse<CategoryDTO> categoryDALResponse = CategoryDAL.GetById(noteDTO.ID);
-                Category cat = new(categoryDALResponse.Data[0].ID, categoryDALResponse.Data[0].Title, categoryDALResponse.Data[0].PersonId);
-                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, cat);
+                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId);
 
                 foreach (TagDTO tagDTO in noteDTO.TagList)
                 {

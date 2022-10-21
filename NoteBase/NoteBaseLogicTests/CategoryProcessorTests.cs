@@ -15,11 +15,14 @@ namespace NoteBaseLogic.Tests
     [TestClass()]
     public class CategoryProcessorTests
     {
-        [TestMethod()]
+        /* [TestMethod()]
         public void CreateTest_Succeed()
         {
             //arrange
             ICategoryDAL categoryDAL = new CreateTest_SucceedDAL();
+            INoteDAL noteDAL = new ();
+            INoteProcessor noteProcessor = new NoteProcessor();
+
             ICategoryProcessor categoryProcessor = NoteBaseLogicFactory.ProcessorFactory.CreateCategoryProcessor(categoryDAL);
             Category category = new(0, "Test", 1);
 
@@ -71,6 +74,6 @@ namespace NoteBaseLogic.Tests
             //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Message, actual.Message);
-        }
+        } */
     }
 }

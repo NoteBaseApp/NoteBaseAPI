@@ -30,7 +30,7 @@ namespace NoteBaseLogic.Tests
 
             //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
-            Assert.AreEqual(expected.Message, actual.Message);
+            Assert.AreEqual(expected.Code, actual.Code);
         }
 
         [TestMethod()]
@@ -39,10 +39,12 @@ namespace NoteBaseLogic.Tests
             //arrange
             ICategoryDAL categoryDAL = new CreateTest_Faled_TitleAreadyExists();
             ICategoryProcessor categoryProcessor = NoteBaseLogicFactory.ProcessorFactory.CreateCategoryProcessor(categoryDAL);
-            Category category = new(0, "", 1);
+            Category category = new(0, "Test", 1);
 
-            Response<Category> expected = new(false);
-            expected.Code = 2627;
+            Response<Category> expected = new(false)
+            {
+                Code = 2627
+            };
 
             //act
             Response<Category> actual = categoryProcessor.Create(category);

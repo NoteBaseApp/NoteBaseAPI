@@ -47,7 +47,6 @@ namespace App.Controllers
             return View(data);
         }
 
-        [Authorize]
         public IActionResult Privacy()
         {
             return View();

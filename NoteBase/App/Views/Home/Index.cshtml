@@ -22,14 +22,15 @@
         @foreach (Category category in Model.categoryResponse.Data)
         {
             <div>
-                <h1>@category.Title</h1>
+                <h2>@category.Title</h2>
+                <hr>
 
                 <div class="note-container">
                     @foreach (Note note in Model.noteResponse.Data)
                     {
                         if (note.Category.ID == category.ID)
                         {
-                            <div class="note">
+                            <div class="note shadow-lg p-3 mb-5 rounded">
                                 <h1>@note.Title</h1>
                                 <p>@note.Text</p>
                                 <br>

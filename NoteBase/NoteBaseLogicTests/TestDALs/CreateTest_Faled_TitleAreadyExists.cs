@@ -12,8 +12,10 @@ namespace NoteBaseLogicTests.TestDALs
     {
         public DALResponse<CategoryDTO> Create(CategoryDTO _cat)
         {
-            DALResponse<CategoryDTO> response = new DALResponse<CategoryDTO>(false);
-            response.Code = 2627;
+            DALResponse<CategoryDTO> response = new DALResponse<CategoryDTO>(false)
+            {
+                Code = 2627
+            };
 
             return response;
         }

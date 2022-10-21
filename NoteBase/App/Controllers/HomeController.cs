@@ -15,7 +15,7 @@ namespace App.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _config;
         private readonly string connString;
-        private Person person;
+        private Person ?person;
         private readonly IPersonProcessor personProcessor;
 
 
@@ -47,7 +47,6 @@ namespace App.Controllers
             return View(data);
         }
 
-        [Authorize]
         public IActionResult Privacy()
         {
             return View();

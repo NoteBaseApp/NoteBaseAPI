@@ -15,7 +15,7 @@ namespace App.Controllers
         private readonly IConfiguration _config;
         private readonly string connString;
         private Person person;
-        private IPersonProcessor personProcessor;
+        private readonly IPersonProcessor personProcessor;
 
 
         public HomeController(ILogger<HomeController> logger, IConfiguration configuration)

@@ -16,3 +16,25 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.note-container {
+    display: flex;  
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+.note {
+    border: solid 1px black;
+    margin: 5px;
+    padding: 10px;
+    width: 200px;
+    height: 200px;
+}
+
+.note h1 {
+    font-size: 22px;
+}
+
+.note p {
+    word-wrap:anywhere;
+}

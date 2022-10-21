@@ -8,28 +8,53 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
-<div class="text-center">
-    <main>
-        <h1>Alle jou notities</h1>
-        @if (Model.Succeeded != true)
-        {
-            <p>er is iets mis gegaan: @Model.Message</p>
-        }
-        else
+<div class="">
+    <h1>Alle jou notities</h1>
+    @if (!Model.Succeeded)
+    {
+        <p>er is iets mis gegaan: @Model.Message</p>
+    }
+    else {
+        <div class="note-container">
             @foreach (Note note in Model.Data)
             {
-            <div>
-                <h4>@note.Title</h4>
-                <p>@note.Text</p>
-                <br>
-                <p>
-                    @for (int i = 0; i < note.TagList.Count() - 1; i++)
-                    {
-                        <span>@note.TagList[i].Title ,</span>
-                    }
-                    <span>@note.TagList.Last().Title</span>
-                </p>
-            </div>
-        }
-    </main>
+                <div class="note">
+                    <h1>@note.Title</h1>
+                    <p>@note.Text</p>
+                    <br>
+                    <p>
+                        @for (int i = 0; i < note.TagList.Count() - 1; i++)
+                        {
+                            <span>@note.TagList[i].Title ,</span>
+                        }
+                        <span>@note.TagList.Last().Title</span>
+                    </p>
+                </div>
+                <div class="note">
+                    <h1>@note.Title</h1>
+                    <p>@note.Text</p>
+                    <br>
+                    <p>
+                        @for (int i = 0; i < note.TagList.Count() - 1; i++)
+                        {
+                            <span>@note.TagList[i].Title ,</span>
+                        }
+                        <span>@note.TagList.Last().Title</span>
+                    </p>
+                </div>
+                <div class="note">
+                    <h1>@note.Title</h1>
+                    <p>@note.Text</p>
+                    <br>
+                    <p>
+                        @for (int i = 0; i < note.TagList.Count() - 1; i++)
+                        {
+                            <span>@note.TagList[i].Title ,</span>
+                        }
+                        <span>@note.TagList.Last().Title</span>
+                    </p>
+                </div>
+            }
+        </div>
+    }
 </div>

@@ -7,6 +7,8 @@ using System.Configuration;
 using App.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.Common;
+using System;
+using System.Dynamic;
 
 namespace App.Controllers
 {
@@ -29,22 +31,57 @@ namespace App.Controllers
         // GET: CategoryController/Details/5
         public ActionResult Details(int id)
         {
-            Response<Category> categoryResponse = categoryProcessor.GetById(id);
+            INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
+            Response<Note> noteResponse = noteProcessor.GetByPerson(personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
 
-            ResponseModel<CategoryModel> responseModel = new(categoryResponse.Succeeded);
-            responseModel.Code = categoryResponse.Code;
-            responseModel.Message = categoryResponse.Message;
+            ResponseModel<NoteModel> noteResponseModel = new(noteResponse.Succeeded);
+            noteResponseModel.Code = noteResponse.Code;
+            noteResponseModel.Message = noteResponse.Message;
+
+            if (noteResponse.Data.Count > 0)
+            {
+                foreach (Note note in noteResponse.Data)
+                {
+                    NoteModel noteModel = new(note.Title, note.Text,
+                        new(note.Category.Title) { 
+                            ID = note.Category.ID
+                        })
+                    {
+                        ID = note.ID
+                    };
+
+                    foreach (Tag tag in note.TagList)
+                    {
+                        noteModel.AddTag(new(tag.Title)
+                        {
+                            ID = tag.ID
+                        });
+                    }
+
+                    noteResponseModel.AddItem(noteModel);
+                }
+            }
+
+                Response<Category> categoryResponse = categoryProcessor.GetById(id);
+
+            ResponseModel<CategoryModel> categoryResponseModel = new(categoryResponse.Succeeded);
+            categoryResponseModel.Code = categoryResponse.Code;
+            categoryResponseModel.Message = categoryResponse.Message;
 
             if (categoryResponse.Data.Count > 0)
             {
-                responseModel.AddItem(new(categoryResponse.Data[0].Title)
+                categoryResponseModel.AddItem(new(categoryResponse.Data[0].Title)
                 {
                     ID = categoryResponse.Data[0].ID,
                     PersonId = categoryResponse.Data[0].PersonId
                 });
             }
 
-            return View(responseModel);
+            dynamic data = new ExpandoObject();
+            data.noteResponseModel = noteResponseModel;
+            data.categoryresponseModel = categoryResponseModel;
+
+            return View(data);
         }
 
         // GET: CategoryController/Create

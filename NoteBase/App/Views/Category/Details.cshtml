@@ -1,5 +1,5 @@
 ﻿@using App.Models
-@model App.Models.ResponseModel<CategoryModel>
+@model dynamic
 
 @{
     ViewData["Title"] = "Details";
@@ -8,33 +8,41 @@
 <h1>Details</h1>
 
 <div>
-    <h4>CategoryModel</h4>
-    <hr />
-    @if (!Model.Succeeded)
+    @if (!Model.categoryresponseModel.Succeeded)
     {
-        <p>er is iets mis gegaan: @Model.Message</p>
-    } else if (Model.Data.Count <= 0)
+        <p>er is iets mis gegaan: @Model.categoryresponseModel.Message</p>
+    }
+    else if (Model.categoryresponseModel.Data.Count <= 0)
     {
         <p>er is geen Categorie gevonden</p>
     }
     else {
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Data[0].ID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Data[0].ID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Data[0].Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Data[0].Title)
-        </dd>
-    </dl>
+        <h2>@Model.categoryresponseModel.Data[0].Title</h2>
+        <a asp-controller="Category" asp-action="Edit" asp-route-Id="Model.categoryresponseModel.Data[0].ID">Bewerken</a>
+        <hr>
+
+        <div class="note-container">
+            @foreach (NoteModel note in Model.noteResponseModel.Data)
+            {
+                if (note.Category.ID == Model.categoryresponseModel.Data[0].ID)
+                {
+                    <div class="note shadow-lg p-3 mb-5 rounded">
+                        <h1>@note.Title</h1>
+                        <p>@note.Text</p>
+                        <br>
+                        <p>
+                            @for (int i = 0; i < note.TagList.Count() - 1; i++)
+                            {
+                                <span>@note.TagList[i].Title ,</span>
+                            }
+                            <span>@note.TagList.Last().Title</span>
+                        </p>
+                    </div>
+                }
+            }
+        </div>
     }
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Data[0].ID }) |
-    <a asp-controller="Home" asp-action="Index" >Back to overview</a>
+    <a asp-controller="Home" asp-action="Index">Terug naar overzicht</a>
 </div>

@@ -32,6 +32,10 @@ namespace NoteBaseLogic
                 Code = catDALreponse.Code
             };
 
+            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetByTitle(_cat.Title);
+
+            response.AddItem(new(catDALreponseGet.Data[0].ID, catDALreponseGet.Data[0].Title, catDALreponseGet.Data[0].PersonId));
+
             return response;
         }
 
@@ -58,7 +62,10 @@ namespace NoteBaseLogic
                 Code = catDALreponse.Code
             };
 
-            response.AddItem(new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId));
+            if (catDALreponse.Data.Count > 0)
+            {
+                response.AddItem(new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId));
+            }
 
             return response;
         }
@@ -81,16 +88,20 @@ namespace NoteBaseLogic
             return response;
         }
 
-        /* public Response<Category> GetByTitle(string _title)
+        public Response<Category> GetByTitle(string _title)
         {
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
+            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByTitle(_title);
 
-            Response<Category> response = new(catDALreponse.Status, catDALreponse.Message);
+            Response<Category> response = new(catDALreponse.Succeeded)
+            {
+                Message = catDALreponse.Message,
+                Code = catDALreponse.Code
+            };
 
             response.AddItem(new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId));
 
             return response;
-        } */
+        }
 
         public Response<Category> Update(Category _cat)
         {

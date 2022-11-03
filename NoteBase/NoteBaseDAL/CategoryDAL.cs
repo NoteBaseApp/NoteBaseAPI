@@ -84,7 +84,7 @@ namespace NoteBaseDAL
 
                         SqlDataReader reader = command.ExecuteReader();
 
-                        while (reader.Read())
+                        if (reader.Read())
                         {
                             CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
 
@@ -157,9 +157,9 @@ namespace NoteBaseDAL
             return response;
         }
 
-        /* public DALResponse<CategoryDTO> GetByTitle(string _Title)
+        public DALResponse<CategoryDTO> GetByTitle(string _Title)
         {
-            DALResponse<CategoryDTO> response = new(200, "");
+            DALResponse<CategoryDTO> response = new(true);
 
             try
             {
@@ -185,15 +185,22 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(e.Number, "CategoryDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "CategoryDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
             }
             catch (Exception e)
             {
-                response = new(409, "CategoryDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message);
+                response = new(false)
+                {
+                    Message = "CategoryDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message
+                };
             }
 
             return response;
-        } */
+        }
 
         public DALResponse<CategoryDTO> Update(CategoryDTO _cat)
         {

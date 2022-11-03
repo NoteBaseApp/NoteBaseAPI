@@ -1,20 +1,50 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NoteBaseLogicFactory;
+using NoteBaseLogicInterface.Models;
+using NoteBaseLogicInterface;
+using System.Configuration;
+using App.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data.Common;
 
 namespace App.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
-        // GET: CategoryController
-        public ActionResult Index()
+        private readonly IConfiguration _config;
+        private readonly string connString;
+        private readonly IPersonProcessor personProcessor;
+        private readonly ICategoryProcessor categoryProcessor;
+
+        public CategoryController(IConfiguration configuration)
         {
-            return View();
+            _config = configuration;
+            connString = _config.GetConnectionString("NoteBaseConnString");
+            personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
+            categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
         }
 
         // GET: CategoryController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Response<Category> categoryResponse = categoryProcessor.GetById(id);
+
+            ResponseModel<CategoryModel> responseModel = new(categoryResponse.Succeeded);
+            responseModel.Code = categoryResponse.Code;
+            responseModel.Message = categoryResponse.Message;
+
+            if (categoryResponse.Data.Count > 0)
+            {
+                responseModel.AddItem(new(categoryResponse.Data[0].Title)
+                {
+                    ID = categoryResponse.Data[0].ID,
+                    PersonId = categoryResponse.Data[0].PersonId
+                });
+            }
+
+            return View(responseModel);
         }
 
         // GET: CategoryController/Create
@@ -30,7 +60,18 @@ namespace App.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                CategoryModel categoryModel = new(collection["Title"])
+                {
+                    PersonId = personProcessor.GetByEmail(User.Identity.Name).Data[0].ID
+                };
+                Response<Category> response = categoryProcessor.Create(categoryModel.ToLogicModel());
+
+                if (!response.Succeeded)
+                {
+                    return View();
+                }
+
+                return RedirectToAction(nameof(Details), response.Data[0].ID);
             }
             catch
             {
@@ -51,7 +92,7 @@ namespace App.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details));
             }
             catch
             {
@@ -72,7 +113,7 @@ namespace App.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details));
             }
             catch
             {

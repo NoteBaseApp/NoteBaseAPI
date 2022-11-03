@@ -1,5 +1,5 @@
-﻿@using NoteBaseLogicInterface.Models
-@model NoteBaseLogicInterface.Models.Response<Category>
+﻿@using App.Models
+@model App.Models.ResponseModel<CategoryModel>
 
 @{
     ViewData["Title"] = "Details";
@@ -8,8 +8,16 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Category</h4>
+    <h4>CategoryModel</h4>
     <hr />
+    @if (!Model.Succeeded)
+    {
+        <p>er is iets mis gegaan: @Model.Message</p>
+    } else if (Model.Data.Count <= 0)
+    {
+        <p>er is geen Categorie gevonden</p>
+    }
+    else {
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Data[0].ID)
@@ -24,8 +32,9 @@
             @Html.DisplayFor(model => model.Data[0].Title)
         </dd>
     </dl>
+    }
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Data[0].ID }) |
+    <a asp-controller="Home" asp-action="Index" >Back to overview</a>
 </div>

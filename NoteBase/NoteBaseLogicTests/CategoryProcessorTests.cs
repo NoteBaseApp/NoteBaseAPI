@@ -19,8 +19,8 @@ namespace NoteBaseLogic.Tests
         public void CreateTest_Succeed()
         {
             //arrange
-            ICategoryDAL categoryDAL = new CreateTest_SucceedDAL();
-            ICategoryProcessor categoryProcessor = NoteBaseLogicFactory.ProcessorFactory.CreateCategoryProcessor(categoryDAL);
+            ICategoryDAL categoryDAL = new Test_SucceedDAL();
+            ICategoryProcessor categoryProcessor = new CategoryProcessor(categoryDAL);
             Category category = new(0, "Test", 1);
 
             Response<Category> expected = new(true);
@@ -38,7 +38,7 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryDAL categoryDAL = new CreateTest_Faled_TitleAreadyExists();
-            ICategoryProcessor categoryProcessor = NoteBaseLogicFactory.ProcessorFactory.CreateCategoryProcessor(categoryDAL);
+            ICategoryProcessor categoryProcessor = new CategoryProcessor(categoryDAL);
             Category category = new(0, "Test", 1);
 
             Response<Category> expected = new(false)
@@ -58,8 +58,8 @@ namespace NoteBaseLogic.Tests
         public void CreateTest_Failed_NoTitle()
         {
             //arrange
-            ICategoryDAL categoryDAL = new CreateTest_SucceedDAL();
-            ICategoryProcessor categoryProcessor = NoteBaseLogicFactory.ProcessorFactory.CreateCategoryProcessor(categoryDAL);
+            ICategoryDAL categoryDAL = new Test_SucceedDAL();
+            ICategoryProcessor categoryProcessor = new CategoryProcessor(categoryDAL);
             Category category = new(0, "", 1);
 
             Response<Category> expected = new(false)
@@ -69,6 +69,23 @@ namespace NoteBaseLogic.Tests
 
             //act
             Response<Category> actual = categoryProcessor.Create(category);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Assert.AreEqual(expected.Message, actual.Message);
+        }
+
+        [TestMethod()]
+        public void DeleteTest_Succeed()
+        {
+            //arrange
+            ICategoryDAL categoryDAL = new Test_SucceedDAL();
+            ICategoryProcessor categoryProcessor = new CategoryProcessor(categoryDAL);
+
+            Response<Category> expected = new(true);
+
+            //act
+            Response<Category> actual = categoryProcessor.Delete(1);
 
             //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NoteBaseLogicTests.TestDALs
 {
-    internal class CreateTest_SucceedDAL : ICategoryDAL
+    internal class Test_SucceedDAL : ICategoryDAL
     {
         public DALResponse<CategoryDTO> Create(CategoryDTO _cat)
         {
@@ -17,7 +17,7 @@ namespace NoteBaseLogicTests.TestDALs
 
         public DALResponse<CategoryDTO> Delete(int _catId)
         {
-            throw new NotImplementedException();
+            return new(true);
         }
 
         public DALResponse<CategoryDTO> GetById(int _catId)

@@ -27,7 +27,16 @@ namespace NoteBaseLogicTests.TestDALs
 
         public DALResponse<NoteDTO> GetByCategory(int _categoryId)
         {
-            throw new NotImplementedException();
+            DALResponse<NoteDTO> dALResponse = new(true);
+            if (_categoryId != 2)
+            {
+                return dALResponse;
+            }
+
+            NoteDTO noteDTO = new(1, "", "", _categoryId);
+            dALResponse.AddItem(noteDTO);
+
+            return dALResponse;
         }
 
         public DALResponse<NoteDTO> GetById(int _noteId)

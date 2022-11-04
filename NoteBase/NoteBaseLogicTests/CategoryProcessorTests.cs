@@ -20,8 +20,8 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
-            Category category = new(0, "Test", 1);
-            Category expectedCategory = new(12, "Test", 1);
+            Category category = new(0, "School", 1);
+            Category expectedCategory = new(12, "School", 1);
 
             Response<Category> expected = new(true);
             expected.AddItem(expectedCategory);
@@ -42,7 +42,7 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
-            Category category = new(0, "TestExist", 1);
+            Category category = new(0, "Games", 1);
 
             Response<Category> expected = new(false)
             {
@@ -124,6 +124,68 @@ namespace NoteBaseLogic.Tests
 
             //act
             Response<Category> actual = categoryProcessor.Delete(999);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Assert.AreEqual(expected.Message, actual.Message);
+        }
+
+        [TestMethod()]
+        public void UpdateTest_Succeed()
+        {
+            //arrange
+            ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
+            Category category = new(1, "Games", 1);
+            Category expectedCategory = new(1, "Games", 1);
+
+            Response<Category> expected = new(true);
+            expected.AddItem(expectedCategory);
+
+            //act
+            Response<Category> actual = categoryProcessor.Update(category);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+
+            Assert.AreEqual(expected.Data[0].ID, actual.Data[0].ID);
+            Assert.AreEqual(expected.Data[0].Title, actual.Data[0].Title);
+            Assert.AreEqual(expected.Data[0].PersonId, actual.Data[0].PersonId);
+        }
+
+        [TestMethod()]
+        public void UpdateTest_Failed_CategoryDoesNotExist()
+        {
+            //arrange
+            ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
+            Category category = new(999, "Games", 1);
+
+            Response<Category> expected = new(false)
+            {
+                Message = "Category doesn't exist"
+            };
+
+            //act
+            Response<Category> actual = categoryProcessor.Update(category);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Assert.AreEqual(expected.Message, actual.Message);
+        }
+
+        [TestMethod()]
+        public void UpdateTest_Failed_TitleEmpty()
+        {
+            //arrange
+            ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
+            Category category = new(1, "", 1);
+
+            Response<Category> expected = new(false)
+            {
+                Message = "Title can't be empty"
+            };
+
+            //act
+            Response<Category> actual = categoryProcessor.Update(category);
 
             //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);

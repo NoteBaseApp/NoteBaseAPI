@@ -12,25 +12,21 @@ namespace NoteBaseLogicTests.TestDALs
 
         public DALResponse<CategoryDTO> Delete(int _catId)
         {
-            return _catId switch
-            {
-                2 => new(false)
-                {
-                    Code = 3621,
-                    Message = ""
-                },
-                999 => new(false)
-                {
-                    Code = 1,
-                    Message = ""
-                },
-                _ => new(true),
-            };
+            return new(true);
         }
 
         public DALResponse<CategoryDTO> GetById(int _catId)
         {
-            throw new NotImplementedException();
+            DALResponse<CategoryDTO> response = new(true);
+
+            if (_catId == 999)
+            {
+                return new(true);
+            }
+
+            CategoryDTO categoryDTO = new(_catId, "", 1);
+            response.AddItem(categoryDTO);
+            return response;
         }
 
         public DALResponse<CategoryDTO> GetByPerson(int _personId)
@@ -44,17 +40,17 @@ namespace NoteBaseLogicTests.TestDALs
         {
             DALResponse<CategoryDTO> response = new(true);
 
-            if (_Title == "Test" && GetByTitleCals > 0)
+            if (_Title == "School" && GetByTitleCals > 0)
             {
                 response = new(true);
-                response.AddItem(new(12, "Test", 1));
+                response.AddItem(new(12, "School", 1));
 
                 return response;
             }
-            else if (_Title == "TestExist")
+            else if (_Title == "Games")
             {
                 response = new(true);
-                response.AddItem(new(1, "TestExist", 1));
+                response.AddItem(new(1, "Games", 1));
 
                 return response;
             }
@@ -66,7 +62,14 @@ namespace NoteBaseLogicTests.TestDALs
 
         public DALResponse<CategoryDTO> Update(CategoryDTO _cat)
         {
-            throw new NotImplementedException();
+            DALResponse<CategoryDTO> response = new(true);
+
+            if (_cat.ID == 999)
+            {
+                return new(false);
+            }
+
+            return response;
         }
     }
 }

@@ -60,14 +60,21 @@ namespace NoteBaseLogic
             Response<Note> noteDALreponse = NoteProcessor.GetByCategory(_catId);
             if (noteDALreponse.Data.Count > 0)
             {
-                response.Message = "";
+                response.Message = "Notes exist with this category";
 
                 return response;
             }
 
 
+            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
+            if (catDALreponse.Data.Count == 0)
+            {
+                response.Message = "Category doesn't exist";
 
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Delete(_catId);
+                return response;
+            }
+
+            catDALreponse = CategoryDAL.Delete(_catId);
 
             response = new(catDALreponse.Succeeded)
             {
@@ -135,13 +142,38 @@ namespace NoteBaseLogic
 
         public Response<Category> Update(Category _cat)
         {
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Update(_cat.ToDTO());
+            Response<Category> response = new(false);
 
-            Response<Category> response = new(catDALreponse.Succeeded)
+            if (_cat.Title == "" || _cat.Title == null)
+            {
+                response.Message = "Title can't be empty";
+
+                return response;
+            }
+
+            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_cat.ID);
+            if (catDALreponse.Data.Count == 0)
+            {
+                response.Message = "Category doesn't exist";
+
+                return response;
+            }
+
+            catDALreponse = CategoryDAL.Update(_cat.ToDTO());
+
+            response = new(catDALreponse.Succeeded)
             {
                 Message = catDALreponse.Message,
                 Code = catDALreponse.Code
             };
+
+            if (!response.Succeeded)
+            {
+                return response;
+            }
+
+            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetById(_cat.ID);
+            response.AddItem(new(catDALreponseGet.Data[0].ID, catDALreponseGet.Data[0].Title, catDALreponseGet.Data[0].PersonId));
 
             return response;
         }

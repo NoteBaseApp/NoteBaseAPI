@@ -29,7 +29,7 @@ namespace NoteBaseDAL
                     {
                         command.Parameters.AddWithValue("@Title", _note.Title);
                         command.Parameters.AddWithValue("@Text", _note.Text);
-                        command.Parameters.AddWithValue("@CategoryID", _note.Category.ID);
+                        command.Parameters.AddWithValue("@CategoryID", _note.CategoryId);
                         command.Parameters.AddWithValue("@PersonId", _note.PersonId);
                         connection.Open();
 
@@ -143,7 +143,7 @@ namespace NoteBaseDAL
 
                         while (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, "", 0));
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
                             DALResponse<TagDTO> DALResponse = tagDAL.GetFromNote(noteDTO.ID);
 
@@ -196,7 +196,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, "", 0));
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
                             DALResponse<TagDTO> DALResponse = tagDAL.GetFromNote(noteDTO.ID);
 
@@ -249,7 +249,7 @@ namespace NoteBaseDAL
 
                         while (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, "", 0));
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
                             DALResponse<TagDTO> DALResponse = tagDAL.GetFromNote(noteDTO.ID);
 

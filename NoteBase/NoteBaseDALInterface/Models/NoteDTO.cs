@@ -7,16 +7,16 @@
         public int ID { get; }
         public string Title { get; private set; }
         public string Text { get; private set; }
-        public CategoryDTO Category { get; private set; }
+        public int CategoryId { get; private set; }
         public IReadOnlyList<TagDTO> TagList { get { return tagList; } }
         public int PersonId { get; set; }
 
-        public NoteDTO(int _id, string _title, string _text, CategoryDTO _category)
+        public NoteDTO(int _id, string _title, string _text, int _categoryId)
         {
             ID = _id;
             Title = _title;
             Text = _text;
-            Category = _category;
+            CategoryId = _categoryId;
             //PersonId = _PersonId;
         }
 
@@ -30,9 +30,9 @@
             tagList.Add(_tagDTO);
         }
 
-        public bool IsTagCompatible(TagDTO _tag)
+        public bool IsTagCompatible(TagDTO _tagDTO)
         {
-            return !tagList.Contains(_tag);
+            return !tagList.Contains(_tagDTO);
         }
     }
 }

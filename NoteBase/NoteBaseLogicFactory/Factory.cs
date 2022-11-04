@@ -7,7 +7,7 @@ namespace NoteBaseLogicFactory
     {
         public static NoteProcessor CreateNoteProcessor(string _connstring)
         {
-            return new NoteProcessor(new NoteDAL(_connstring), CreateTagProcessor(_connstring), CreateCategoryProcessor(_connstring));
+            return new NoteProcessor(new NoteDAL(_connstring), CreateTagProcessor(_connstring));
         }
 
         public static TagProcessor CreateTagProcessor(string _connstring)

@@ -14,23 +14,21 @@ namespace NoteBaseLogicInterface.Models
         public int ID { get; }
         public string Title { get; private set; }
         public string Text { get; private set; }
-        public Category Category { get; private set; }
+        public int CategoryId { get; private set; }
         public IReadOnlyList<Tag> TagList { get { return tagList; } }
         public int PersonId { get; set; }
 
-        public Note(int _id, string _title, string _text, Category _category)
+        public Note(int _id, string _title, string _text, int _categoryId)
         {
             ID = _id;
             Title = _title;
             Text = _text;
-            Category = _category;
+            CategoryId = _categoryId;
         }
 
         public NoteDTO ToDTO()
         {
-            CategoryDTO catDTO = new(Category.ID, Category.Title, Category.PersonId);
-
-            NoteDTO noteDTO = new NoteDTO(ID, Title, Text, catDTO);
+            NoteDTO noteDTO = new NoteDTO(ID, Title, Text, CategoryId);
             noteDTO.PersonId = PersonId;
 
             foreach (Tag tag in tagList)

@@ -6,7 +6,7 @@ namespace NoteBaseLogicTests.TestDALs
     {
         public static NoteProcessor CreateNoteProcessor()
         {
-            return new NoteProcessor(new NoteTestDAL(), CreateTagProcessor(), CreateCategoryProcessor());
+            return new NoteProcessor(new NoteTestDAL(), CreateTagProcessor());
         }
 
         public static TagProcessor CreateTagProcessor()

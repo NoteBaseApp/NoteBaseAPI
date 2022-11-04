@@ -88,10 +88,14 @@ namespace NoteBaseLogic
                 Code = catDALreponse.Code
             };
 
-            if (catDALreponse.Data.Count > 0)
+            if (catDALreponse.Data.Count == 0)
             {
-                response.AddItem(new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId));
+                return response;
             }
+
+            Category category = new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId);
+
+            response.AddItem(category);
 
             return response;
         }

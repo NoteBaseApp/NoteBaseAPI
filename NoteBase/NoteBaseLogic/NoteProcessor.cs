@@ -10,12 +10,10 @@ namespace NoteBaseLogic
     {
         private readonly INoteDAL NoteDAL;
         private readonly ITagProcessor TagProcessor;
-        private readonly ICategoryProcessor CategoryProcessor;
-        public NoteProcessor(INoteDAL _noteDAL, ITagProcessor _tagProcessor, ICategoryProcessor categoryProcessor)
+        public NoteProcessor(INoteDAL _noteDAL, ITagProcessor _tagProcessor)
         {
             NoteDAL = _noteDAL;
             TagProcessor = _tagProcessor;
-            CategoryProcessor = categoryProcessor;
         }
 
         public Response<Note> Create(Note _note)
@@ -94,9 +92,7 @@ namespace NoteBaseLogic
 
             foreach (NoteDTO noteDTO in noteDALreponse.Data)
             {
-                Response<Category> categoryDALResponse = CategoryProcessor.GetById(noteDTO.Category.ID);
-                Category cat = new(categoryDALResponse.Data[0].ID, categoryDALResponse.Data[0].Title, categoryDALResponse.Data[0].PersonId);
-                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, cat);
+                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId);
 
                 foreach (TagDTO tagDTO in noteDTO.TagList)
                 {
@@ -136,9 +132,7 @@ namespace NoteBaseLogic
 
             foreach (NoteDTO noteDTO in noteDALreponse.Data)
             {
-                Response<Category> categoryDALResponse = CategoryProcessor.GetById(noteDTO.Category.ID);
-                Category cat = new(categoryDALResponse.Data[0].ID, categoryDALResponse.Data[0].Title, categoryDALResponse.Data[0].PersonId);
-                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, cat);
+                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId);
 
                 foreach (TagDTO tagDTO in noteDTO.TagList)
                 {

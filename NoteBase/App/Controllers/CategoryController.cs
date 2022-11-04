@@ -28,30 +28,22 @@ namespace App.Controllers
             categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
         }
 
-        // GET: CategoryController/Details/5
+        // GET: Category/Details/5
         public ActionResult Details(int id)
         {
-            INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
-
-            Response<Note> noteResponse = noteProcessor.GetByPerson(personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
-            ResponseModel<NoteModel> noteResponseModel = new(noteResponse.Succeeded);
-            noteResponseModel.Code = noteResponse.Code;
-            noteResponseModel.Message = noteResponse.Message;
-
             Response<Category> categoryResponse = categoryProcessor.GetById(id);
-            ResponseModel<CategoryModel> categoryResponseModel = new(categoryResponse.Succeeded);
+            ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
 
             for (int i = 0; i < 10; i++)
             {
                 categoryResponse = categoryProcessor.GetById(id);
-                categoryResponseModel = new(categoryResponse.Succeeded)
+                categoryModelResponse = new(categoryResponse.Succeeded)
                 {
                     Code = categoryResponse.Code,
                     Message = categoryResponse.Message
                 };
 
-                if (noteResponseModel.Data.Count > 0 &&
-                    categoryResponseModel.Data.Count > 0)
+                if (categoryModelResponse.Data.Count > 0)
                 {
                     break;
                 }
@@ -59,47 +51,32 @@ namespace App.Controllers
                 Thread.Sleep(50);
             }
 
-            if (noteResponse.Data.Count > 0)
+            foreach (Category category in categoryResponse.Data)
             {
-                foreach (Note note in noteResponse.Data)
+                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+                CategoryModel categoryModel = new(category.ID, category.Title, category.PersonId);
+
+                foreach (Note note in category.NoteList)
                 {
-                    NoteModel noteModel = new(note.Title, note.Text,
-                        new(note.Category.Title) { 
-                            ID = note.Category.ID
-                        })
-                    {
-                        ID = note.ID
-                    };
+                    NoteModel noteModel = new(note.ID, note.Title, note.Text, note.CategoryId);
 
                     foreach (Tag tag in note.TagList)
                     {
-                        noteModel.AddTag(new(tag.Title)
-                        {
-                            ID = tag.ID
-                        });
+                        TagModel tagModel = new(tag.ID, tag.Title);
+
+                        noteModel.AddTag(tagModel);
                     }
 
-                    noteResponseModel.AddItem(noteModel);
+                    categoryModel.AddNote(noteModel);
                 }
+
+                categoryModelResponse.AddItem(categoryModel);
             }
 
-            if (categoryResponse.Data.Count > 0)
-            {
-                categoryResponseModel.AddItem(new(categoryResponse.Data[0].Title)
-                {
-                    ID = categoryResponse.Data[0].ID,
-                    PersonId = categoryResponse.Data[0].PersonId
-                });
-            }
-
-            dynamic data = new ExpandoObject();
-            data.noteResponseModel = noteResponseModel;
-            data.categoryresponseModel = categoryResponseModel;
-
-            return View(data);
+            return View(categoryModelResponse);
         }
 
-        // GET: CategoryController/Create
+        // GET: Category/Create
         public ActionResult Create()
         {
             return View();
@@ -112,22 +89,25 @@ namespace App.Controllers
         {
             try
             {
-                CategoryModel categoryModel = new(collection["Title"])
-                {
-                    PersonId = personProcessor.GetByEmail(User.Identity.Name).Data[0].ID
-                };
+                CategoryModel categoryModel = new(0, collection["Title"], personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
                 Response<Category> response = categoryProcessor.Create(categoryModel.ToLogicModel());
 
                 if (!response.Succeeded)
                 {
+                    ViewBag.Succeeded = response.Succeeded;
+                    ViewBag.Message = response.Message;
+                    ViewBag.Code = response.Code;
+
                     return View();
                 }
 
                 //diffrent redirect options? book example
                 return RedirectToAction(nameof(Details), response.Data[0].ID);
             }
-            catch
+            catch(Exception e)
             {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
                 return View();
             }
         }
@@ -138,7 +118,7 @@ namespace App.Controllers
             return View();
         }
 
-        // POST: CategoryController/Edit/5
+        // POST: Category/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -153,13 +133,13 @@ namespace App.Controllers
             }
         }
 
-        // GET: CategoryController/Delete/5
+        // GET: Category/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: CategoryController/Delete/5
+        // POST: Category/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

@@ -1,4 +1,4 @@
-﻿@model dynamic
+﻿@model Response<CategoryModel>
 
 @{
     ViewData["Title"] = "Home Page";
@@ -10,16 +10,12 @@
 
 <div class="">
     <h1>Alle notities</h1>
-    @if (!Model.categoryResponse.Succeeded)
+    @if (!Model.Succeeded)
     {
-        <p>er is iets mis gegaan: @Model.categoryResponse.Message</p>
-    }
-    else if (!Model.noteResponse.Succeeded)
-    {
-        <p>er is iets mis gegaan: @Model.noteResponse.Message</p>
+        <p>er is iets mis gegaan: @Model.Message</p>
     }
     else {
-        @foreach (Category category in Model.categoryResponse.Data)
+        @foreach (CategoryModel category in Model.Data)
         {
             <div>
                 <h2><a asp-controller="Category" asp-action="Details" asp-route-Id="@category.ID">@category.Title</a></h2>
@@ -27,23 +23,20 @@
                 <hr>
 
                 <div class="note-container">
-                    @foreach (Note note in Model.noteResponse.Data)
+                    @foreach (NoteModel note in category.NoteList)
                     {
-                        if (note.Category.ID == category.ID)
-                        {
-                            <div class="note shadow-lg p-3 mb-5 rounded">
-                                <h1>@note.Title</h1>
-                                <p>@note.Text</p>
-                                <br>
-                                <p>
-                                    @for (int i = 0; i < note.TagList.Count() - 1; i++)
-                                    {
-                                        <span>@note.TagList[i].Title ,</span>
-                                    }
-                                    <span>@note.TagList.Last().Title</span>
-                                </p>
-                            </div>
-                        }
+                        <div class="note shadow-lg p-3 mb-5 rounded">
+                            <h1>@note.Title</h1>
+                            <p>@note.Text</p>
+                            <br>
+                            <p>
+                                @for (int i = 0; i < note.TagList.Count() - 1; i++)
+                                {
+                                    <span>@note.TagList[i].Title ,</span>
+                                }
+                                <span>@note.TagList.Last().Title</span>
+                            </p>
+                        </div>
                     }
                 </div>
             </div>

@@ -1,5 +1,5 @@
 ﻿@using App.Models
-@model dynamic
+@model ResponseModel<CategoryModel>
 
 @{
     ViewData["Title"] = "Details";
@@ -8,37 +8,30 @@
 <h1>Details</h1>
 
 <div>
-    @if (!Model.categoryresponseModel.Succeeded)
+    @if (!Model.Succeeded)
     {
-        <p>er is iets mis gegaan: @Model.categoryresponseModel.Message</p>
-    }
-    else if (Model.categoryresponseModel.Data.Count <= 0)
-    {
-        <p>er is geen Categorie gevonden</p>
+        <p>er is iets mis gegaan: @Model.Message</p>
     }
     else {
-        <h2>@Model.categoryresponseModel.Data[0].Title</h2>
+        <h2>@Model.Data[0].Title</h2>
         <a asp-controller="Category" asp-action="Edit" asp-route-Id="Model.categoryresponseModel.Data[0].ID">Bewerken</a>
         <hr>
 
         <div class="note-container">
-            @foreach (NoteModel note in Model.noteResponseModel.Data)
+            @foreach (NoteModel note in Model.Data[0].NoteList)
             {
-                if (note.Category.ID == Model.categoryresponseModel.Data[0].ID)
-                {
-                    <div class="note shadow-lg p-3 mb-5 rounded">
-                        <h1>@note.Title</h1>
-                        <p>@note.Text</p>
-                        <br>
-                        <p>
-                            @for (int i = 0; i < note.TagList.Count() - 1; i++)
-                            {
-                                <span>@note.TagList[i].Title ,</span>
-                            }
-                            <span>@note.TagList.Last().Title</span>
-                        </p>
-                    </div>
-                }
+                <div class="note shadow-lg p-3 mb-5 rounded">
+                    <h1>@note.Title</h1>
+                    <p>@note.Text</p>
+                    <br>
+                    <p>
+                        @for (int i = 0; i < note.TagList.Count() - 1; i++)
+                        {
+                            <span>@note.TagList[i].Title ,</span>
+                        }
+                        <span>@note.TagList.Last().Title</span>
+                    </p>
+                </div>
             }
         </div>
     }

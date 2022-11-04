@@ -17,6 +17,10 @@ body {
   margin-bottom: 60px;
 }
 
+h3 {
+    color: red;
+}
+
 h2 a {
     color: inherit;
     text-decoration: none;

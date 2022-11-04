@@ -33,17 +33,39 @@ namespace App.Controllers
             Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
             person = personResponse.Data[0];
 
-            INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
-            Response<Note> noteResponse = noteProcessor.GetByPerson(person.ID);
-
             ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
             Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
 
-            dynamic data = new ExpandoObject();
-            data.noteResponse = noteResponse;
-            data.categoryResponse = categoryResponse;
+            Response<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded) 
+            { 
+                Code = categoryResponse.Code,
+                Message = categoryResponse.Message
+            };
 
-            return View(data);
+            foreach (Category category in categoryResponse.Data)
+            {
+                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+                CategoryModel categoryModel = new(category.ID, category.Title, category.PersonId);
+
+                foreach (Note note in category.NoteList)
+                {
+                    NoteModel noteModel = new(note.ID, note.Title, note.Text, note.CategoryId);
+
+                    foreach (Tag tag in note.TagList)
+                    {
+                        TagModel tagModel = new(tag.ID, tag.Title);
+
+                        noteModel.AddTag(tagModel);
+                    }
+
+                    categoryModel.AddNote(noteModel);
+                }
+
+                categoryModelResponse.AddItem(categoryModel);
+            }
+
+
+            return View(categoryModelResponse);
         }
 
         public IActionResult Privacy()

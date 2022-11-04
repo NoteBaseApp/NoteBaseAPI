@@ -32,11 +32,32 @@ namespace App.Controllers
         public ActionResult Details(int id)
         {
             INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
-            Response<Note> noteResponse = noteProcessor.GetByPerson(personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
 
+            Response<Note> noteResponse = noteProcessor.GetByPerson(personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
             ResponseModel<NoteModel> noteResponseModel = new(noteResponse.Succeeded);
             noteResponseModel.Code = noteResponse.Code;
             noteResponseModel.Message = noteResponse.Message;
+
+            Response<Category> categoryResponse = categoryProcessor.GetById(id);
+            ResponseModel<CategoryModel> categoryResponseModel = new(categoryResponse.Succeeded);
+
+            for (int i = 0; i < 10; i++)
+            {
+                categoryResponse = categoryProcessor.GetById(id);
+                categoryResponseModel = new(categoryResponse.Succeeded)
+                {
+                    Code = categoryResponse.Code,
+                    Message = categoryResponse.Message
+                };
+
+                if (noteResponseModel.Data.Count > 0 &&
+                    categoryResponseModel.Data.Count > 0)
+                {
+                    break;
+                }
+
+                Thread.Sleep(50);
+            }
 
             if (noteResponse.Data.Count > 0)
             {
@@ -61,12 +82,6 @@ namespace App.Controllers
                     noteResponseModel.AddItem(noteModel);
                 }
             }
-
-                Response<Category> categoryResponse = categoryProcessor.GetById(id);
-
-            ResponseModel<CategoryModel> categoryResponseModel = new(categoryResponse.Succeeded);
-            categoryResponseModel.Code = categoryResponse.Code;
-            categoryResponseModel.Message = categoryResponse.Message;
 
             if (categoryResponse.Data.Count > 0)
             {
@@ -108,6 +123,7 @@ namespace App.Controllers
                     return View();
                 }
 
+                //diffrent redirect options? book example
                 return RedirectToAction(nameof(Details), response.Data[0].ID);
             }
             catch

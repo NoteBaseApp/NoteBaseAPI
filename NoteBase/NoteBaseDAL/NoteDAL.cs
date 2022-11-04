@@ -44,6 +44,7 @@ namespace NoteBaseDAL
                                 response.Message = "NoteDAL.Create(" + _note.Title + ") ERROR: Could not Create Note";
                             }
                         }
+                        connection.Close();
                     }
                 }
             }
@@ -94,6 +95,7 @@ namespace NoteBaseDAL
                                 response.Message = "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: Could not Create Tag";
                             }
                         }
+                        connection.Close();
                     }
                 }
             }
@@ -152,6 +154,7 @@ namespace NoteBaseDAL
 
                             response.AddItem(noteDTO);
                         }
+                        connection.Close();
                     }
                 }
             }
@@ -204,6 +207,7 @@ namespace NoteBaseDAL
 
                             response.AddItem(noteDTO);
                         }
+                        connection.Close();
                     }
                 }
             }

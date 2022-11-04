@@ -36,6 +36,7 @@ namespace NoteBaseDAL
 
                         SqlDataReader reader = command.ExecuteReader();
 
+
                         if (reader.Read())
                         {
                             int result = reader.GetInt32(0);
@@ -45,6 +46,7 @@ namespace NoteBaseDAL
                                 response.Message = "CategoryDAL.Create(" + _cat.Title + ") ERROR: Could not Create Category";
                             }
                         }
+                        connection.Close();
                     }
                 }
             }
@@ -90,6 +92,7 @@ namespace NoteBaseDAL
 
                             response.AddItem(categoryDTO);
                         }
+                        connection.Close();
                     }
                 }
             }
@@ -135,6 +138,7 @@ namespace NoteBaseDAL
 
                             response.AddItem(categoryDTO);
                         }
+                        connection.Close();
                     }
                 }
             }
@@ -174,12 +178,13 @@ namespace NoteBaseDAL
 
                         SqlDataReader reader = command.ExecuteReader();
 
-                        while (reader.Read())
+                        if (reader.Read())
                         {
                             CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
 
                             response.AddItem(categoryDTO);
                         }
+                        connection.Close();
                     }
                 }
             }
@@ -229,6 +234,7 @@ namespace NoteBaseDAL
                                 response.Message = "CategoryDAL.Update(" + _cat.ID + ") ERROR: Could not Update Category";
                             }
                         }
+                        connection.Close();
                     }
                 }
             }
@@ -278,6 +284,7 @@ namespace NoteBaseDAL
                                 response.Message = "CategoryDAL.Delete(" + _catId + ") ERROR: Could not Delete Category";
                             }
                         }
+                        connection.Close();
                     }
                 }
             }

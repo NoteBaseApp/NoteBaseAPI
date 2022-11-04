@@ -8,23 +8,33 @@ namespace NoteBaseLogic
     public class CategoryProcessor : ICategoryProcessor
     {
         private readonly ICategoryDAL CategoryDAL;
-        public CategoryProcessor(ICategoryDAL _categoryDAL)
+        private readonly INoteProcessor NoteProcessor;
+        public CategoryProcessor(ICategoryDAL _categoryDAL, INoteProcessor _noteProcessor)
         {
             CategoryDAL = _categoryDAL;
+            NoteProcessor = _noteProcessor;
         }
 
         public Response<Category> Create(Category _cat)
         {
             Response<Category> response = new(false);
 
-            if (_cat.Title == "")
+            if (_cat.Title == ""|| _cat.Title == null)
             {
-                response.Message = "Title cant be empty";
+                response.Message = "Title can't be empty";
 
                 return response;
             }
 
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Create(_cat.ToDTO());
+            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByTitle(_cat.Title);
+            if (catDALreponse.Data.Count > 0)
+            {
+                response.Message = "Category With this title already exists";
+
+                return response;
+            }
+
+            catDALreponse = CategoryDAL.Create(_cat.ToDTO());
 
             response = new(catDALreponse.Succeeded)
             {
@@ -32,8 +42,12 @@ namespace NoteBaseLogic
                 Code = catDALreponse.Code
             };
 
-            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetByTitle(_cat.Title);
+            if (!response.Succeeded)
+            {
+                return response;
+            }
 
+            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetByTitle(_cat.Title);
             response.AddItem(new(catDALreponseGet.Data[0].ID, catDALreponseGet.Data[0].Title, catDALreponseGet.Data[0].PersonId));
 
             return response;
@@ -41,9 +55,21 @@ namespace NoteBaseLogic
 
         public Response<Category> Delete(int _catId)
         {
+            Response<Category> response = new(false);
+
+            Response<Note> noteDALreponse = NoteProcessor.GetByCategory(_catId);
+            if (noteDALreponse.Data.Count > 0)
+            {
+                response.Message = "";
+
+                return response;
+            }
+
+
+
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Delete(_catId);
 
-            Response<Category> response = new(catDALreponse.Succeeded)
+            response = new(catDALreponse.Succeeded)
             {
                 Message = catDALreponse.Message,
                 Code = catDALreponse.Code

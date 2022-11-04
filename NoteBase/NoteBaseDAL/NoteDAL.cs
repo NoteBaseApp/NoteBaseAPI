@@ -230,6 +230,59 @@ namespace NoteBaseDAL
             return response;
         }
 
+        public DALResponse<NoteDTO> GetByCategory(int _categoryId)
+        {
+            DALResponse<NoteDTO> response = new(true);
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"SELECT ID, Title, Text, CategoryId FROM Note WHERE CategoryId = @categoryId";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@categoryId", _categoryId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), new(0, "", 0));
+
+                            DALResponse<TagDTO> DALResponse = tagDAL.GetFromNote(noteDTO.ID);
+
+                            foreach (TagDTO tagDTO in DALResponse.Data)
+                            {
+                                noteDTO.TryAddTagDTO(tagDTO);
+                            }
+
+                            response.AddItem(noteDTO);
+                        }
+                        connection.Close();
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.Get(" + _categoryId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
+            }
+            catch (Exception e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.Get(" + _categoryId + ") ERROR: " + e.Message
+                };
+            }
+
+            return response;
+        }
+
         public DALResponse<NoteDTO> Update(NoteDTO _note)
         {
             throw new NotImplementedException();

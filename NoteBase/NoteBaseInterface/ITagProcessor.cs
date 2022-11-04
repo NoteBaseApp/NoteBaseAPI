@@ -1,4 +1,5 @@
-﻿using NoteBaseLogicInterface.Models;
+﻿using NoteBaseDALInterface.Models;
+using NoteBaseLogicInterface.Models;
 
 namespace NoteBaseInterface
 {
@@ -8,6 +9,7 @@ namespace NoteBaseInterface
         Response<Tag> Delete(int _tagId);
         Response<Tag> Get(int _tagId);
         Response<Tag> Get(string _UserMail);
+        Response<Tag> GetByTitle(string _Title);
         Response<Tag> Update(int _tagId, Tag _tag);
     }
 }

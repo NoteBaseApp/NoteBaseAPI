@@ -78,6 +78,23 @@ namespace NoteBaseLogic
             return response;
         }
 
+        public Response<Tag> GetByTitle(string _Title)
+        {
+            DALResponse<TagDTO> DALreponse = TagDAL.GetByTitle(_Title);
+            Response<Tag> response = new(DALreponse.Succeeded)
+            {
+                Message = DALreponse.Message
+            };
+
+            foreach (TagDTO tagDTO in DALreponse.Data)
+            {
+                Tag tag = new(tagDTO.ID, tagDTO.Title);
+                response.AddItem(tag);
+            }
+
+            return response;
+        }
+
         public Response<Tag> Update(int _tagId, Tag _tag)
         {
             TagDTO tagDTO = new(_tag.ID, _tag.Title);

@@ -1,5 +1,6 @@
 ﻿using NoteBaseDALInterface;
 using NoteBaseDALInterface.Models;
+using NoteBaseInterface;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
 
@@ -8,13 +9,13 @@ namespace NoteBaseLogic
     public class NoteProcessor : INoteProcessor
     {
         private readonly INoteDAL NoteDAL;
-        private readonly ITagDAL TagDAL;
-        private readonly ICategoryDAL CategoryDAL;
-        public NoteProcessor(INoteDAL _noteDAL, ITagDAL _tagDAL, ICategoryDAL categoryDAL)
+        private readonly ITagProcessor TagProcessor;
+        private readonly ICategoryProcessor CategoryProcessor;
+        public NoteProcessor(INoteDAL _noteDAL, ITagProcessor _tagProcessor, ICategoryProcessor categoryProcessor)
         {
             NoteDAL = _noteDAL;
-            TagDAL = _tagDAL;
-            CategoryDAL = categoryDAL;
+            TagProcessor = _tagProcessor;
+            CategoryProcessor = categoryProcessor;
         }
 
         public Response<Note> Create(Note _note)
@@ -33,14 +34,14 @@ namespace NoteBaseLogic
 
             foreach (Tag tag in _note.TagList)
             {
-                TagDAL.Create(tag.ToDTO());
+                TagProcessor.Create(tag);
 
-                DALResponse<TagDTO> tagDALresponse = TagDAL.GetByTitle(tag.Title);
+                Response<Tag> tagResponse = TagProcessor.GetByTitle(tag.Title);
 
-                if (tagDALresponse.Data.Count  == 0)
+                if (tagResponse.Data.Count  == 0)
                 {
-                    response.Succeeded = tagDALresponse.Succeeded;
-                    response.Message = tagDALresponse.Message;
+                    response.Succeeded = tagResponse.Succeeded;
+                    response.Message = tagResponse.Message;
 
                     return response;
                 }
@@ -51,7 +52,7 @@ namespace NoteBaseLogic
 
                     return response;
                 }
-                NoteDAL.CreateNoteTag(noteDALreponse.Data[0].ID, tagDALresponse.Data[0].ID);
+                NoteDAL.CreateNoteTag(noteDALreponse.Data[0].ID, tagResponse.Data[0].ID);
             }
 
             return response;
@@ -93,7 +94,7 @@ namespace NoteBaseLogic
 
             foreach (NoteDTO noteDTO in noteDALreponse.Data)
             {
-                DALResponse<CategoryDTO> categoryDALResponse = CategoryDAL.GetById(noteDTO.ID);
+                Response<Category> categoryDALResponse = CategoryProcessor.GetById(noteDTO.Category.ID);
                 Category cat = new(categoryDALResponse.Data[0].ID, categoryDALResponse.Data[0].Title, categoryDALResponse.Data[0].PersonId);
                 Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, cat);
 
@@ -121,6 +122,38 @@ namespace NoteBaseLogic
         public Response<Note> Delete(int _noteId)
         {
             throw new NotImplementedException();
+        }
+
+        public Response<Note> GetByCategory(int _categoryId)
+        {
+            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByCategory(_categoryId);
+
+            Response<Note> response = new(noteDALreponse.Succeeded)
+            {
+                Message = noteDALreponse.Message,
+                Code = noteDALreponse.Code
+            };
+
+            foreach (NoteDTO noteDTO in noteDALreponse.Data)
+            {
+                Response<Category> categoryDALResponse = CategoryProcessor.GetById(noteDTO.Category.ID);
+                Category cat = new(categoryDALResponse.Data[0].ID, categoryDALResponse.Data[0].Title, categoryDALResponse.Data[0].PersonId);
+                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, cat);
+
+                foreach (TagDTO tagDTO in noteDTO.TagList)
+                {
+                    Tag tag = new(tagDTO.ID, tagDTO.Title);
+
+                    if (note.IsTagCompatible(tag))
+                    {
+                        note.TryAddTag(tag);
+                    }
+                }
+
+                response.AddItem(note);
+            }
+
+            return response;
         }
     }
 }

@@ -43,6 +43,12 @@
           <AssociatedConnUserName />
           <FullPath>TestData.sql</FullPath>
         </FileNode>
+        <FileNode Name="TestDBScript.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-AK9JEN2V:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LAPTOP-AK9JEN2V</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>TestDBScript.sql</FullPath>
+        </FileNode>
         <FileNode Name="Views new.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-AK9JEN2V:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>LAPTOP-AK9JEN2V</AssociatedConnSrvName>

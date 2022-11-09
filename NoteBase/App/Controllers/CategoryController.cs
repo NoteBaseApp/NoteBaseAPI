@@ -112,24 +112,10 @@ namespace App.Controllers
             }
         }
 
-        // GET: CategoryC/Edit/5
+        // GET: CategoryController/Edit/5
         public ActionResult Edit(int id)
         {
-            Response<Category> categoryResponse = categoryProcessor.GetById(id);
-
-            if (!categoryResponse.Succeeded)
-            {
-                ViewBag.Succeeded = categoryResponse.Succeeded;
-                ViewBag.Message = categoryResponse.Message;
-                ViewBag.Code = categoryResponse.Code;
-
-                return View();
-            }
-
-            ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
-            categoryModelResponse.AddItem(new CategoryModel(categoryResponse.Data[0].ID, categoryResponse.Data[0].Title, categoryResponse.Data[0].PersonId));
-
-            return View(categoryModelResponse.Data[0]);
+            return View();
         }
 
         // POST: Category/Edit/5
@@ -139,25 +125,10 @@ namespace App.Controllers
         {
             try
             {
-                CategoryModel categoryModel = new(id, collection["Title"], personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
-                Response<Category> response = categoryProcessor.Update(categoryModel.ToLogicModel());
-
-                if (!response.Succeeded)
-                {
-                    ViewBag.Succeeded = response.Succeeded;
-                    ViewBag.Message = response.Message;
-                    ViewBag.Code = response.Code;
-
-                    return View();
-                }
-
-                //diffrent redirect options?
-                return RedirectToAction(nameof(Details), response.Data[0].ID);
+                return RedirectToAction(nameof(Details));
             }
-            catch (Exception e)
+            catch
             {
-                ViewBag.Succeeded = false;
-                ViewBag.Message = e.Message;
                 return View();
             }
         }
@@ -165,30 +136,20 @@ namespace App.Controllers
         // GET: Category/Delete/5
         public ActionResult Delete(int id)
         {
-            ViewBag.Post = false;
             return View();
         }
 
-        // POST: Category/Edit/5
+        // POST: Category/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
-            ViewBag.Post = true;
             try
             {
-                Response<Category> response = categoryProcessor.Delete(id);
-
-                ViewBag.Succeeded = response.Succeeded;
-                ViewBag.Message = response.Message;
-                ViewBag.Code = response.Code;
-
-                return View();
+                return RedirectToAction(nameof(Details));
             }
-            catch (Exception e)
+            catch
             {
-                ViewBag.Succeeded = false;
-                ViewBag.Message = e.Message;
                 return View();
             }
         }

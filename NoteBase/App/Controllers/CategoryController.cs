@@ -165,6 +165,16 @@ namespace App.Controllers
         // GET: Category/Delete/5
         public ActionResult Delete(int id)
         {
+            ViewBag.Post = false;
+            return View();
+        }
+
+        // POST: Category/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            ViewBag.Post = true;
             try
             {
                 Response<Category> response = categoryProcessor.Delete(id);

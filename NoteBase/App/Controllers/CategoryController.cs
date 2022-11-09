@@ -165,20 +165,20 @@ namespace App.Controllers
         // GET: Category/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
-        }
-
-        // POST: Category/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
             try
             {
-                return RedirectToAction(nameof(Details));
+                Response<Category> response = categoryProcessor.Delete(id);
+
+                ViewBag.Succeeded = response.Succeeded;
+                ViewBag.Message = response.Message;
+                ViewBag.Code = response.Code;
+
+                return View();
             }
-            catch
+            catch (Exception e)
             {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
                 return View();
             }
         }

@@ -1,0 +1,16 @@
+﻿@{
+<h1>Verwijderen</h1>
+    <div>
+        @if (!ViewBag.Succeeded)
+        {
+            <p>er is iets mis gegaan: @ViewBag.Message</p>
+        }
+        else
+        {
+            <p>Verwijderen gelukt</p>
+        }
+    </div>
+    <div>
+        <a asp-controller="Home" asp-action="Index">Terug naar overzicht</a>
+    </div>
+}

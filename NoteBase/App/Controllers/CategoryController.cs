@@ -112,10 +112,24 @@ namespace App.Controllers
             }
         }
 
-        // GET: CategoryController/Edit/5
+        // GET: CategoryC/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Response<Category> categoryResponse = categoryProcessor.GetById(id);
+
+            if (!categoryResponse.Succeeded)
+            {
+                ViewBag.Succeeded = categoryResponse.Succeeded;
+                ViewBag.Message = categoryResponse.Message;
+                ViewBag.Code = categoryResponse.Code;
+
+                return View();
+            }
+
+            ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
+            categoryModelResponse.AddItem(new CategoryModel(categoryResponse.Data[0].ID, categoryResponse.Data[0].Title, categoryResponse.Data[0].PersonId));
+
+            return View(categoryModelResponse.Data[0]);
         }
 
         // POST: Category/Edit/5
@@ -125,10 +139,25 @@ namespace App.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Details));
+                CategoryModel categoryModel = new(id, collection["Title"], personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
+                Response<Category> response = categoryProcessor.Update(categoryModel.ToLogicModel());
+
+                if (!response.Succeeded)
+                {
+                    ViewBag.Succeeded = response.Succeeded;
+                    ViewBag.Message = response.Message;
+                    ViewBag.Code = response.Code;
+
+                    return View();
+                }
+
+                //diffrent redirect options?
+                return RedirectToAction(nameof(Details), response.Data[0].ID);
             }
-            catch
+            catch (Exception e)
             {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
                 return View();
             }
         }

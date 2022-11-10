@@ -18,11 +18,21 @@ namespace NoteBaseLogic
 
         public Response<Note> Create(Note _note)
         {
+            Response<Note> notereponse = new(false);
+
+            if (_note.CategoryId == 0 || _note.CategoryId == null)
+            {
+                notereponse.Message = "No valid category was given";
+
+                return notereponse;
+            }
+
             _note = AddTags(_note);
             DALResponse<NoteDTO> noteDALreponse = NoteDAL.Create(_note.ToDTO());
-            string tempMessage = noteDALreponse.Message;
-            noteDALreponse = NoteDAL.GetByTitle(_note.Title);
-            noteDALreponse.Message = tempMessage;
+            if (noteDALreponse.Succeeded)
+            {
+                notereponse = GetByTitle(_note.Title);
+            }
 
             Response<Note> response = new(noteDALreponse.Succeeded)
             {
@@ -43,19 +53,24 @@ namespace NoteBaseLogic
 
                     return response;
                 }
-                else if (noteDALreponse.Data.Count == 0)
+                else if (notereponse.Data.Count == 0)
                 {
-                    response.Succeeded = noteDALreponse.Succeeded;
-                    response.Message = noteDALreponse.Message;
+                    response.Succeeded = notereponse.Succeeded;
+                    response.Message = notereponse.Message;
 
                     return response;
                 }
-                NoteDAL.CreateNoteTag(noteDALreponse.Data[0].ID, tagResponse.Data[0].ID);
+                NoteDAL.CreateNoteTag(notereponse.Data[0].ID, tagResponse.Data[0].ID);
             }
+
+            notereponse = GetByTitle(_note.Title);
+
+            response.AddItem(notereponse.Data[0]);
 
             return response;
         }
 
+        //what if somebody usses a tag with a hashtag in it like #C#
         public Note AddTags(Note _note)
         {
             string[] allWords = _note.Text.Split(" ");
@@ -110,14 +125,34 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Note> Update(int _noteId, Note _note)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Response<Note> Delete(int _noteId)
+        public Response<Note> GetByTitle(string _Title)
         {
-            throw new NotImplementedException();
+            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByTitle(_Title);
+
+            Response<Note> response = new(noteDALreponse.Succeeded)
+            {
+                Message = noteDALreponse.Message,
+                Code = noteDALreponse.Code
+            };
+
+            NoteDTO noteDTO = noteDALreponse.Data[0];
+
+            Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId);
+
+            foreach (TagDTO tagDTO in noteDTO.TagList)
+            {
+                Tag tag = new(tagDTO.ID, tagDTO.Title);
+
+                if (note.IsTagCompatible(tag))
+                {
+                    note.TryAddTag(tag);
+                }
+            }
+
+            response.AddItem(note);
+
+            return response;
         }
 
         public Response<Note> GetByCategory(int _categoryId)
@@ -149,5 +184,17 @@ namespace NoteBaseLogic
 
             return response;
         }
+
+        public Response<Note> Update(int _noteId, Note _note)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Response<Note> Delete(int _noteId)
+        {
+            throw new NotImplementedException();
+        }
+
+        
     }
 }

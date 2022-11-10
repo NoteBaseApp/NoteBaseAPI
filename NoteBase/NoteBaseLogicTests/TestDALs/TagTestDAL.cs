@@ -12,7 +12,7 @@ namespace NoteBaseLogicTests.TestDALs
     {
         public DALResponse<TagDTO> Create(TagDTO _tag)
         {
-            throw new NotImplementedException();
+            return new(true);
         }
 
         public DALResponse<TagDTO> Delete(int _tagId)
@@ -32,7 +32,18 @@ namespace NoteBaseLogicTests.TestDALs
 
         public DALResponse<TagDTO> GetByTitle(string _Title)
         {
-            throw new NotImplementedException();
+            DALResponse<TagDTO> response = new(true);
+
+            if (_Title == "fontys")
+            {
+                response.AddItem(new(11, "fontys"));
+            } 
+            else if (_Title == "eindhoven")
+            {
+                response.AddItem(new(12, "fontys"));
+            }
+
+            return response;
         }
 
         public DALResponse<TagDTO> GetFromNote(int _noteId)

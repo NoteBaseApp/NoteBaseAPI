@@ -68,55 +68,7 @@ namespace NoteBaseDAL
             return response;
         }
 
-        public DALResponse<TagDTO> Delete(int _tagId)
-        {
-            DALResponse<TagDTO> response = new(true);
-
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(ConnString))
-                {
-                    string query = @"DELETE From Tag WHERE ID = @ID";
-
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@ID", _tagId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "TagDAL.Delete(" + _tagId + ") ERROR: Could not delete Tag";
-                            }
-                        }
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message,
-                };
-            }
-
-            return response;
-        }
-
-        public DALResponse<TagDTO> Get(int _tagId)
+        public DALResponse<TagDTO> GetById(int _tagId)
         {
             DALResponse<TagDTO> response = new(true);
 
@@ -161,7 +113,8 @@ namespace NoteBaseDAL
             return response;
         }
 
-        public DALResponse<TagDTO> Get(string _userMail)
+        //need to remake this for using person id
+        public DALResponse<TagDTO> GetByPerson(string _userMail)
         {
             DALResponse<TagDTO> response = new(true);
 
@@ -206,7 +159,7 @@ namespace NoteBaseDAL
             return response;
         }
 
-        public DALResponse<TagDTO> GetFromNote(int _noteId)
+        public DALResponse<TagDTO> GetByNote(int _noteId)
         {
             DALResponse<TagDTO> response = new(true);
 
@@ -251,54 +204,6 @@ namespace NoteBaseDAL
             return response;
         }
 
-        public DALResponse<TagDTO> Update(int _tagId, TagDTO _tag)
-        {
-            DALResponse<TagDTO> response = new(true);
-
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(ConnString))
-                {
-                    string query = @"UPDATE Tag SET Title = @Title WHERE ID = @ID";
-
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Title", _tag.Title);
-                        command.Parameters.AddWithValue("@ID", _tagId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "TagDAL.Update(" + _tagId + ",TagDTO) ERROR: Could not update Tag";
-                            }
-                        }
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "TagDAL.Update(" + _tagId + ", TagDTO) ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "TagDAL.Update(" + _tagId + ", TagDTO) ERROR: " + e.Message
-                };
-            }
-
-            return response;
-        }
         public DALResponse<TagDTO> GetByTitle(string _Title)
         {
             DALResponse<TagDTO> response = new(true);
@@ -338,6 +243,104 @@ namespace NoteBaseDAL
                 response = new(false)
                 {
                     Message = "TagDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message
+                };
+            }
+
+            return response;
+        }
+
+
+        public DALResponse<TagDTO> Update(TagDTO _tag)
+        {
+            DALResponse<TagDTO> response = new(true);
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"UPDATE Tag SET Title = @Title WHERE ID = @ID";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", _tag.Title);
+                        command.Parameters.AddWithValue("@ID", _tag.ID);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Succeeded = false;
+                                response.Message = "TagDAL.Update(" + _tag.ID + ",TagDTO) ERROR: Could not update Tag";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(false)
+                {
+                    Message = "TagDAL.Update(" + _tag.ID + ", TagDTO) ERROR: " + e.Message,
+                    Code = e.Number
+                };
+            }
+            catch (Exception e)
+            {
+                response = new(false)
+                {
+                    Message = "TagDAL.Update(" + _tag.ID + ", TagDTO) ERROR: " + e.Message
+                };
+            }
+
+            return response;
+        }
+
+        public DALResponse<TagDTO> Delete(int _tagId)
+        {
+            DALResponse<TagDTO> response = new(true);
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"DELETE From Tag WHERE ID = @ID";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ID", _tagId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Succeeded = false;
+                                response.Message = "TagDAL.Delete(" + _tagId + ") ERROR: Could not delete Tag";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(false)
+                {
+                    Message = "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
+            }
+            catch (Exception e)
+            {
+                response = new(false)
+                {
+                    Message = "TagDAL.Delete(" + _tagId + ") ERROR: " + e.Message,
                 };
             }
 

@@ -34,6 +34,7 @@ namespace App.Controllers
             Response<Category> categoryResponse = categoryProcessor.GetById(id);
             ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
 
+            //trying to fix category not loading problem
             for (int i = 0; i < 10; i++)
             {
                 categoryResponse = categoryProcessor.GetById(id);
@@ -51,27 +52,25 @@ namespace App.Controllers
                 Thread.Sleep(50);
             }
 
-            foreach (Category category in categoryResponse.Data)
+            Category category = categoryResponse.Data[0];
+            category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+            CategoryModel categoryModel = new(category.ID, category.Title, category.PersonId);
+
+            foreach (Note note in category.NoteList)
             {
-                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
-                CategoryModel categoryModel = new(category.ID, category.Title, category.PersonId);
+                NoteModel noteModel = new(note.ID, note.Title, note.Text, note.CategoryId);
 
-                foreach (Note note in category.NoteList)
+                foreach (Tag tag in note.TagList)
                 {
-                    NoteModel noteModel = new(note.ID, note.Title, note.Text, note.CategoryId);
+                    TagModel tagModel = new(tag.ID, tag.Title);
 
-                    foreach (Tag tag in note.TagList)
-                    {
-                        TagModel tagModel = new(tag.ID, tag.Title);
-
-                        noteModel.AddTag(tagModel);
-                    }
-
-                    categoryModel.AddNote(noteModel);
+                    noteModel.AddTag(tagModel);
                 }
 
-                categoryModelResponse.AddItem(categoryModel);
+                categoryModel.AddNote(noteModel);
             }
+
+            categoryModelResponse.AddItem(categoryModel);
 
             return View(categoryModelResponse);
         }

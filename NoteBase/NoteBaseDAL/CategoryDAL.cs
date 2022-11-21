@@ -161,7 +161,7 @@ namespace NoteBaseDAL
             return response;
         }
 
-        public DALResponse<CategoryDTO> GetByTitle(string _Title)
+        public DALResponse<CategoryDTO> GetByTitle(string _title)
         {
             DALResponse<CategoryDTO> response = new(true);
 
@@ -173,7 +173,7 @@ namespace NoteBaseDAL
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Title", _Title);
+                        command.Parameters.AddWithValue("@Title", _title);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();
@@ -192,7 +192,7 @@ namespace NoteBaseDAL
             {
                 response = new(false)
                 {
-                    Message = "CategoryDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message,
+                    Message = "CategoryDAL.GetByTitle(" + _title + ") ERROR: " + e.Message,
                     Code = e.Number
                 };
             }
@@ -200,7 +200,7 @@ namespace NoteBaseDAL
             {
                 response = new(false)
                 {
-                    Message = "CategoryDAL.GetByTitle(" + _Title + ") ERROR: " + e.Message
+                    Message = "CategoryDAL.GetByTitle(" + _title + ") ERROR: " + e.Message
                 };
             }
 

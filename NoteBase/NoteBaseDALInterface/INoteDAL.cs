@@ -12,5 +12,6 @@ namespace NoteBaseDALInterface
         DALResponse<NoteDTO> GetByCategory(int _categoryId);
         DALResponse<NoteDTO> Update(NoteDTO _note);
         DALResponse<NoteDTO> Delete(int _noteId);
+        DALResponse<NoteDTO> DeleteNoteTag(int _noteId);
     }
 }

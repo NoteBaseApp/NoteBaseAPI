@@ -20,12 +20,12 @@ namespace NoteBaseLogicTests.TestDALs
             throw new NotImplementedException();
         }
 
-        public DALResponse<TagDTO> Get(int _tagId)
+        public DALResponse<TagDTO> GetById(int _tagId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<TagDTO> Get(string _userMail)
+        public DALResponse<TagDTO> GetByPerson(string _userMail)
         {
             throw new NotImplementedException();
         }
@@ -46,7 +46,7 @@ namespace NoteBaseLogicTests.TestDALs
             return response;
         }
 
-        public DALResponse<TagDTO> GetFromNote(int _noteId)
+        public DALResponse<TagDTO> GetByNote(int _noteId)
         {
             throw new NotImplementedException();
         }

@@ -27,26 +27,9 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Tag> Delete(int _tagId)
+        public Response<Tag> GetById(int _tagId)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.Delete(_tagId);
-
-            List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
-            Tag tag = new Tag(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
-
-            //create response
-            Response<Tag> response = new(DALreponse.Succeeded)
-            {
-                Message = DALreponse.Message
-            };
-            response.AddItem(tag);
-
-            return response;
-        }
-
-        public Response<Tag> Get(int _tagId)
-        {
-            DALResponse<TagDTO> DALreponse = TagDAL.Get(_tagId);
+            DALResponse<TagDTO> DALreponse = TagDAL.GetById(_tagId);
 
             List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
             Tag tag = new(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
@@ -61,9 +44,10 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Tag> Get(string _UserMail)
+        //need to remake this for using person id
+        public Response<Tag> GetByPerson(string _personMail)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.Get(_UserMail);
+            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_personMail);
             Response<Tag> response = new(DALreponse.Succeeded)
             {
                 Message = DALreponse.Message
@@ -78,9 +62,9 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Tag> GetByTitle(string _Title)
+        public Response<Tag> GetByTitle(string _title)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.GetByTitle(_Title);
+            DALResponse<TagDTO> DALreponse = TagDAL.GetByTitle(_title);
             Response<Tag> response = new(DALreponse.Succeeded)
             {
                 Message = DALreponse.Message
@@ -95,11 +79,11 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Tag> Update(int _tagId, Tag _tag)
+        public Response<Tag> Update(Tag _tag)
         {
             TagDTO tagDTO = new(_tag.ID, _tag.Title);
 
-            DALResponse<TagDTO> DALreponse = TagDAL.Update(_tagId, tagDTO);
+            DALResponse<TagDTO> DALreponse = TagDAL.Update(tagDTO);
 
             List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
 
@@ -108,6 +92,23 @@ namespace NoteBaseLogic
             {
                 Message = DALreponse.Message
             };
+
+            return response;
+        }
+
+        public Response<Tag> Delete(int _tagId)
+        {
+            DALResponse<TagDTO> DALreponse = TagDAL.Delete(_tagId);
+
+            List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
+            Tag tag = new Tag(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+
+            //create response
+            Response<Tag> response = new(DALreponse.Succeeded)
+            {
+                Message = DALreponse.Message
+            };
+            response.AddItem(tag);
 
             return response;
         }

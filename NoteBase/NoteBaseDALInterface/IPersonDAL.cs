@@ -11,7 +11,7 @@ namespace NoteBaseDALInterface
     {
         public DALResponse<PersonDTO> Create(PersonDTO _person);
         public DALResponse<PersonDTO> GetByEmail(string _personEmail);
-        public DALResponse<PersonDTO> Update(int _personId, PersonDTO _note);
+        public DALResponse<PersonDTO> Update(PersonDTO _person);
         public DALResponse<PersonDTO> Delete(int _personId);
     }
 }

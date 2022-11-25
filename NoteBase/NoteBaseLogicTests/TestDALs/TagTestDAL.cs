@@ -12,7 +12,7 @@ namespace NoteBaseLogicTests.TestDALs
     {
         public DALResponse<TagDTO> Create(TagDTO _tag)
         {
-            throw new NotImplementedException();
+            return new(true);
         }
 
         public DALResponse<TagDTO> Delete(int _tagId)
@@ -20,22 +20,33 @@ namespace NoteBaseLogicTests.TestDALs
             throw new NotImplementedException();
         }
 
-        public DALResponse<TagDTO> Get(int _tagId)
+        public DALResponse<TagDTO> GetById(int _tagId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<TagDTO> Get(string _userMail)
+        public DALResponse<TagDTO> GetByPerson(string _userMail)
         {
             throw new NotImplementedException();
         }
 
         public DALResponse<TagDTO> GetByTitle(string _Title)
         {
-            throw new NotImplementedException();
+            DALResponse<TagDTO> response = new(true);
+
+            if (_Title == "fontys")
+            {
+                response.AddItem(new(11, "fontys"));
+            } 
+            else if (_Title == "eindhoven")
+            {
+                response.AddItem(new(12, "fontys"));
+            }
+
+            return response;
         }
 
-        public DALResponse<TagDTO> GetFromNote(int _noteId)
+        public DALResponse<TagDTO> GetByNote(int _noteId)
         {
             throw new NotImplementedException();
         }

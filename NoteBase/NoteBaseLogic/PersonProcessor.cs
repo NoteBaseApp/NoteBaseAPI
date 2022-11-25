@@ -32,7 +32,7 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Person> Update(int _personId, Person _person)
+        public Response<Person> Update(Person _person)
         {
             throw new NotImplementedException();
         }

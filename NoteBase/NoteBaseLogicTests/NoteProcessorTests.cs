@@ -12,61 +12,87 @@ using NoteBaseDAL;
 using NoteBaseLogicInterface.Models;
 using NoteBaseInterface;
 using NoteBaseLogicFactory;
+using NoteBaseLogicInterface;
+using NoteBaseLogicTests.TestDALs;
 
 namespace NoteBaseLogic.Tests
 {
     [TestClass()]
     public class NoteProcessorTests
     {
-        /* [TestMethod()]
-        public void CreateTest()
+        [TestMethod()]
+        public void CreateTest_Succeed()
         {
-            //Arrange
-            NoteDTO note = new(1, "test", "Dit is een #Test voor mijn #Tag selector en het toevoegen van een #Note", new(1, "TestCategory", 1));
-            DALResponse<NoteDTO> NoteDALResponse = new(200, "");
+            //arrange
+            INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
+            Note note = new(0, "School", "Ik zit op #Fontys in #Eindhoven", 1);
+            Note expectedNote = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1);
+            expectedNote.TryAddTag(new(11, "fontys"));
+            expectedNote.TryAddTag(new(12, "eindhoven"));
 
+            Response<Note> expected = new(true);
+            expected.AddItem(expectedNote);
 
-            TagDTO testTag = new(1, "test");
-            TagDTO tagTag = new(2, "tag");
-            TagDTO NoteTag = new(3, "note");
-            DALResponse<TagDTO> TagDALResponse = new(200, "");
+            //act
+            Response<Note> actual = noteProcessor.Create(note);
 
-            var tagDALMock = new Mock<TagDAL>();
-            tagDALMock
-            .Setup(m => m.Create(testTag))//the expected method called
-            .Returns(TagDALResponse)//If called as expected what result to return
-            .Verifiable();//expected service behavior can be verified
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
 
-            tagDALMock
-            .Setup(m => m.Create(tagTag))//the expected method called
-            .Returns(TagDALResponse)//If called as expected what result to return
-            .Verifiable();//expected service behavior can be verified
-
-            var NoteDALMock = new Mock<NoteDAL>();
-            NoteDALMock
-            .Setup(m => m.Create(note))//the expected method called
-            .Returns(NoteDALResponse)//If called as expected what result to return
-            .Verifiable();//expected service behavior can be verified
-
-            NoteDALMock
-            .Setup(m => m.Create(note))//the expected method called
-            .Returns(NoteDALResponse)//If called as expected what result to return
-            .Verifiable();//expected service behavior can be verified
-
-            //Act
-
-
-            //Assert
-            Assert.Fail();
+            Assert.AreEqual(expected.Data[0].ID, actual.Data[0].ID);
+            Assert.AreEqual(expected.Data[0].Title, actual.Data[0].Title);
+            Assert.AreEqual(expected.Data[0].PersonId, actual.Data[0].PersonId);
         }
 
         [TestMethod()]
-        public void AddTagsTest()
+        public void CreateTest_Succeed_NoTags()
+        {
+            //arrange
+            INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
+            Note note = new(0, "Gaming", "Ik ga zaterdag gamen", 1);
+            Note expectedNote = new(21, "Gaming", "Ik ga zaterdag gamen", 1);
+
+            Response<Note> expected = new(true);
+            expected.AddItem(expectedNote);
+
+            //act
+            Response<Note> actual = noteProcessor.Create(note);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+
+            Assert.AreEqual(expected.Data[0].ID, actual.Data[0].ID);
+            Assert.AreEqual(expected.Data[0].Title, actual.Data[0].Title);
+            Assert.AreEqual(expected.Data[0].PersonId, actual.Data[0].PersonId);
+        }
+
+        [TestMethod()]
+        public void CreateTest_Failed_NoCategory()
+        {
+            //arrange
+            INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
+            Note note = new(0, "Huiswerk", "Ik heb #programeer huiswerk", 0);
+
+            Response<Note> expected = new(false)
+            {
+                Message = "No valid category was given"
+            };
+
+            //act
+            Response<Note> actual = noteProcessor.Create(note);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Assert.AreEqual(expected.Message, actual.Message);
+        }
+
+        [TestMethod()]
+        public void AddTagsTest_Succeed()
         {
             
             //Arrage
-            Note note = new(1, "test", "Dit is een #Test voor mijn #Tag selector en het toevoegen van een #Note", new(1, "TestCategory"));
-            NoteProcessor processor = ProcessorFactory.CreateNoteProcessor("");
+            Note note = new(1, "test", "Dit is een #Test voor mijn #Tag selector en het toevoegen van een #Note", 1);
+            NoteProcessor processor = Factory.CreateNoteProcessor();
 
             List<Tag> expected = new() { new Tag(0, "test"), new Tag(1, "tag") , new Tag(2, "note") };
             //Act
@@ -78,6 +104,6 @@ namespace NoteBaseLogic.Tests
                 Assert.AreEqual(expected[i].Title, actual.TagList[i].Title);
             }
             
-        } */
+        }
     }
 }

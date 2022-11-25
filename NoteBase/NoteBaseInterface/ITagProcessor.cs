@@ -7,9 +7,9 @@ namespace NoteBaseInterface
     {
         Response<Tag> Create(Tag _tag);
         Response<Tag> Delete(int _tagId);
-        Response<Tag> Get(int _tagId);
-        Response<Tag> Get(string _UserMail);
+        Response<Tag> GetById(int _tagId);
+        Response<Tag> GetByPerson(string _PersonMail);
         Response<Tag> GetByTitle(string _Title);
-        Response<Tag> Update(int _tagId, Tag _tag);
+        Response<Tag> Update(Tag _tag);
     }
 }

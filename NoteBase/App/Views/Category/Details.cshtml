@@ -20,18 +20,7 @@
         <div class="note-container">
             @foreach (NoteModel note in Model.Data[0].NoteList)
             {
-                <div class="note shadow-lg p-3 mb-5 rounded">
-                    <h1>@note.Title</h1>
-                    <p>@note.Text</p>
-                    <br>
-                    <p>
-                        @for (int i = 0; i < note.TagList.Count() - 1; i++)
-                        {
-                            <span>@note.TagList[i].Title ,</span>
-                        }
-                        <span>@note.TagList.Last().Title</span>
-                    </p>
-                </div>
+                @Html.Partial("_Note", note)
             }
         </div>
     }

@@ -1,5 +1,6 @@
 ﻿using NoteBaseDALInterface;
 using NoteBaseDALInterface.Models;
+using NoteBaseLogicInterface.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,12 @@ namespace NoteBaseLogicTests.TestDALs
     {
         public DALResponse<NoteDTO> Create(NoteDTO _note)
         {
-            throw new NotImplementedException();
+            return new(true);
         }
 
         public DALResponse<NoteDTO> CreateNoteTag(int _noteId, int _tagId)
         {
-            throw new NotImplementedException();
+            return new(true);
         }
 
         public DALResponse<NoteDTO> Delete(int _noteId)
@@ -51,7 +52,21 @@ namespace NoteBaseLogicTests.TestDALs
 
         public DALResponse<NoteDTO> GetByTitle(string _Title)
         {
-            throw new NotImplementedException();
+            DALResponse<NoteDTO> response = new(true);
+
+            if (_Title == "School")
+            {
+               NoteDTO note = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1);
+                note.TryAddTagDTO(new(11, "fontys"));
+                note.TryAddTagDTO(new(12, "eindhoven"));
+                response.AddItem(note);
+            }
+            else if (_Title == "Gaming")
+            {
+                response.AddItem(new(21, "Gaming", "Ik ga zaterdag gamen", 1));
+            }
+
+            return response;
         }
 
         public DALResponse<NoteDTO> Update(NoteDTO _note)

@@ -12,7 +12,7 @@ namespace NoteBaseLogicInterface
         Response<Category> Create(Category _cat);
         Response<Category> GetById(int _catId);
         Response<Category> GetByPerson(int _personId);
-        //Response<Category> GetByTitle(string _title);
+        Response<Category> GetByTitle(string _title);
         Response<Category> Update(Category _cat);
         Response<Category> Delete(int _catId);
     }

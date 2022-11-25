@@ -12,6 +12,6 @@ namespace NoteBaseLogicInterface
         Response<Person> Create(Person _person);
         Response<Person> Delete(int _personId);
         Response<Person> GetByEmail(string _email);
-        Response<Person> Update(int _personId, Person _person);
+        Response<Person> Update(Person _person);
     }
 }

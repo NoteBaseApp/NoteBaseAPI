@@ -113,7 +113,7 @@ namespace NoteBaseDAL
             return response;
         }
 
-        public DALResponse<PersonDTO> Update(int _personId, PersonDTO _note)
+        public DALResponse<PersonDTO> Update(PersonDTO _person)
         {
             throw new NotImplementedException();
         }

@@ -15,23 +15,16 @@ namespace NoteBaseLogicTests.TestDALs
             return new(true);
         }
 
-        int GetByIdCals = 0;
-
         public DALResponse<CategoryDTO> GetById(int _catId)
         {
             DALResponse<CategoryDTO> response = new(true);
-            CategoryDTO categoryDTO = new(_catId, "", 1);
 
             if (_catId == 999)
             {
                 return new(true);
-            } else if (_catId == 1 && GetByIdCals > 0)
-            {
-                categoryDTO = new(_catId, "Games", 1);
             }
 
-            GetByIdCals++;
-
+            CategoryDTO categoryDTO = new(_catId, "", 1);
             response.AddItem(categoryDTO);
             return response;
         }

@@ -260,7 +260,7 @@ namespace NoteBaseDAL
 
         public DALResponse<CategoryDTO> Delete(int _catId)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            DALResponse<CategoryDTO> response = new(false);
 
             try
             {

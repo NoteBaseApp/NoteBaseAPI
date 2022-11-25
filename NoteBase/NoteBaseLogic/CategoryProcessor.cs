@@ -26,15 +26,15 @@ namespace NoteBaseLogic
                 return response;
             }
 
-            Response<Category> catreponse = GetByTitle(_cat.Title);
-            if (catreponse.Data.Count > 0)
+            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByTitle(_cat.Title);
+            if (catDALreponse.Data.Count > 0)
             {
                 response.Message = "Category With this title already exists";
 
                 return response;
             }
 
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Create(_cat.ToDTO());
+            catDALreponse = CategoryDAL.Create(_cat.ToDTO());
 
             response = new(catDALreponse.Succeeded)
             {
@@ -47,17 +47,26 @@ namespace NoteBaseLogic
                 return response;
             }
 
-            catreponse = GetByTitle(_cat.Title);
-            response.AddItem(new(catreponse.Data[0].ID, catreponse.Data[0].Title, catreponse.Data[0].PersonId));
+            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetByTitle(_cat.Title);
+            response.AddItem(new(catDALreponseGet.Data[0].ID, catDALreponseGet.Data[0].Title, catDALreponseGet.Data[0].PersonId));
 
             return response;
         }
 
-        public Response<Category> GetById(int _catId)
+        public Response<Category> Delete(int _catId)
         {
             Response<Category> response = new(false);
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
 
+            Response<Note> noteDALreponse = NoteProcessor.GetByCategory(_catId);
+            if (noteDALreponse.Data.Count > 0)
+            {
+                response.Message = "Notes exist with this category";
+
+                return response;
+            }
+
+
+            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
             if (catDALreponse.Data.Count == 0)
             {
                 response.Message = "Category doesn't exist";
@@ -65,11 +74,31 @@ namespace NoteBaseLogic
                 return response;
             }
 
+            catDALreponse = CategoryDAL.Delete(_catId);
+
             response = new(catDALreponse.Succeeded)
             {
                 Message = catDALreponse.Message,
                 Code = catDALreponse.Code
             };
+
+            return response;
+        }
+
+        public Response<Category> GetById(int _catId)
+        {
+            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
+
+            Response<Category> response = new(catDALreponse.Succeeded)
+            {
+                Message = catDALreponse.Message,
+                Code = catDALreponse.Code
+            };
+
+            if (catDALreponse.Data.Count == 0)
+            {
+                return response;
+            }
 
             Category category = new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId);
 
@@ -98,17 +127,9 @@ namespace NoteBaseLogic
 
         public Response<Category> GetByTitle(string _title)
         {
-            Response<Category> response = new(false);
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByTitle(_title);
 
-            if (catDALreponse.Data.Count == 0)
-            {
-                response.Message = "Category doesn't exist";
-
-                return response;
-            }
-
-            response = new(catDALreponse.Succeeded)
+            Response<Category> response = new(catDALreponse.Succeeded)
             {
                 Message = catDALreponse.Message,
                 Code = catDALreponse.Code
@@ -130,15 +151,15 @@ namespace NoteBaseLogic
                 return response;
             }
 
-            Response<Category> catreponse = GetById(_cat.ID);
-            if (catreponse.Data.Count == 0)
+            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_cat.ID);
+            if (catDALreponse.Data.Count == 0)
             {
                 response.Message = "Category doesn't exist";
 
                 return response;
             }
 
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Update(_cat.ToDTO());
+            catDALreponse = CategoryDAL.Update(_cat.ToDTO());
 
             response = new(catDALreponse.Succeeded)
             {
@@ -151,8 +172,8 @@ namespace NoteBaseLogic
                 return response;
             }
 
-            catreponse = GetById(_cat.ID);
-            response.AddItem(new(catreponse.Data[0].ID, catreponse.Data[0].Title, catreponse.Data[0].PersonId));
+            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetById(_cat.ID);
+            response.AddItem(new(catDALreponseGet.Data[0].ID, catDALreponseGet.Data[0].Title, catDALreponseGet.Data[0].PersonId));
 
             return response;
         }

@@ -53,38 +53,6 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Category> Delete(int _catId)
-        {
-            Response<Category> response = new(false);
-
-            Response<Note> noteDALreponse = NoteProcessor.GetByCategory(_catId);
-            if (noteDALreponse.Data.Count > 0)
-            {
-                response.Message = "Notes exist with this category";
-
-                return response;
-            }
-
-
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
-            if (catDALreponse.Data.Count == 0)
-            {
-                response.Message = "Category doesn't exist";
-
-                return response;
-            }
-
-            catDALreponse = CategoryDAL.Delete(_catId);
-
-            response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            return response;
-        }
-
         public Response<Category> GetById(int _catId)
         {
             DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);

@@ -1,0 +1,26 @@
+﻿@model App.Models.ResponseModel<NoteModel>
+
+<h1>Details</h1>
+
+<div>
+    <h4>@Model.Data[0].Title</h4>
+     @if (!Model.Succeeded)
+    {
+        <p>er is iets mis gegaan: @Model.Message</p>
+    }
+    else {
+        <a asp-controller="Note" asp-action="Edit" asp-route-Id="Model.Data[0].ID">Bewerken</a>
+        <hr />
+        <p>@Model.Data[0].Text</p>
+        <p>
+            @for (int i = 0; i < Model.Data[0].TagList.Count() - 1; i++)
+            {
+                <span>@Model.Data[0].TagList[i].Title ,</span>
+            }
+            <span>@Model.Data[0].TagList.Last().Title</span>
+        </p>
+    }
+</div>
+<div>
+    <a asp-controller="Home" asp-action="Index">Terug naar overzicht</a>
+</div>

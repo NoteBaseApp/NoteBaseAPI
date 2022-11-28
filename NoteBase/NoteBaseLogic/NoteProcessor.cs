@@ -100,6 +100,11 @@ namespace NoteBaseLogic
                 Code = noteDALreponse.Code
             };
 
+            if (!noteDALreponse.Succeeded || noteDALreponse.Data.Count == 0)
+            {
+                return response;
+            }
+
             NoteDTO noteDTO = noteDALreponse.Data[0];
 
             Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId);

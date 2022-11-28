@@ -2,7 +2,7 @@
 
 @{
     <div class="note shadow-lg p-3 mb-5 rounded">
-        <h1>@Model.Title</h1>
+        <a asp-controller="Note" asp-action="Details" asp-route-Id="@Model.ID"><h1>@Model.Title</h1></a>
         <p>@Model.Text</p>
         <br>
         <p>

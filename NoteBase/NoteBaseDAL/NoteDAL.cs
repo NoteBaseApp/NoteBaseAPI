@@ -121,7 +121,55 @@ namespace NoteBaseDAL
 
         public DALResponse<NoteDTO> GetById(int _noteId)
         {
-            throw new NotImplementedException();
+            DALResponse<NoteDTO> response = new(true);
+
+            try
+            {
+                using (SqlConnection connection = new(ConnString))
+                {
+                    string query = @"SELECT ID, Title, Text, CategoryID From Note WHERE ID = @ID";
+
+                    using (SqlCommand command = new(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ID", _noteId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
+
+                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+
+                            foreach (TagDTO tagDTO in DALResponse.Data)
+                            {
+                                noteDTO.TryAddTagDTO(tagDTO);
+                            }
+
+                            response.AddItem(noteDTO);
+                        }
+                        connection.Close();
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.GetById(" + _noteId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
+            }
+            catch (Exception e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.GetById(" + _noteId + ") ERROR: " + e.Message,
+                };
+            }
+
+            return response;
         }
 
         public DALResponse<NoteDTO> GetByPerson(int _personId)

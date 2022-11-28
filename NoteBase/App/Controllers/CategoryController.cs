@@ -82,7 +82,7 @@ namespace App.Controllers
             return View();
         }
 
-        // POST: CategoryController/Create
+        // POST: Category/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -115,7 +115,7 @@ namespace App.Controllers
             }
         }
 
-        // GET: CategoryController/Edit/5
+        // GET: Category/Edit/5
         public ActionResult Edit(int id)
         {
             return View();

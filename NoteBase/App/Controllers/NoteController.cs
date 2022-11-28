@@ -30,7 +30,6 @@ namespace App.Controllers
         {
 
             Response<Note> noteResponse = noteProcessor.GetById(id);
-
             ResponseModel<NoteModel> noteResponseModel = new(noteResponse.Succeeded)
             {
                 Message = noteResponse.Message,

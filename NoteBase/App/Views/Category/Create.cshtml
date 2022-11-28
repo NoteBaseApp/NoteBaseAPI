@@ -4,12 +4,12 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create Category</h1>
+<h1>Categorie aanmaken</h1>
 <hr />
 <div class="row">
     @if (ViewBag.Succeeded != null && !ViewBag.Succeeded)
     {
-        <h3>@ViewBag.Message</h3>
+        <h3>er is iets mis gegaan: @ViewBag.Message</h3>
     }
     <div class="col-md-4">
         <form asp-action="Create">

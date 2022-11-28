@@ -1,19 +1,13 @@
 ﻿@using App.Models
 @model ResponseModel<CategoryModel>
 
-@{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
-
 <div>
     @if (!Model.Succeeded)
     {
         <p>er is iets mis gegaan: @Model.Message</p>
     }
     else {
-        <h2>@Model.Data[0].Title</h2>
+        <h1>@Model.Data[0].Title</h1>
         <a asp-controller="Category" asp-action="Edit" asp-route-Id="Model.categoryresponseModel.Data[0].ID">Bewerken</a>
         <hr>
 

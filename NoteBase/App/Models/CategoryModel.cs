@@ -1,5 +1,6 @@
 ﻿using NoteBaseDALInterface.Models;
 using NoteBaseLogicInterface.Models;
+using System.ComponentModel;
 using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -10,6 +11,8 @@ namespace App.Models
         private readonly List<NoteModel> noteList = new();
 
         public int ID { get; set; }
+
+        [DisplayName("Titel")]
         public string Title { get; private set; }
         public IReadOnlyList<NoteModel> NoteList { get { return noteList; } }
         public int PersonId { get; set; }

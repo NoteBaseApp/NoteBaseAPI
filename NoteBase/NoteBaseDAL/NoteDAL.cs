@@ -344,11 +344,11 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"DELETE FROM Note WHERE NoteID = @NoteID";
+                    string query = @"DELETE FROM Note WHERE ID = @ID";
 
                     using (SqlCommand command = new(query, connection))
                     {
-                        command.Parameters.AddWithValue("@NoteID", _noteId);
+                        command.Parameters.AddWithValue("@ID", _noteId);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();

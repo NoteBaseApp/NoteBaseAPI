@@ -1,0 +1,29 @@
+﻿﻿@{
+    <h1>Verwijderen</h1>
+    <div>
+        @if (ViewBag.Post)
+        {
+            @if (!ViewBag.Succeeded)
+            {
+                <p>er is iets mis gegaan: @ViewBag.Message</p>
+            }
+            else
+            {
+                <p>Verwijderen gelukt</p>
+            }
+        }
+        else
+        {
+            <h2>Weet je het zeker</h2>
+            <p>na het bevestigen is het niet mogelijk om deze notitie terug te halen.</p>
+            <form asp-action="Delete">
+                <input type="submit" value="bevestigen" class="btn btn-danger" />
+            </form>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">afbreken</a>
+        }
+    </div>
+    <br />
+    <div>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Terug naar overzicht</a>
+    </div>
+}

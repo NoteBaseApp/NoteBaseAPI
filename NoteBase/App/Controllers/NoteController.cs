@@ -36,6 +36,12 @@ namespace App.Controllers
                 Code = noteResponse.Code
             };
 
+            if (noteResponse.Data.Count == 0)
+            {
+                noteResponseModel.Succeeded = false;
+                return View(noteResponseModel);
+            }
+
             NoteModel noteModel = new(noteResponse.Data[0].ID, noteResponse.Data[0].Title, noteResponse.Data[0].Text, noteResponse.Data[0].CategoryId);
 
             foreach (Tag tag in noteResponse.Data[0].TagList)
@@ -143,6 +149,7 @@ namespace App.Controllers
         // GET: Note/Delete/5
         public ActionResult Delete(int id)
         {
+            ViewBag.Post = false;
             return View();
         }
 
@@ -151,12 +158,21 @@ namespace App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
+            ViewBag.Post = true;
             try
             {
-                return RedirectToAction(nameof(Index));
+                Response<Note> response = noteProcessor.Delete(id);
+
+                ViewBag.Succeeded = response.Succeeded;
+                ViewBag.Message = response.Message;
+                ViewBag.Code = response.Code;
+
+                return View();
             }
-            catch
+            catch (Exception e)
             {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
                 return View();
             }
         }

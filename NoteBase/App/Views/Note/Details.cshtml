@@ -9,16 +9,20 @@
     else {
         <h1>@Model.Data[0].Title</h1>
         <!--<h2>Category</h2>-->
-        <a asp-controller="Note" asp-action="Edit" asp-route-Id="Model.Data[0].ID">Bewerken</a>
+        <a asp-controller="Note" asp-action="Edit" asp-route-Id="@Model.Data[0].ID">Bewerken</a>
+        <a asp-controller="Note" asp-action="Delete" asp-route-Id="@Model.Data[0].ID">Verwijderen</a>
         <hr />
         <p>@Model.Data[0].Text</p>
-        <p>
-            @for (int i = 0; i < Model.Data[0].TagList.Count() - 1; i++)
-            {
-                <span>@Model.Data[0].TagList[i].Title ,</span>
-            }
-            <span>@Model.Data[0].TagList.Last().Title</span>
-        </p>
+        @if (Model.Data[0].TagList.Count() > 0)
+        {
+            <p>
+                @for (int i = 0; i < Model.Data[0].TagList.Count() - 1; i++)
+                {
+                    <span>@Model.Data[0].TagList[i].Title ,</span>
+                }
+                <span>@Model.Data[0].TagList.Last().Title</span>
+            </p>
+        }
     }
 </div>
 <div>

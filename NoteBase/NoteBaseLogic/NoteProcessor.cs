@@ -301,6 +301,8 @@ namespace NoteBaseLogic
                 Code = noteDALreponse.Code
             };
 
+            TagProcessor.DeleteWithoutNote();
+
             return response;
         }
 

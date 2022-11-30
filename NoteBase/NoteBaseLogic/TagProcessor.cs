@@ -112,5 +112,12 @@ namespace NoteBaseLogic
 
             return response;
         }
+
+        public Response<Tag> DeleteWithoutNote()
+        {
+            //get every tag without notetag
+
+            //call this.delete
+        }
     }
 }

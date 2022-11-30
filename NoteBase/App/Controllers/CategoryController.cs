@@ -34,7 +34,6 @@ namespace App.Controllers
             Response<Category> categoryResponse = categoryProcessor.GetById(id);
             ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
 
-            //trying to fix category not loading problem
             for (int i = 0; i < 10; i++)
             {
                 categoryResponse = categoryProcessor.GetById(id);
@@ -50,6 +49,12 @@ namespace App.Controllers
                 }
 
                 Thread.Sleep(50);
+            }
+
+            if (categoryResponse.Data.Count == 0)
+            {
+                categoryModelResponse.Succeeded = false;
+                return View(categoryModelResponse);
             }
 
             Category category = categoryResponse.Data[0];
@@ -73,6 +78,7 @@ namespace App.Controllers
             categoryModelResponse.AddItem(categoryModel);
 
             return View(categoryModelResponse);
+
         }
 
         // GET: Category/Create
@@ -114,7 +120,21 @@ namespace App.Controllers
         // GET: CategoryController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Response<Category> categoryResponse = categoryProcessor.GetById(id);
+
+            if (!categoryResponse.Succeeded)
+            {
+                ViewBag.Succeeded = categoryResponse.Succeeded;
+                ViewBag.Message = categoryResponse.Message;
+                ViewBag.Code = categoryResponse.Code;
+
+                return View();
+            }
+
+            ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
+            categoryModelResponse.AddItem(new CategoryModel(categoryResponse.Data[0].ID, categoryResponse.Data[0].Title, categoryResponse.Data[0].PersonId));
+
+            return View(categoryModelResponse.Data[0]);
         }
 
         // POST: Category/Edit/5
@@ -124,17 +144,34 @@ namespace App.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Details));
+                CategoryModel categoryModel = new(id, collection["Title"], personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
+                Response<Category> response = categoryProcessor.Update(categoryModel.ToLogicModel());
+
+                if (!response.Succeeded)
+                {
+                    ViewBag.Succeeded = response.Succeeded;
+                    ViewBag.Message = response.Message;
+                    ViewBag.Code = response.Code;
+
+                    return View();
+                }
+
+                //diffrent redirect options?
+                return RedirectToAction(nameof(Details), response.Data[0].ID);
             }
-            catch
+            catch (Exception e)
             {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
                 return View();
             }
         }
 
+
         // GET: Category/Delete/5
         public ActionResult Delete(int id)
         {
+            ViewBag.Post = false;
             return View();
         }
 
@@ -143,14 +180,24 @@ namespace App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
+            ViewBag.Post = true;
             try
             {
-                return RedirectToAction(nameof(Details));
-            }
-            catch
-            {
+                Response<Category> response = categoryProcessor.Delete(id);
+
+                ViewBag.Succeeded = response.Succeeded;
+                ViewBag.Message = response.Message;
+                ViewBag.Code = response.Code;
+
                 return View();
             }
+            catch (Exception e)
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
+                return View();
+            }
+
         }
     }
 }

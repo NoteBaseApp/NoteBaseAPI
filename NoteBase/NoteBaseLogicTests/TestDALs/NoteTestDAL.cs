@@ -26,6 +26,11 @@ namespace NoteBaseLogicTests.TestDALs
             throw new NotImplementedException();
         }
 
+        public DALResponse<NoteDTO> DeleteNoteTag(int _noteId)
+        {
+            throw new NotImplementedException();
+        }
+
         public DALResponse<NoteDTO> GetByCategory(int _categoryId)
         {
             DALResponse<NoteDTO> dALResponse = new(true);

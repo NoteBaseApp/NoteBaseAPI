@@ -55,5 +55,10 @@ namespace NoteBaseLogicTests.TestDALs
         {
             throw new NotImplementedException();
         }
+
+        public DALResponse<TagDTO> Update(TagDTO _tag)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

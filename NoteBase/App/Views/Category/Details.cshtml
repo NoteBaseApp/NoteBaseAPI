@@ -16,7 +16,7 @@
         <h2>@Model.Data[0].Title</h2>
         <a asp-controller="Category" asp-action="Edit" asp-route-Id="Model.categoryresponseModel.Data[0].ID">Bewerken</a>
         <a asp-controller="Category" asp-action="Delete" asp-route-Id="Model.categoryresponseModel.Data[0].ID">Verwijderen</a>
-        <hr>
+        <hr/>
 
         <div class="note-container">
             @foreach (NoteModel note in Model.Data[0].NoteList)

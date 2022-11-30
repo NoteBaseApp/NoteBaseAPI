@@ -53,38 +53,6 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Category> Delete(int _catId)
-        {
-            Response<Category> response = new(false);
-
-            Response<Note> noteDALreponse = NoteProcessor.GetByCategory(_catId);
-            if (noteDALreponse.Data.Count > 0)
-            {
-                response.Message = "Notes exist with this category";
-
-                return response;
-            }
-
-
-            Response<Category> catreponse = GetById(_catId);
-            if (catreponse.Data.Count == 0)
-            {
-                response.Message = "Category doesn't exist";
-
-                return response;
-            }
-
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Delete(_catId);
-
-            response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            return response;
-        }
-
         public Response<Category> GetById(int _catId)
         {
             Response<Category> response = new(false);
@@ -185,6 +153,38 @@ namespace NoteBaseLogic
 
             catreponse = GetById(_cat.ID);
             response.AddItem(new(catreponse.Data[0].ID, catreponse.Data[0].Title, catreponse.Data[0].PersonId));
+
+            return response;
+        }
+
+        public Response<Category> Delete(int _catId)
+        {
+            Response<Category> response = new(false);
+
+            Response<Note> noteDALreponse = NoteProcessor.GetByCategory(_catId);
+            if (noteDALreponse.Data.Count > 0)
+            {
+                response.Message = "Notes exist with this category";
+
+                return response;
+            }
+
+
+            Response<Category> catreponse = GetById(_catId);
+            if (catreponse.Data.Count == 0)
+            {
+                response.Message = "Category doesn't exist";
+
+                return response;
+            }
+
+            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Delete(_catId);
+
+            response = new(catDALreponse.Succeeded)
+            {
+                Message = catDALreponse.Message,
+                Code = catDALreponse.Code
+            };
 
             return response;
         }

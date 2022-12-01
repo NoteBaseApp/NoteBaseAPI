@@ -31,8 +31,11 @@ JOIN NoteTag AS NT
 	ON T.ID = NT.TagID
 /*DROP VIEW PersonCategories*/
 
-SELECT T.ID
+SELECT T.ID, T.Title
 FROM Tag AS T
+
+DELETE FROM Tag 
+WHERE ID = 6
 
 SELECT ID, Title FROM NoteTags
 WHERE PersonId = 1;

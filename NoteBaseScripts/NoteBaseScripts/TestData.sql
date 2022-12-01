@@ -37,7 +37,7 @@ JOIN NoteTag AS NT
 JOIN Tag AS T
 	ON T.ID = NT.TagID
 
-	select * from Tag
+	select * from Note
 
 DELETE FROM NoteTag WHERE NoteID = 4
-DELETE FROM Note WHERE ID = 4
+DELETE FROM Note WHERE ID = 1017

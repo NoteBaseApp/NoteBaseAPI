@@ -247,9 +247,13 @@ namespace NoteBaseLogic
 
             foreach (Tag tag in _note.TagList)
             {
-                TagProcessor.Create(tag);
-
                 Response<Tag> tagResponse = TagProcessor.GetByTitle(tag.Title);
+
+                if (tagResponse.Data.Count == 0)
+                {
+                    TagProcessor.Create(tag);
+                    tagResponse = TagProcessor.GetByTitle(tag.Title);
+                }
 
                 if (tagResponse.Data.Count == 0)
                 {

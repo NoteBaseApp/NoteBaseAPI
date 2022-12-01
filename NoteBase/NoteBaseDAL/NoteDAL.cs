@@ -339,14 +339,13 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"UPDATE Note SET Title = @Title, Text = @Text, CategoryID = @CategoryID, PersonId = @PersonId WHERE ID = @ID";
+                    string query = @"UPDATE Note SET Title = @Title, Text = @Text, CategoryID = @CategoryID WHERE ID = @ID";
 
                     using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@Title", _note.Title);
                         command.Parameters.AddWithValue("@Text", _note.Text);
                         command.Parameters.AddWithValue("@CategoryID", _note.CategoryId);
-                        command.Parameters.AddWithValue("@PersonId", _note.PersonId);
                         command.Parameters.AddWithValue("@ID", _note.ID);
                         connection.Open();
 

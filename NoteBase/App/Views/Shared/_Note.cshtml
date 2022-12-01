@@ -2,9 +2,10 @@
 
 @{
     <div class="note shadow-lg p-3 mb-5 rounded">
-        <a asp-controller="Note" asp-action="Details" asp-route-Id="@Model.ID"><h1>@Model.Title</h1></a>
+        <a asp-controller="Note" asp-action="Details" asp-route-Id="@Model.ID"><h1>@Model.Title</h1>
         <p>@Model.Text</p>
         <br>
+        </a>
         @if (Model.TagList.Count() > 0)
         {
             <p>

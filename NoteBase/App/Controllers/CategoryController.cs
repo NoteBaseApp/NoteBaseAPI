@@ -19,6 +19,7 @@ namespace App.Controllers
         private readonly string connString;
         private readonly IPersonProcessor personProcessor;
         private readonly ICategoryProcessor categoryProcessor;
+        private Person? person;
 
         public CategoryController(IConfiguration configuration)
         {
@@ -87,14 +88,17 @@ namespace App.Controllers
             return View();
         }
 
-        // POST: CategoryController/Create
+        // POST: Category/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
+            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+            person = personResponse.Data[0];
+
             try
             {
-                CategoryModel categoryModel = new(0, collection["Title"], personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
+                CategoryModel categoryModel = new(0, collection["Title"], person.ID);
                 Response<Category> response = categoryProcessor.Create(categoryModel.ToLogicModel());
 
                 if (!response.Succeeded)
@@ -117,7 +121,7 @@ namespace App.Controllers
             }
         }
 
-        // GET: CategoryController/Edit/5
+        // GET: Category/Edit/5
         public ActionResult Edit(int id)
         {
             Response<Category> categoryResponse = categoryProcessor.GetById(id);

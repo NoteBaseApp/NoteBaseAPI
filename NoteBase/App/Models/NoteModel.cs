@@ -1,4 +1,5 @@
 ﻿using NoteBaseLogicInterface.Models;
+using System.ComponentModel;
 
 namespace App.Models
 {
@@ -7,8 +8,14 @@ namespace App.Models
         private readonly List<TagModel> tagList = new();
 
         public int ID { get; set; }
+
+        [DisplayName("Titel")]
         public string Title { get; private set; }
+
+        [DisplayName("Tekst")]
         public string Text { get; private set; }
+
+        [DisplayName("Categorie")]
         public int CategoryId { get; private set; }
         public IReadOnlyList<TagModel> TagList { get { return tagList; } }
         public int PersonId { get; set; }

@@ -121,7 +121,55 @@ namespace NoteBaseDAL
 
         public DALResponse<NoteDTO> GetById(int _noteId)
         {
-            throw new NotImplementedException();
+            DALResponse<NoteDTO> response = new(true);
+
+            try
+            {
+                using (SqlConnection connection = new(ConnString))
+                {
+                    string query = @"SELECT ID, Title, Text, CategoryID From Note WHERE ID = @ID";
+
+                    using (SqlCommand command = new(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ID", _noteId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
+
+                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+
+                            foreach (TagDTO tagDTO in DALResponse.Data)
+                            {
+                                noteDTO.TryAddTagDTO(tagDTO);
+                            }
+
+                            response.AddItem(noteDTO);
+                        }
+                        connection.Close();
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.GetById(" + _noteId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
+            }
+            catch (Exception e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.GetById(" + _noteId + ") ERROR: " + e.Message,
+                };
+            }
+
+            return response;
         }
 
         public DALResponse<NoteDTO> GetByPerson(int _personId)
@@ -285,7 +333,55 @@ namespace NoteBaseDAL
 
         public DALResponse<NoteDTO> Update(NoteDTO _note)
         {
-            throw new NotImplementedException();
+            DALResponse<NoteDTO> response = new(true);
+
+            try
+            {
+                using (SqlConnection connection = new(ConnString))
+                {
+                    string query = @"UPDATE Note SET Title = @Title, Text = @Text, CategoryID = @CategoryID WHERE ID = @ID";
+
+                    using (SqlCommand command = new(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", _note.Title);
+                        command.Parameters.AddWithValue("@Text", _note.Text);
+                        command.Parameters.AddWithValue("@CategoryID", _note.CategoryId);
+                        command.Parameters.AddWithValue("@ID", _note.ID);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Succeeded = false;
+                                response.Message = "NoteDAL.Update(" + _note.ID + ") ERROR: Could not Update Note";
+                            }
+                        }
+                        connection.Close();
+                    }
+                }
+            }
+            //het opvangen van een mogelijke error
+            catch (SqlException e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.Update(" + _note.ID + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
+            }
+            catch (Exception e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.Update(" + _note.ID + ") ERROR: " + e.Message
+                };
+            }
+
+            return response;
         }
 
         public DALResponse<NoteDTO> Delete(int _noteId)
@@ -296,11 +392,11 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"DELETE FROM Note WHERE NoteID = @NoteID";
+                    string query = @"DELETE FROM Note WHERE ID = @ID";
 
                     using (SqlCommand command = new(query, connection))
                     {
-                        command.Parameters.AddWithValue("@NoteID", _noteId);
+                        command.Parameters.AddWithValue("@ID", _noteId);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();

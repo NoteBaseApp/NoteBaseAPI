@@ -18,20 +18,20 @@ namespace NoteBaseLogic
 
         public Response<Note> Create(Note _note)
         {
-            Response<Note> notereponse = new(false);
+            Response<Note> noteReponse = new(false);
 
             if (_note.CategoryId == 0)
             {
-                notereponse.Message = "No valid category was given";
+                noteReponse.Message = "No valid category was given";
 
-                return notereponse;
+                return noteReponse;
             }
 
             _note = AddTags(_note);
             DALResponse<NoteDTO> noteDALreponse = NoteDAL.Create(_note.ToDTO());
             if (noteDALreponse.Succeeded)
             {
-                notereponse = GetByTitle(_note.Title);
+                noteReponse = GetByTitle(_note.Title);
             }
 
             Response<Note> response = new(noteDALreponse.Succeeded)
@@ -42,9 +42,13 @@ namespace NoteBaseLogic
 
             foreach (Tag tag in _note.TagList)
             {
-                TagProcessor.Create(tag);
-
                 Response<Tag> tagResponse = TagProcessor.GetByTitle(tag.Title);
+
+                if (tagResponse.Data.Count == 0)
+                {
+                    TagProcessor.Create(tag);
+                    tagResponse = TagProcessor.GetByTitle(tag.Title);
+                }
 
                 if (tagResponse.Data.Count  == 0)
                 {
@@ -53,24 +57,25 @@ namespace NoteBaseLogic
 
                     return response;
                 }
-                else if (notereponse.Data.Count == 0)
+                else if (noteReponse.Data.Count == 0)
                 {
-                    response.Succeeded = notereponse.Succeeded;
-                    response.Message = notereponse.Message;
+                    response.Succeeded = noteReponse.Succeeded;
+                    response.Message = noteReponse.Message;
 
                     return response;
                 }
-                NoteDAL.CreateNoteTag(notereponse.Data[0].ID, tagResponse.Data[0].ID);
+                NoteDAL.CreateNoteTag(noteReponse.Data[0].ID, tagResponse.Data[0].ID);
             }
 
-            notereponse = GetByTitle(_note.Title);
+            noteReponse = GetByTitle(_note.Title);
 
-            response.AddItem(notereponse.Data[0]);
+            response.AddItem(noteReponse.Data[0]);
 
             return response;
         }
 
         //what if somebody usses a tag with a hashtag in it like #C#
+        //aslo move this to the Note Class
         public Note AddTags(Note _note)
         {
             string[] allWords = _note.Text.Split(" ");
@@ -265,18 +270,18 @@ namespace NoteBaseLogic
                 NoteDAL.CreateNoteTag(_note.ID, tagResponse.Data[0].ID);
             }
 
-            notereponse = GetByTitle(_note.Title);
+            notereponse = GetById(_note.ID);
 
             response.AddItem(notereponse.Data[0]);
 
             return response;
         }
 
-        public Response<Note> Delete(int _noteId)
+        public Response<Note> Delete(Note _note, int _PersonId)
         {
             Response<Note> response = new(false);
 
-            Response<Note> noteReponse = GetById(_noteId);
+            Response<Note> noteReponse = GetById(_note.ID);
             if (noteReponse.Data.Count == 0)
             {
                 response.Message = "Note doesn't exist";
@@ -285,23 +290,35 @@ namespace NoteBaseLogic
             }
 
 
-            DALResponse<NoteDTO> noteDalReponse = NoteDAL.DeleteNoteTag(_noteId);
+            DALResponse<NoteDTO> noteDalReponse = NoteDAL.DeleteNoteTag(_note.ID);
             if (!noteDalReponse.Succeeded)
             {
-                response.Message = noteDalReponse.Message;
+                response = new(noteDalReponse.Succeeded)
+                {
+                    Message = noteDalReponse.Message,
+                    Code = noteDalReponse.Code
+                };
 
                 return response;
             }
 
-            DALResponse<NoteDTO> noteDALreponse = NoteDAL.Delete(_noteId);
+            noteDalReponse = NoteDAL.Delete(_note.ID);
 
-            response = new(noteDALreponse.Succeeded)
+            if (!noteDalReponse.Succeeded)
             {
-                Message = noteDALreponse.Message,
-                Code = noteDALreponse.Code
-            };
+                response = new(noteDalReponse.Succeeded)
+                {
+                    Message = noteDalReponse.Message,
+                    Code = noteDalReponse.Code
+                };
 
-            TagProcessor.DeleteWithoutNote();
+                return response;
+            }
+
+            foreach (Tag tag in _note.TagList)
+            {
+                TagProcessor.TryDelete(tag.ID, _PersonId);
+            }
 
             return response;
         }

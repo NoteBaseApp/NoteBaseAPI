@@ -333,7 +333,56 @@ namespace NoteBaseDAL
 
         public DALResponse<NoteDTO> Update(NoteDTO _note)
         {
-            throw new NotImplementedException();
+            DALResponse<NoteDTO> response = new(true);
+
+            try
+            {
+                using (SqlConnection connection = new(ConnString))
+                {
+                    string query = @"UPDATE Note SET Title = @Title, Text = @Text, CategoryID = @CategoryID, PersonId = @PersonId WHERE ID = @ID";
+
+                    using (SqlCommand command = new(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Title", _note.Title);
+                        command.Parameters.AddWithValue("@Text", _note.Text);
+                        command.Parameters.AddWithValue("@CategoryID", _note.CategoryId);
+                        command.Parameters.AddWithValue("@PersonId", _note.PersonId);
+                        command.Parameters.AddWithValue("@ID", _note.ID);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            int result = reader.GetInt32(0);
+                            if (result == 0)
+                            {
+                                response.Succeeded = false;
+                                response.Message = "NoteDAL.Update(" + _note.ID + ") ERROR: Could not Update Note";
+                            }
+                        }
+                        connection.Close();
+                    }
+                }
+            }
+            //het opvangen van een mogelijke error
+            catch (SqlException e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.Update(" + _note.ID + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
+            }
+            catch (Exception e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.Update(" + _note.ID + ") ERROR: " + e.Message
+                };
+            }
+
+            return response;
         }
 
         public DALResponse<NoteDTO> Delete(int _noteId)

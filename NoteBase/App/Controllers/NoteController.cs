@@ -158,10 +158,24 @@ namespace App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
+            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+            person = personResponse.Data[0];
+
             ViewBag.Post = true;
             try
             {
-                Response<Note> response = noteProcessor.Delete(id);
+                Response<Note> response = noteProcessor.GetById(id);
+
+                if (!response.Succeeded)
+                {
+                    ViewBag.Succeeded = response.Succeeded;
+                    ViewBag.Message = response.Message;
+                    ViewBag.Code = response.Code;
+
+                    return View();
+                }
+
+                response = noteProcessor.Delete(response.Data[0], person.ID);
 
                 ViewBag.Succeeded = response.Succeeded;
                 ViewBag.Message = response.Message;

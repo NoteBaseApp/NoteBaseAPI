@@ -114,7 +114,7 @@ namespace NoteBaseDAL
         }
 
         //need to remake this for using person id
-        public DALResponse<TagDTO> GetByPerson(string _userMail)
+        public DALResponse<TagDTO> GetByPerson(int _PersonId)
         {
             DALResponse<TagDTO> response = new(true);
 
@@ -122,11 +122,11 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"SELECT ID, Title FROM NoteTags WHERE UserMail = @UserMail";
+                    string query = @"SELECT ID, Title FROM NoteTags WHERE PersonId = @PersonId";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@UserMail", _userMail);
+                        command.Parameters.AddWithValue("@PersonId", _PersonId);
                         connection.Open();
 
                         SqlDataReader reader = command.ExecuteReader();
@@ -144,7 +144,7 @@ namespace NoteBaseDAL
             {
                 response = new(false)
                 {
-                    Message = "TagDAL.Get(" + _userMail + ") ERROR: " + e.Message,
+                    Message = "TagDAL.Get(" + _PersonId + ") ERROR: " + e.Message,
                     Code = e.Number
                 };
             }
@@ -152,7 +152,7 @@ namespace NoteBaseDAL
             {
                 response = new(false)
                 {
-                    Message = "TagDAL.Get(" + _userMail + ") ERROR: " + e.Message,
+                    Message = "TagDAL.Get(" + _PersonId + ") ERROR: " + e.Message,
                 };
             }
 
@@ -249,6 +249,49 @@ namespace NoteBaseDAL
             return response;
         }
 
+        /*public DALResponse<TagDTO> GetTagWithNote()
+        {
+            DALResponse<TagDTO> response = new(true);
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnString))
+                {
+                    string query = @"SELECT DISTINCT TagID From NoteTag";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            TagDTO tripDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
+
+                            response.AddItem(tripDTO);
+                        }
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(false)
+                {
+                    Message = "TagDAL.GetTagWithNote() ERROR: " + e.Message,
+                    Code = e.Number
+                };
+            }
+            catch (Exception e)
+            {
+                response = new(false)
+                {
+                    Message = "TagDAL.GetTagWithNote() ERROR: " + e.Message
+                };
+            }
+
+            return response;
+        }*/
 
         public DALResponse<TagDTO> Update(TagDTO _tag)
         {

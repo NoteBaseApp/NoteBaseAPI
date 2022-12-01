@@ -45,9 +45,9 @@ namespace NoteBaseLogic
         }
 
         //need to remake this for using person id
-        public Response<Tag> GetByPerson(string _personMail)
+        public Response<Tag> GetByPerson(int _PersonId)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_personMail);
+            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_PersonId);
             Response<Tag> response = new(DALreponse.Succeeded)
             {
                 Message = DALreponse.Message
@@ -96,28 +96,28 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Tag> Delete(int _tagId)
+        public Response<Tag> TryDelete(int _tagId, int _PersonId)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.Delete(_tagId);
+            Response<Tag> response = new(true);
 
-            List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
-            Tag tag = new Tag(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+            IReadOnlyList<Tag> allTags = GetByPerson(_PersonId).Data;
 
-            //create response
-            Response<Tag> response = new(DALreponse.Succeeded)
+            foreach (Tag tag in allTags)
             {
-                Message = DALreponse.Message
-            };
-            response.AddItem(tag);
+                if (tag.ID == _tagId)
+                {
+                    response = new(false)
+                    {
+                        Message = "Tag is still in used in a note",
+                    };
+
+                    return response;
+                }
+            }
+
+            TagDAL.Delete(_tagId);
 
             return response;
-        }
-
-        public Response<Tag> DeleteWithoutNote()
-        {
-            //get every tag without notetag
-
-            //call this.delete
         }
     }
 }

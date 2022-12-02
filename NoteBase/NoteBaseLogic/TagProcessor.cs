@@ -32,7 +32,7 @@ namespace NoteBaseLogic
             DALResponse<TagDTO> DALreponse = TagDAL.GetById(_tagId);
 
             List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
-            Tag tag = new(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+            Tag tag = new(resposeTagDTO[0]);
 
             //create response
             Response<Tag> response = new(DALreponse.Succeeded)
@@ -55,7 +55,7 @@ namespace NoteBaseLogic
 
             foreach (TagDTO tagDTO in DALreponse.Data)
             {
-                Tag tag = new(tagDTO.ID, tagDTO.Title);
+                Tag tag = new(tagDTO);
                 response.AddItem(tag);
             }
 
@@ -72,7 +72,7 @@ namespace NoteBaseLogic
 
             foreach (TagDTO tagDTO in DALreponse.Data)
             {
-                Tag tag = new(tagDTO.ID, tagDTO.Title);
+                Tag tag = new(tagDTO);
                 response.AddItem(tag);
             }
 
@@ -81,7 +81,7 @@ namespace NoteBaseLogic
 
         public Response<Tag> Update(Tag _tag)
         {
-            TagDTO tagDTO = new(_tag.ID, _tag.Title);
+            TagDTO tagDTO = _tag.ToDTO();
 
             DALResponse<TagDTO> DALreponse = TagDAL.Update(tagDTO);
 

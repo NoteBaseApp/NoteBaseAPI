@@ -61,23 +61,8 @@ namespace App.Controllers
 
             Category category = categoryResponse.Data[0];
             category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
-            CategoryModel categoryModel = new(category.ID, category.Title, category.PersonId);
 
-            foreach (Note note in category.NoteList)
-            {
-                NoteModel noteModel = new(note.ID, note.Title, note.Text, note.CategoryId);
-
-                foreach (Tag tag in note.TagList)
-                {
-                    TagModel tagModel = new(tag.ID, tag.Title);
-
-                    noteModel.AddTag(tagModel);
-                }
-
-                categoryModel.AddNote(noteModel);
-            }
-
-            categoryModelResponse.AddItem(categoryModel);
+            categoryModelResponse.AddItem(new(category));
 
             return View(categoryModelResponse);
 
@@ -137,7 +122,7 @@ namespace App.Controllers
             }
 
             ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
-            categoryModelResponse.AddItem(new CategoryModel(categoryResponse.Data[0].ID, categoryResponse.Data[0].Title, categoryResponse.Data[0].PersonId));
+            categoryModelResponse.AddItem(new(categoryResponse.Data[0]));
 
             return View(categoryModelResponse.Data[0]);
         }

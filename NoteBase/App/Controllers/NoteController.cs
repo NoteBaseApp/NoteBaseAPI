@@ -42,16 +42,7 @@ namespace App.Controllers
                 return View(noteResponseModel);
             }
 
-            NoteModel noteModel = new(noteResponse.Data[0].ID, noteResponse.Data[0].Title, noteResponse.Data[0].Text, noteResponse.Data[0].CategoryId);
-
-            foreach (Tag tag in noteResponse.Data[0].TagList)
-            {
-                TagModel tagModel = new(tag.ID, tag.Title);
-
-                noteModel.AddTag(tagModel);
-            }
-
-            noteResponseModel.AddItem(noteModel);
+            noteResponseModel.AddItem(new(noteResponse.Data[0]));
 
             return View(noteResponseModel);
         }
@@ -67,24 +58,7 @@ namespace App.Controllers
 
             foreach (Category category in categoryResponse.Data)
             {
-                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
-                CategoryModel categoryModel = new(category.ID, category.Title, category.PersonId);
-
-                foreach (Note note in category.NoteList)
-                {
-                    NoteModel noteModel = new(note.ID, note.Title, note.Text, note.CategoryId);
-
-                    foreach (Tag tag in note.TagList)
-                    {
-                        TagModel tagModel = new(tag.ID, tag.Title);
-
-                        noteModel.AddTag(tagModel);
-                    }
-
-                    categoryModel.AddNote(noteModel);
-                }
-
-                categorymodellist.Add(categoryModel);
+                categorymodellist.Add(new(category));
             }
             ViewBag.CategoryList = categorymodellist;
 
@@ -141,24 +115,7 @@ namespace App.Controllers
 
             foreach (Category category in categoryResponse.Data)
             {
-                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
-                CategoryModel categoryModel = new(category.ID, category.Title, category.PersonId);
-
-                foreach (Note note in category.NoteList)
-                {
-                    NoteModel noteModel = new(note.ID, note.Title, note.Text, note.CategoryId);
-
-                    foreach (Tag tag in note.TagList)
-                    {
-                        TagModel tagModel = new(tag.ID, tag.Title);
-
-                        noteModel.AddTag(tagModel);
-                    }
-
-                    categoryModel.AddNote(noteModel);
-                }
-
-                categorymodellist.Add(categoryModel);
+                categorymodellist.Add(new(category));
             }
             ViewBag.CategoryList = categorymodellist;
 
@@ -193,24 +150,7 @@ namespace App.Controllers
 
                 foreach (Category category in categoryResponse.Data)
                 {
-                    category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
-                    CategoryModel categoryModel = new(category.ID, category.Title, category.PersonId);
-
-                    foreach (Note note in category.NoteList)
-                    {
-                        NoteModel catNoteModel = new(note.ID, note.Title, note.Text, note.CategoryId);
-
-                        foreach (Tag tag in note.TagList)
-                        {
-                            TagModel tagModel = new(tag.ID, tag.Title);
-
-                            catNoteModel.AddTag(tagModel);
-                        }
-
-                        categoryModel.AddNote(catNoteModel);
-                    }
-
-                    categorymodellist.Add(categoryModel);
+                    categorymodellist.Add(new(category));
                 }
                 ViewBag.CategoryList = categorymodellist;
 

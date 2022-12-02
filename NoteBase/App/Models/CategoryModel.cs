@@ -1,4 +1,5 @@
-﻿using NoteBaseLogicInterface.Models;
+﻿using NoteBaseDALInterface.Models;
+using NoteBaseLogicInterface.Models;
 using System.ComponentModel;
 
 namespace App.Models
@@ -19,6 +20,18 @@ namespace App.Models
             ID = _id;
             Title = _title;
             PersonId = _personId;
+        }
+
+        public CategoryModel(Category _category)
+        {
+            ID = _category.ID;
+            Title = _category.Title;
+            PersonId = _category.PersonId;
+
+            foreach (Note note in _category.NoteList)
+            {
+                AddNote(new(note));
+            }
         }
 
         public Category ToLogicModel()

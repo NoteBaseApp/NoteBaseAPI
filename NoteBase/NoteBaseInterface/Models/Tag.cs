@@ -13,6 +13,12 @@ namespace NoteBaseLogicInterface.Models
             Title = _title;
         }
 
+        public Tag(TagDTO _tagDTO)
+        {
+            ID = _tagDTO.ID;
+            Title = _tagDTO.Title;
+        }
+
         public TagDTO ToDTO()
         {
             return new TagDTO(ID, Title);

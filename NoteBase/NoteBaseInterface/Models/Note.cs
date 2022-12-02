@@ -26,6 +26,24 @@ namespace NoteBaseLogicInterface.Models
             CategoryId = _categoryId;
         }
 
+        public Note(NoteDTO _noteDTO)
+        {
+            ID = _noteDTO.ID;
+            Title = _noteDTO.Title;
+            Text = _noteDTO.Text;
+            CategoryId = _noteDTO.CategoryId;
+            PersonId = _noteDTO.PersonId;
+
+            foreach (TagDTO tagDTO in _noteDTO.TagList)
+            {
+                Tag tag = new Tag(tagDTO);
+                if (IsTagCompatible(tag))
+                {
+                    TryAddTag(tag);
+                }
+            }
+        }
+
         public NoteDTO ToDTO()
         {
             NoteDTO noteDTO = new NoteDTO(ID, Title, Text, CategoryId);
@@ -39,6 +57,25 @@ namespace NoteBaseLogicInterface.Models
             }
 
             return noteDTO;
+        }
+
+        //what if somebody usses a tag with a hashtag in it like #C#
+        //aslo move this to the Note Class
+        public void AddTags()
+        {
+            string[] allWords = Text.Split(" ");
+            for (int i = 0; i < allWords.Length; i++)
+            {
+                string word = allWords[i];
+                if (word.StartsWith("#"))
+                {
+                    Tag tag = new(i, word.Substring(1).ToLower());
+                    if (IsTagCompatible(tag))
+                    {
+                        TryAddTag(tag);
+                    }
+                }
+            }
         }
 
         public void TryAddTag(Tag _tag)

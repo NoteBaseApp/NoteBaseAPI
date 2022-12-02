@@ -26,7 +26,7 @@ namespace NoteBaseLogic
                 Message = DALreponse.Message
             };
 
-            Person person = new(DALreponse.Data[0].ID, DALreponse.Data[0].Name, DALreponse.Data[0].Email);
+            Person person = new(DALreponse.Data[0]);
             response.AddItem(person);
 
             return response;

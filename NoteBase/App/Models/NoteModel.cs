@@ -28,6 +28,19 @@ namespace App.Models
             CategoryId = _categoryId;
         }
 
+        public NoteModel(Note _note)
+        {
+            ID = _note.ID;
+            Title = _note.Title;
+            Text = _note.Text;
+            CategoryId = _note.CategoryId;
+
+            foreach (Tag tag in _note.TagList)
+            {
+                AddTag(new(tag));
+            }
+        }
+
         public Note ToLogicModel()
         {
             Note note = new Note(ID, Title, Text, CategoryId);

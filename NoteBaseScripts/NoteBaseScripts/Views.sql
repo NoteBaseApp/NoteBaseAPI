@@ -34,8 +34,11 @@ JOIN NoteTag AS NT
 SELECT T.ID, T.Title
 FROM Tag AS T
 
-DELETE FROM Tag 
-WHERE ID = 6
+SELECT * 
+FROM Note
+
+DELETE FROM Note 
+WHERE ID = 1021
 
 SELECT ID, Title FROM NoteTags
 WHERE PersonId = 1;

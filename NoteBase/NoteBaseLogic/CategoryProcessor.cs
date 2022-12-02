@@ -48,7 +48,7 @@ namespace NoteBaseLogic
             }
 
             DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetByTitle(_cat.Title);
-            response.AddItem(new(catDALreponseGet.Data[0].ID, catDALreponseGet.Data[0].Title, catDALreponseGet.Data[0].PersonId));
+            response.AddItem(new(catDALreponseGet.Data[0]));
 
             return response;
         }
@@ -68,7 +68,7 @@ namespace NoteBaseLogic
                 return response;
             }
 
-            Category category = new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId);
+            Category category = new(catDALreponse.Data[0]);
 
             response.AddItem(category);
 
@@ -85,9 +85,9 @@ namespace NoteBaseLogic
                 Code = catDALreponse.Code
             };
 
-            foreach (CategoryDTO item in catDALreponse.Data)
+            foreach (CategoryDTO categoryDTO in catDALreponse.Data)
             {
-                response.AddItem(new(item.ID, item.Title, item.PersonId));
+                response.AddItem(new(categoryDTO));
             }
 
             return response;
@@ -103,7 +103,7 @@ namespace NoteBaseLogic
                 Code = catDALreponse.Code
             };
 
-            response.AddItem(new(catDALreponse.Data[0].ID, catDALreponse.Data[0].Title, catDALreponse.Data[0].PersonId));
+            response.AddItem(new(catDALreponse.Data[0]));
 
             return response;
         }
@@ -141,7 +141,7 @@ namespace NoteBaseLogic
             }
 
             DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetById(_cat.ID);
-            response.AddItem(new(catDALreponseGet.Data[0].ID, catDALreponseGet.Data[0].Title, catDALreponseGet.Data[0].PersonId));
+            response.AddItem(new(catDALreponseGet.Data[0]));
 
             return response;
         }

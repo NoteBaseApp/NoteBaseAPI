@@ -27,7 +27,7 @@ namespace NoteBaseLogic
                 return noteReponse;
             }
 
-            _note = AddTags(_note);
+            _note.AddTags();
             DALResponse<NoteDTO> noteDALreponse = NoteDAL.Create(_note.ToDTO());
             if (noteDALreponse.Succeeded)
             {
@@ -74,27 +74,6 @@ namespace NoteBaseLogic
             return response;
         }
 
-        //what if somebody usses a tag with a hashtag in it like #C#
-        //aslo move this to the Note Class
-        public Note AddTags(Note _note)
-        {
-            string[] allWords = _note.Text.Split(" ");
-            for (int i = 0; i < allWords.Length; i++)
-            {
-                string word = allWords[i];
-                if (word.StartsWith("#"))
-                {
-                    Tag tag = new(i, word.Substring(1).ToLower());
-                    if (_note.IsTagCompatible(tag))
-                    {
-                        _note.TryAddTag(tag);
-                    }
-                }
-            }
-
-            return _note;
-        }
-
         public Response<Note> GetById(int _noteId)
         {
             DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetById(_noteId);
@@ -110,19 +89,7 @@ namespace NoteBaseLogic
                 return response;
             }
 
-            NoteDTO noteDTO = noteDALreponse.Data[0];
-
-            Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId);
-
-            foreach (TagDTO tagDTO in noteDTO.TagList)
-            {
-                Tag tag = new(tagDTO.ID, tagDTO.Title);
-
-                if (note.IsTagCompatible(tag))
-                {
-                    note.TryAddTag(tag);
-                }
-            }
+            Note note = new(noteDALreponse.Data[0]);
 
             response.AddItem(note);
 
@@ -141,19 +108,7 @@ namespace NoteBaseLogic
 
             foreach (NoteDTO noteDTO in noteDALreponse.Data)
             {
-                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId);
-
-                foreach (TagDTO tagDTO in noteDTO.TagList)
-                {
-                    Tag tag = new(tagDTO.ID, tagDTO.Title);
-
-                    if (note.IsTagCompatible(tag))
-                    {
-                        note.TryAddTag(tag);
-                    }
-                }
-
-                response.AddItem(note);
+                response.AddItem(new(noteDTO));
             }
 
             return response;
@@ -170,21 +125,7 @@ namespace NoteBaseLogic
                 Code = noteDALreponse.Code
             };
 
-            NoteDTO noteDTO = noteDALreponse.Data[0];
-
-            Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId);
-
-            foreach (TagDTO tagDTO in noteDTO.TagList)
-            {
-                Tag tag = new(tagDTO.ID, tagDTO.Title);
-
-                if (note.IsTagCompatible(tag))
-                {
-                    note.TryAddTag(tag);
-                }
-            }
-
-            response.AddItem(note);
+            response.AddItem(new(noteDALreponse.Data[0]));
 
             return response;
         }
@@ -201,19 +142,7 @@ namespace NoteBaseLogic
 
             foreach (NoteDTO noteDTO in noteDALreponse.Data)
             {
-                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId);
-
-                foreach (TagDTO tagDTO in noteDTO.TagList)
-                {
-                    Tag tag = new(tagDTO.ID, tagDTO.Title);
-
-                    if (note.IsTagCompatible(tag))
-                    {
-                        note.TryAddTag(tag);
-                    }
-                }
-
-                response.AddItem(note);
+                response.AddItem(new(noteDTO));
             }
 
             return response;
@@ -230,7 +159,7 @@ namespace NoteBaseLogic
                 return notereponse;
             }
 
-            _note = AddTags(_note);
+            _note.AddTags();
             DALResponse<NoteDTO> noteDALreponse = NoteDAL.Update(_note.ToDTO());
             if (noteDALreponse.Succeeded)
             {

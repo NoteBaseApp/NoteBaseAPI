@@ -92,16 +92,15 @@ namespace NoteBaseLogic.Tests
             
             //Arrage
             Note note = new(1, "test", "Dit is een #Test voor mijn #Tag selector en het toevoegen van een #Note", 1);
-            NoteProcessor processor = Factory.CreateNoteProcessor();
 
             List<Tag> expected = new() { new Tag(0, "test"), new Tag(1, "tag") , new Tag(2, "note") };
             //Act
-            Note actual = processor.AddTags(note);
+            note.AddTags();
 
             //Assert
             for (int i = 0; i < expected.Count; i++)
             {
-                Assert.AreEqual(expected[i].Title, actual.TagList[i].Title);
+                Assert.AreEqual(expected[i].Title, note.TagList[i].Title);
             }
             
         }

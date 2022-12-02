@@ -16,6 +16,12 @@ namespace App.Models
             Title = _title;
         }
 
+        public TagModel(Tag _tag)
+        {
+            ID = _tag.ID;
+            Title = _tag.Title;
+        }
+
         public Tag ToLogicModel()
         {
             return new Tag(ID, Title);

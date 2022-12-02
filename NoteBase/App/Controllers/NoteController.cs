@@ -70,11 +70,11 @@ namespace App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
-            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-            person = personResponse.Data[0];
-
             try
             {
+                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+                person = personResponse.Data[0];
+
                 NoteModel NoteModel = new(0, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]));
                 NoteModel.PersonId = person.ID;
                 Response<Note> response = noteProcessor.Create(NoteModel.ToLogicModel());
@@ -111,33 +111,43 @@ namespace App.Controllers
         // GET: Note/Edit/5
         public ActionResult Edit(int id)
         {
-            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-            person = personResponse.Data[0];
-
-            Response<Note> noteResponse = noteProcessor.GetById(id);
-
-            ResponseModel<NoteModel> noteModelResponse = new(noteResponse.Succeeded);
-            noteModelResponse.AddItem(new NoteModel(noteResponse.Data[0].ID, noteResponse.Data[0].Title, noteResponse.Data[0].Text, noteResponse.Data[0].CategoryId));
-
-            Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
-            List<CategoryModel> categorymodellist = new();
-
-            foreach (Category category in categoryResponse.Data)
+            try 
             {
-                categorymodellist.Add(new(category));
+                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+                person = personResponse.Data[0];
+
+                Response<Note> noteResponse = noteProcessor.GetById(id);
+
+                ResponseModel<NoteModel> noteModelResponse = new(noteResponse.Succeeded);
+                noteModelResponse.AddItem(new NoteModel(noteResponse.Data[0].ID, noteResponse.Data[0].Title, noteResponse.Data[0].Text, noteResponse.Data[0].CategoryId));
+
+                Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
+                List<CategoryModel> categorymodellist = new();
+
+                foreach (Category category in categoryResponse.Data)
+                {
+                    categorymodellist.Add(new(category));
+                }
+                ViewBag.CategoryList = categorymodellist;
+
+                if (!noteResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = noteResponse.Succeeded;
+                    ViewBag.Message = noteResponse.Message;
+                    ViewBag.Code = noteResponse.Code;
+
+                    return View();
+                }
+
+                return View(noteModelResponse.Data[0]);
+
             }
-            ViewBag.CategoryList = categorymodellist;
-
-            if (!noteResponse.Succeeded)
+            catch (Exception e)
             {
-                ViewBag.Succeeded = noteResponse.Succeeded;
-                ViewBag.Message = noteResponse.Message;
-                ViewBag.Code = noteResponse.Code;
-
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
                 return View();
             }
-
-            return View(noteModelResponse.Data[0]);
 
         }
 
@@ -146,11 +156,11 @@ namespace App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
         {
-            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-            person = personResponse.Data[0];
-
             try
             {
+                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+                person = personResponse.Data[0];
+
                 NoteModel noteModel = new(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]));
                 Response<Note> response = noteProcessor.Update(noteModel.ToLogicModel());
 
@@ -196,12 +206,12 @@ namespace App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
-            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-            person = personResponse.Data[0];
-
             ViewBag.Post = true;
             try
             {
+                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+                person = personResponse.Data[0];
+
                 Response<Note> response = noteProcessor.GetById(id);
 
                 if (!response.Succeeded)

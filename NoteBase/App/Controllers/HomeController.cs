@@ -30,27 +30,35 @@ namespace App.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-            person = personResponse.Data[0];
-
-            ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
-            Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
-
-            Response<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded) 
-            { 
-                Code = categoryResponse.Code,
-                Message = categoryResponse.Message
-            };
-
-            foreach (Category category in categoryResponse.Data)
+            try
             {
-                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+                person = personResponse.Data[0];
+
+                ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
+                Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
+
+                Response<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded) 
+                { 
+                    Code = categoryResponse.Code,
+                    Message = categoryResponse.Message
+                };
+
+                foreach (Category category in categoryResponse.Data)
+                {
+                    category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
                 
-                categoryModelResponse.AddItem(new(category));
+                    categoryModelResponse.AddItem(new(category));
+                }
+
+                return View(categoryModelResponse);
             }
-
-
-            return View(categoryModelResponse);
+            catch (Exception e)
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
+                return View();
+            }
         }
 
         public IActionResult Privacy()

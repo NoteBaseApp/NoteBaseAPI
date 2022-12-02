@@ -60,5 +60,10 @@ namespace NoteBaseLogicTests.TestDALs
         {
             throw new NotImplementedException();
         }
+
+        public DALResponse<TagDTO> GetByPerson(int _PersonId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

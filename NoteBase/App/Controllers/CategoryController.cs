@@ -35,7 +35,8 @@ namespace App.Controllers
             Response<Category> categoryResponse = categoryProcessor.GetById(id);
             ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
 
-            for (int i = 0; i < 10; i++)
+            //trying to fix not loading after adding category
+            /* for (int i = 0; i < 10; i++)
             {
                 categoryResponse = categoryProcessor.GetById(id);
                 categoryModelResponse = new(categoryResponse.Succeeded)
@@ -50,7 +51,7 @@ namespace App.Controllers
                 }
 
                 Thread.Sleep(50);
-            }
+            } */
 
             if (categoryResponse.Data.Count == 0)
             {

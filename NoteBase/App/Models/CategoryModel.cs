@@ -1,8 +1,5 @@
-﻿using NoteBaseDALInterface.Models;
-using NoteBaseLogicInterface.Models;
+﻿using NoteBaseLogicInterface.Models;
 using System.ComponentModel;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace App.Models
 {
@@ -36,9 +33,9 @@ namespace App.Models
             return category;
         }
 
-        public void AddNote(NoteModel _tag)
+        public void AddNote(NoteModel _note)
         {
-            noteList.Add(_tag);
+            noteList.Add(_note);
         }
     }
 }

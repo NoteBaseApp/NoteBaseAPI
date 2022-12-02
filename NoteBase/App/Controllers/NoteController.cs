@@ -79,6 +79,15 @@ namespace App.Controllers
                 NoteModel.PersonId = person.ID;
                 Response<Note> response = noteProcessor.Create(NoteModel.ToLogicModel());
 
+                Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
+                List<CategoryModel> categorymodellist = new();
+
+                foreach (Category category in categoryResponse.Data)
+                {
+                    categorymodellist.Add(new(category));
+                }
+                ViewBag.CategoryList = categorymodellist;
+
                 if (!response.Succeeded)
                 {
                     ViewBag.Succeeded = response.Succeeded;

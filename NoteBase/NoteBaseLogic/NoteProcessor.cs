@@ -20,6 +20,20 @@ namespace NoteBaseLogic
         {
             Response<Note> noteReponse = new(false);
 
+            if (_note.Title == "")
+            {
+                noteReponse.Message = "Title can't be empty";
+
+                return noteReponse;
+            }
+
+            if (_note.Text == "")
+            {
+                noteReponse.Message = "Text can't be empty";
+
+                return noteReponse;
+            }
+
             if (_note.CategoryId == 0)
             {
                 noteReponse.Message = "No valid category was given";

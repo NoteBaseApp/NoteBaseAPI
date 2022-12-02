@@ -32,7 +32,7 @@ namespace NoteBaseLogic
             DALResponse<TagDTO> DALreponse = TagDAL.GetById(_tagId);
 
             List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
-            Tag tag = new(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+            Tag tag = new(resposeTagDTO[0]);
 
             //create response
             Response<Tag> response = new(DALreponse.Succeeded)
@@ -45,9 +45,9 @@ namespace NoteBaseLogic
         }
 
         //need to remake this for using person id
-        public Response<Tag> GetByPerson(string _personMail)
+        public Response<Tag> GetByPerson(int _PersonId)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_personMail);
+            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_PersonId);
             Response<Tag> response = new(DALreponse.Succeeded)
             {
                 Message = DALreponse.Message
@@ -55,7 +55,7 @@ namespace NoteBaseLogic
 
             foreach (TagDTO tagDTO in DALreponse.Data)
             {
-                Tag tag = new(tagDTO.ID, tagDTO.Title);
+                Tag tag = new(tagDTO);
                 response.AddItem(tag);
             }
 
@@ -72,7 +72,7 @@ namespace NoteBaseLogic
 
             foreach (TagDTO tagDTO in DALreponse.Data)
             {
-                Tag tag = new(tagDTO.ID, tagDTO.Title);
+                Tag tag = new(tagDTO);
                 response.AddItem(tag);
             }
 
@@ -81,7 +81,7 @@ namespace NoteBaseLogic
 
         public Response<Tag> Update(Tag _tag)
         {
-            TagDTO tagDTO = new(_tag.ID, _tag.Title);
+            TagDTO tagDTO = _tag.ToDTO();
 
             DALResponse<TagDTO> DALreponse = TagDAL.Update(tagDTO);
 
@@ -96,19 +96,26 @@ namespace NoteBaseLogic
             return response;
         }
 
-        public Response<Tag> Delete(int _tagId)
+        public Response<Tag> TryDelete(int _tagId, int _PersonId)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.Delete(_tagId);
+            Response<Tag> response = new(true);
 
-            List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
-            Tag tag = new Tag(resposeTagDTO[0].ID, resposeTagDTO[0].Title);
+            IReadOnlyList<Tag> allTags = GetByPerson(_PersonId).Data;
 
-            //create response
-            Response<Tag> response = new(DALreponse.Succeeded)
+            foreach (Tag tag in allTags)
             {
-                Message = DALreponse.Message
-            };
-            response.AddItem(tag);
+                if (tag.ID == _tagId)
+                {
+                    response = new(false)
+                    {
+                        Message = "Tag is still in used in a note",
+                    };
+
+                    return response;
+                }
+            }
+
+            TagDAL.Delete(_tagId);
 
             return response;
         }

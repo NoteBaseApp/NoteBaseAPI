@@ -1,23 +1,26 @@
 ﻿@model App.Models.CategoryModel
 
-<h1>Categorie aanmaken</h1>
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Categorie bewerken</h1>
 <hr/>
 <div class="row">
     @if (ViewBag.Succeeded != null && !ViewBag.Succeeded)
     {
-        <h3>er is iets mis gegaan: @ViewBag.Message</h3>
+        <p>er is iets mis gegaan: @ViewBag.Message</p>
     }
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <br/>
             <div class="form-group">
-                <input type="submit" value="Aanmaken" class="btn btn-primary" />
+                <input type="submit" value="bevestigen" class="btn btn-primary" />
             </div>
         </form>
     </div>

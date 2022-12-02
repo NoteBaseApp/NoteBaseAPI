@@ -45,23 +45,8 @@ namespace App.Controllers
             foreach (Category category in categoryResponse.Data)
             {
                 category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
-                CategoryModel categoryModel = new(category.ID, category.Title, category.PersonId);
-
-                foreach (Note note in category.NoteList)
-                {
-                    NoteModel noteModel = new(note.ID, note.Title, note.Text, note.CategoryId);
-
-                    foreach (Tag tag in note.TagList)
-                    {
-                        TagModel tagModel = new(tag.ID, tag.Title);
-
-                        noteModel.AddTag(tagModel);
-                    }
-
-                    categoryModel.AddNote(noteModel);
-                }
-
-                categoryModelResponse.AddItem(categoryModel);
+                
+                categoryModelResponse.AddItem(new(category));
             }
 
 

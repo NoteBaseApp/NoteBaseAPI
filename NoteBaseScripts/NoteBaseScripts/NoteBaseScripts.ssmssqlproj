@@ -19,35 +19,17 @@
     </LogicalFolder>
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
-        <FileNode Name="Mainscript new.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-AK9JEN2V:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>LAPTOP-AK9JEN2V</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>Mainscript new.sql</FullPath>
-        </FileNode>
         <FileNode Name="Mainscript.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-AK9JEN2V:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>LAPTOP-AK9JEN2V</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>Mainscript.sql</FullPath>
         </FileNode>
-        <FileNode Name="TestData new.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-AK9JEN2V:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>LAPTOP-AK9JEN2V</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>TestData new.sql</FullPath>
-        </FileNode>
         <FileNode Name="TestData.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-AK9JEN2V:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>LAPTOP-AK9JEN2V</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>TestData.sql</FullPath>
-        </FileNode>
-        <FileNode Name="Views new.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-AK9JEN2V:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>LAPTOP-AK9JEN2V</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>Views new.sql</FullPath>
         </FileNode>
         <FileNode Name="Views.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-AK9JEN2V:True</AssociatedConnectionMoniker>

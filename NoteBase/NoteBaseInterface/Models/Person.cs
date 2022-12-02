@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NoteBaseDALInterface.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,18 @@ namespace NoteBaseLogicInterface.Models
             ID = _ID;
             Name = _Name;
             Email = _Email;
+        }
+
+        public Person(PersonDTO personDTO)
+        {
+            ID = personDTO.ID;
+            Name = personDTO.Name;
+            Email = personDTO.Email;
+        }
+
+        public PersonDTO ToDTO()
+        {
+            return new(ID, Name, Email);
         }
     }
 }

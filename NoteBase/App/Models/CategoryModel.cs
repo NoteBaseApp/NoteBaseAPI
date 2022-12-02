@@ -1,7 +1,6 @@
 ﻿using NoteBaseDALInterface.Models;
 using NoteBaseLogicInterface.Models;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
+using System.ComponentModel;
 
 namespace App.Models
 {
@@ -10,6 +9,8 @@ namespace App.Models
         private readonly List<NoteModel> noteList = new();
 
         public int ID { get; set; }
+
+        [DisplayName("Titel")]
         public string Title { get; private set; }
         public IReadOnlyList<NoteModel> NoteList { get { return noteList; } }
         public int PersonId { get; set; }
@@ -19,6 +20,18 @@ namespace App.Models
             ID = _id;
             Title = _title;
             PersonId = _personId;
+        }
+
+        public CategoryModel(Category _category)
+        {
+            ID = _category.ID;
+            Title = _category.Title;
+            PersonId = _category.PersonId;
+
+            foreach (Note note in _category.NoteList)
+            {
+                AddNote(new(note));
+            }
         }
 
         public Category ToLogicModel()
@@ -33,9 +46,9 @@ namespace App.Models
             return category;
         }
 
-        public void AddNote(NoteModel _tag)
+        public void AddNote(NoteModel _note)
         {
-            noteList.Add(_tag);
+            noteList.Add(_note);
         }
     }
 }

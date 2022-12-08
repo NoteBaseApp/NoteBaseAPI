@@ -4,7 +4,7 @@
 <div>
     @if (!Model.Succeeded)
     {
-        <p>er is iets mis gegaan: @Model.Message</p>
+        <p>Er is iets mis gegaan: @Model.Message</p>
     }
     else {
         <h1>@Model.Data[0].Title</h1>
@@ -13,9 +13,16 @@
         <hr/>
 
         <div class="note-container">
-            @foreach (NoteModel note in Model.Data[0].NoteList)
+            @if (Model.Data[0].NoteList.Count() == 0)
             {
-                @Html.Partial("_Note", note)
+                <p>Deze categorie heeft geen notities</p>
+            }
+            else
+            {
+                @foreach (NoteModel note in Model.Data[0].NoteList)
+                {
+                    @Html.Partial("_Note", note)
+                }
             }
         </div>
     }

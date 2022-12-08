@@ -28,41 +28,80 @@ namespace App.Controllers
         // GET: Note/Details/5
         public ActionResult Details(int id)
         {
-
-            Response<Note> noteResponse = noteProcessor.GetById(id);
-            ResponseModel<NoteModel> noteResponseModel = new(noteResponse.Succeeded)
+            try
             {
-                Message = noteResponse.Message,
-                Code = noteResponse.Code
-            };
+                Response<Note> noteResponse = noteProcessor.GetById(id);
+                ResponseModel<NoteModel> noteResponseModel = new(noteResponse.Succeeded)
+                {
+                    Message = noteResponse.Message,
+                    Code = noteResponse.Code
+                };
 
-            if (noteResponse.Data.Count == 0)
-            {
-                noteResponseModel.Succeeded = false;
+                if (!noteResponseModel.Succeeded || noteResponse.Data.Count == 0)
+                {
+                    ViewBag.Succeeded = noteResponseModel.Succeeded;
+                    ViewBag.Message = noteResponseModel.Message;
+                    ViewBag.Code = noteResponseModel.Code;
+
+                    return View(noteResponseModel);
+                }
+
+                noteResponseModel.AddItem(new(noteResponse.Data[0]));
+
                 return View(noteResponseModel);
             }
-
-            noteResponseModel.AddItem(new(noteResponse.Data[0]));
-
-            return View(noteResponseModel);
+            catch (Exception e)
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
+                return View();
+            }
         }
 
         // GET: Note/Create
         public ActionResult Create()
         {
-            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-            person = personResponse.Data[0];
-
-            Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
-            List<CategoryModel> categorymodellist = new();
-
-            foreach (Category category in categoryResponse.Data)
+            try
             {
-                categorymodellist.Add(new(category));
-            }
-            ViewBag.CategoryList = categorymodellist;
+                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
 
-            return View();
+                if (!personResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = personResponse.Succeeded;
+                    ViewBag.Message = personResponse.Message;
+                    ViewBag.Code = personResponse.Code;
+
+                    return View();
+                }
+
+                person = personResponse.Data[0];
+
+                Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
+
+                if (!categoryResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = categoryResponse.Succeeded;
+                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
+                }
+
+                List<CategoryModel> categorymodellist = new();
+                foreach (Category category in categoryResponse.Data)
+                {
+                    categorymodellist.Add(new(category));
+                }
+                ViewBag.CategoryList = categorymodellist;
+
+                return View();
+            }
+            catch (Exception e)
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
+                return View();
+            }
         }
 
         // POST: Note/Create
@@ -73,32 +112,51 @@ namespace App.Controllers
             try
             {
                 Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+
+                if (!personResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = personResponse.Succeeded;
+                    ViewBag.Message = personResponse.Message;
+                    ViewBag.Code = personResponse.Code;
+
+                    return View();
+                }
+
                 person = personResponse.Data[0];
 
                 NoteModel NoteModel = new(0, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]));
                 NoteModel.PersonId = person.ID;
-                Response<Note> response = noteProcessor.Create(NoteModel.ToLogicModel());
+                Response<Note> noteResponse = noteProcessor.Create(NoteModel.ToLogicModel());
+
+                if (!noteResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = noteResponse.Succeeded;
+                    ViewBag.Message = noteResponse.Message;
+                    ViewBag.Code = noteResponse.Code;
+
+                    return View();
+                }
 
                 Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
-                List<CategoryModel> categorymodellist = new();
 
+                if (!categoryResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = categoryResponse.Succeeded;
+                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
+                }
+
+                List<CategoryModel> categorymodellist = new();
                 foreach (Category category in categoryResponse.Data)
                 {
                     categorymodellist.Add(new(category));
                 }
                 ViewBag.CategoryList = categorymodellist;
 
-                if (!response.Succeeded)
-                {
-                    ViewBag.Succeeded = response.Succeeded;
-                    ViewBag.Message = response.Message;
-                    ViewBag.Code = response.Code;
-
-                    return View();
-                }
-
                 //diffrent redirect options? book example
-                return RedirectToAction(nameof(Details), response.Data[0].ID);
+                return RedirectToAction(nameof(Details), noteResponse.Data[0].ID);
             }
             catch(Exception e)
             {
@@ -114,21 +172,19 @@ namespace App.Controllers
             try 
             {
                 Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+
+                if (!personResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = personResponse.Succeeded;
+                    ViewBag.Message = personResponse.Message;
+                    ViewBag.Code = personResponse.Code;
+
+                    return View();
+                }
+
                 person = personResponse.Data[0];
 
                 Response<Note> noteResponse = noteProcessor.GetById(id);
-
-                ResponseModel<NoteModel> noteModelResponse = new(noteResponse.Succeeded);
-                noteModelResponse.AddItem(new NoteModel(noteResponse.Data[0].ID, noteResponse.Data[0].Title, noteResponse.Data[0].Text, noteResponse.Data[0].CategoryId));
-
-                Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
-                List<CategoryModel> categorymodellist = new();
-
-                foreach (Category category in categoryResponse.Data)
-                {
-                    categorymodellist.Add(new(category));
-                }
-                ViewBag.CategoryList = categorymodellist;
 
                 if (!noteResponse.Succeeded)
                 {
@@ -138,6 +194,27 @@ namespace App.Controllers
 
                     return View();
                 }
+
+                ResponseModel<NoteModel> noteModelResponse = new(noteResponse.Succeeded);
+                noteModelResponse.AddItem(new NoteModel(noteResponse.Data[0].ID, noteResponse.Data[0].Title, noteResponse.Data[0].Text, noteResponse.Data[0].CategoryId));
+
+                Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
+
+                if (!categoryResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = categoryResponse.Succeeded;
+                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
+                }
+
+                List<CategoryModel> categorymodellist = new();
+                foreach (Category category in categoryResponse.Data)
+                {
+                    categorymodellist.Add(new(category));
+                }
+                ViewBag.CategoryList = categorymodellist;
 
                 return View(noteModelResponse.Data[0]);
 
@@ -159,31 +236,50 @@ namespace App.Controllers
             try
             {
                 Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+
+                if (!personResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = personResponse.Succeeded;
+                    ViewBag.Message = personResponse.Message;
+                    ViewBag.Code = personResponse.Code;
+
+                    return View();
+                }
+
                 person = personResponse.Data[0];
 
                 NoteModel noteModel = new(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]));
-                Response<Note> response = noteProcessor.Update(noteModel.ToLogicModel());
+                Response<Note> noteResponse = noteProcessor.Update(noteModel.ToLogicModel());
+
+                if (!noteResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = noteResponse.Succeeded;
+                    ViewBag.Message = noteResponse.Message;
+                    ViewBag.Code = noteResponse.Code;
+
+                    return View();
+                }
 
                 Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
-                List<CategoryModel> categorymodellist = new();
 
+                if (!categoryResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = categoryResponse.Succeeded;
+                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
+                }
+
+                List<CategoryModel> categorymodellist = new();
                 foreach (Category category in categoryResponse.Data)
                 {
                     categorymodellist.Add(new(category));
                 }
                 ViewBag.CategoryList = categorymodellist;
 
-                if (!response.Succeeded)
-                {
-                    ViewBag.Succeeded = response.Succeeded;
-                    ViewBag.Message = response.Message;
-                    ViewBag.Code = response.Code;
-
-                    return View();
-                }
-
                 //diffrent redirect options?
-                return RedirectToAction(nameof(Details), response.Data[0].ID);
+                return RedirectToAction(nameof(Details), noteResponse.Data[0].ID);
             }
             catch (Exception e)
             {
@@ -210,24 +306,34 @@ namespace App.Controllers
             try
             {
                 Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-                person = personResponse.Data[0];
 
-                Response<Note> response = noteProcessor.GetById(id);
-
-                if (!response.Succeeded)
+                if (!personResponse.Succeeded)
                 {
-                    ViewBag.Succeeded = response.Succeeded;
-                    ViewBag.Message = response.Message;
-                    ViewBag.Code = response.Code;
+                    ViewBag.Succeeded = personResponse.Succeeded;
+                    ViewBag.Message = personResponse.Message;
+                    ViewBag.Code = personResponse.Code;
 
                     return View();
                 }
 
-                response = noteProcessor.Delete(response.Data[0], person.ID);
+                person = personResponse.Data[0];
 
-                ViewBag.Succeeded = response.Succeeded;
-                ViewBag.Message = response.Message;
-                ViewBag.Code = response.Code;
+                Response<Note> noteResponse = noteProcessor.GetById(id);
+
+                if (!noteResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = noteResponse.Succeeded;
+                    ViewBag.Message = noteResponse.Message;
+                    ViewBag.Code = noteResponse.Code;
+
+                    return View();
+                }
+
+                noteResponse = noteProcessor.Delete(noteResponse.Data[0], person.ID);
+
+                ViewBag.Succeeded = noteResponse.Succeeded;
+                ViewBag.Message = noteResponse.Message;
+                ViewBag.Code = noteResponse.Code;
 
                 return View();
             }

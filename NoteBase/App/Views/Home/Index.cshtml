@@ -12,24 +12,38 @@
     <h1>Notitie overzicht</h1>
     @if (!Model.Succeeded)
     {
-        <p>er is iets mis gegaan: @Model.Message</p>
+        <p>Er is iets mis gegaan: @Model.Message</p>
     }
     else {
-        @foreach (CategoryModel category in Model.Data)
+        @if (Model.Data.Count() == 0)
         {
-            <div>
-                <h2><a asp-controller="Category" asp-action="Details" asp-route-Id="@category.ID">@category.Title</a></h2>
-                <a asp-controller="Category" asp-action="Edit" asp-route-Id="@category.ID">Bewerken</a>
-                <a asp-controller="Category" asp-action="Delete" asp-route-Id="@category.ID">Verwijderen</a>
-                <hr>
+            <p>Je hebt geen categorieën</p>
+        }
+        else
+        {
+            @foreach (CategoryModel category in Model.Data)
+            {
+                <div>
+                    <h2><a asp-controller="Category" asp-action="Details" asp-route-Id="@category.ID">@category.Title</a></h2>
+                    <a asp-controller="Category" asp-action="Edit" asp-route-Id="@category.ID">Bewerken</a>
+                    <a asp-controller="Category" asp-action="Delete" asp-route-Id="@category.ID">Verwijderen</a>
+                    <hr>
 
-                <div class="note-container">
-                    @foreach (NoteModel note in category.NoteList)
-                    {
-                        @Html.Partial("_Note", note)
-                    }
+                    <div class="note-container">
+                        @if (category.NoteList.Count() == 0)
+                        {
+                            <p>Deze categorie heeft geen notities</p>
+                        }
+                        else
+                        {
+                            @foreach (NoteModel note in category.NoteList)
+                            {
+                                @Html.Partial("_Note", note)
+                            }
+                        }
+                    </div>
                 </div>
-            </div>
+            }
         }
     }
 </div>

@@ -33,16 +33,31 @@ namespace App.Controllers
             try
             {
                 Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+
+                if (!personResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = personResponse.Succeeded;
+                    ViewBag.Message = personResponse.Message;
+                    ViewBag.Code = personResponse.Code;
+
+                    return View();
+                }
+
                 person = personResponse.Data[0];
 
                 ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
                 Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
 
-                Response<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded) 
-                { 
-                    Code = categoryResponse.Code,
-                    Message = categoryResponse.Message
-                };
+                if (!categoryResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = categoryResponse.Succeeded;
+                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
+                }
+
+                Response<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
 
                 foreach (Category category in categoryResponse.Data)
                 {

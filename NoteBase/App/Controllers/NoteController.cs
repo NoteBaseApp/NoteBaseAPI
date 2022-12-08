@@ -32,10 +32,19 @@ namespace App.Controllers
             {
                 Response<Note> noteResponse = noteProcessor.GetById(id);
 
-                if (!noteResponse.Succeeded || noteResponse.Data.Count == 0)
+                if (!noteResponse.Succeeded)
                 {
                     ViewBag.Succeeded = noteResponse.Succeeded;
                     ViewBag.Message = noteResponse.Message;
+                    ViewBag.Code = noteResponse.Code;
+
+                    return View();
+                }
+
+                if (noteResponse.Data.Count == 0)
+                {
+                    ViewBag.Succeeded = false;
+                    ViewBag.Message = "Notitie niet gevonden";
                     ViewBag.Code = noteResponse.Code;
 
                     return View();

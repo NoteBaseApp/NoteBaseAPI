@@ -60,8 +60,8 @@ namespace App.Controllers
 
                 if (categoryResponse.Data.Count == 0)
                 {
-                    ViewBag.Succeeded = categoryResponse.Succeeded;
-                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Succeeded = false;
+                    ViewBag.Message = "Categorie niet gevonden";
                     ViewBag.Code = categoryResponse.Code;
 
                     return View();

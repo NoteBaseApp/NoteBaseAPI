@@ -35,7 +35,7 @@ SELECT T.ID, T.Title
 FROM Tag AS T
 
 SELECT * 
-FROM Note
+FROM Tag
 
 DELETE FROM Note 
 WHERE ID = 1021

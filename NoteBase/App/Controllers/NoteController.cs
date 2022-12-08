@@ -31,24 +31,19 @@ namespace App.Controllers
             try
             {
                 Response<Note> noteResponse = noteProcessor.GetById(id);
-                ResponseModel<NoteModel> noteResponseModel = new(noteResponse.Succeeded)
-                {
-                    Message = noteResponse.Message,
-                    Code = noteResponse.Code
-                };
 
-                if (!noteResponseModel.Succeeded || noteResponse.Data.Count == 0)
+                if (!noteResponse.Succeeded || noteResponse.Data.Count == 0)
                 {
-                    ViewBag.Succeeded = noteResponseModel.Succeeded;
-                    ViewBag.Message = noteResponseModel.Message;
-                    ViewBag.Code = noteResponseModel.Code;
+                    ViewBag.Succeeded = noteResponse.Succeeded;
+                    ViewBag.Message = noteResponse.Message;
+                    ViewBag.Code = noteResponse.Code;
 
-                    return View(noteResponseModel);
+                    return View();
                 }
 
-                noteResponseModel.AddItem(new(noteResponse.Data[0]));
+                ViewBag.Succeeded = noteResponse.Succeeded;
 
-                return View(noteResponseModel);
+                return View(new NoteModel(noteResponse.Data[0]));
             }
             catch (Exception e)
             {
@@ -92,7 +87,9 @@ namespace App.Controllers
                 {
                     categorymodellist.Add(new(category));
                 }
+
                 ViewBag.CategoryList = categorymodellist;
+                ViewBag.Succeeded = categoryResponse.Succeeded;
 
                 return View();
             }
@@ -153,7 +150,9 @@ namespace App.Controllers
                 {
                     categorymodellist.Add(new(category));
                 }
+
                 ViewBag.CategoryList = categorymodellist;
+                ViewBag.Succeeded = categoryResponse.Succeeded;
 
                 //diffrent redirect options? book example
                 return RedirectToAction(nameof(Details), noteResponse.Data[0].ID);
@@ -214,7 +213,9 @@ namespace App.Controllers
                 {
                     categorymodellist.Add(new(category));
                 }
+
                 ViewBag.CategoryList = categorymodellist;
+                ViewBag.Succeeded = categoryResponse.Succeeded;
 
                 return View(noteModelResponse.Data[0]);
 
@@ -276,7 +277,9 @@ namespace App.Controllers
                 {
                     categorymodellist.Add(new(category));
                 }
+
                 ViewBag.CategoryList = categorymodellist;
+                ViewBag.Succeeded = categoryResponse.Succeeded;
 
                 //diffrent redirect options?
                 return RedirectToAction(nameof(Details), noteResponse.Data[0].ID);

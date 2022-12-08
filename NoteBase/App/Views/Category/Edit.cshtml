@@ -1,13 +1,9 @@
-﻿@model App.Models.CategoryModel
-
-@{
-    ViewData["Title"] = "Edit";
-}
+﻿@model CategoryModel
 
 <h1>Categorie bewerken</h1>
 <hr/>
 <div class="row">
-    @if (ViewBag.Succeeded != null && !ViewBag.Succeeded)
+    @if (!ViewBag.Succeeded)
     {
         <p>Er is iets mis gegaan: @ViewBag.Message</p>
     }

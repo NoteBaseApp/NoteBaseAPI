@@ -1,27 +1,24 @@
-﻿@model Response<CategoryModel>
-
-@{
-    ViewData["Title"] = "Home Page";
-}
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @using NoteBaseLogicInterface.Models
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
+@model List<CategoryModel>
+
 <div class="">
     <h1>Notitie overzicht</h1>
-    @if (!Model.Succeeded)
+    @if (!ViewBag.Succeeded)
     {
-        <p>Er is iets mis gegaan: @Model.Message</p>
+        <p>Er is iets mis gegaan: @ViewBag.Message</p>
     }
     else {
-        @if (Model.Data.Count() == 0)
+        @if (Model.Count() == 0)
         {
             <p>Je hebt geen categorieën</p>
         }
         else
         {
-            @foreach (CategoryModel category in Model.Data)
+            @foreach (CategoryModel category in Model)
             {
                 <div>
                     <h2><a asp-controller="Category" asp-action="Details" asp-route-Id="@category.ID">@category.Title</a></h2>

@@ -57,16 +57,20 @@ namespace App.Controllers
                     return View();
                 }
 
-                Response<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
+                List<CategoryModel> categoryModelList = new();
 
                 foreach (Category category in categoryResponse.Data)
                 {
                     category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
                 
-                    categoryModelResponse.AddItem(new(category));
+                    categoryModelList.Add(new(category));
                 }
 
-                return View(categoryModelResponse);
+                ViewBag.Succeeded = categoryResponse.Succeeded;
+                ViewBag.Message = categoryResponse.Message;
+                ViewBag.Code = categoryResponse.Code;
+
+                return View(categoryModelList);
             }
             catch (Exception e)
             {

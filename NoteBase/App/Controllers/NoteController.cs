@@ -194,9 +194,6 @@ namespace App.Controllers
                     return View();
                 }
 
-                ResponseModel<NoteModel> noteModelResponse = new(noteResponse.Succeeded);
-                noteModelResponse.AddItem(new NoteModel(noteResponse.Data[0].ID, noteResponse.Data[0].Title, noteResponse.Data[0].Text, noteResponse.Data[0].CategoryId));
-
                 Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
 
                 if (!categoryResponse.Succeeded)
@@ -217,7 +214,7 @@ namespace App.Controllers
                 ViewBag.CategoryList = categorymodellist;
                 ViewBag.Succeeded = categoryResponse.Succeeded;
 
-                return View(noteModelResponse.Data[0]);
+                return View(new NoteModel(noteResponse.Data[0]));
 
             }
             catch (Exception e)

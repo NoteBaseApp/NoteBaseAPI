@@ -55,6 +55,11 @@ namespace NoteBaseLogicTests.TestDALs
             throw new NotImplementedException();
         }
 
+        public DALResponse<NoteDTO> GetByTag(int _tagId)
+        {
+            throw new NotImplementedException();
+        }
+
         public DALResponse<NoteDTO> GetByTitle(string _Title)
         {
             DALResponse<NoteDTO> response = new(true);

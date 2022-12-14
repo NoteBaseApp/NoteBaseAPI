@@ -130,19 +130,6 @@ namespace App.Controllers
 
                 person = personResponse.Data[0];
 
-                NoteModel NoteModel = new(0, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]));
-                NoteModel.PersonId = person.ID;
-                Response<Note> noteResponse = noteProcessor.Create(NoteModel.ToLogicModel());
-
-                if (!noteResponse.Succeeded)
-                {
-                    ViewBag.Succeeded = noteResponse.Succeeded;
-                    ViewBag.Message = noteResponse.Message;
-                    ViewBag.Code = noteResponse.Code;
-
-                    return View();
-                }
-
                 Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
 
                 if (!categoryResponse.Succeeded)
@@ -159,8 +146,20 @@ namespace App.Controllers
                 {
                     categorymodellist.Add(new(category));
                 }
-
                 ViewBag.CategoryList = categorymodellist;
+
+                NoteModel NoteModel = new(0, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]));
+                NoteModel.PersonId = person.ID;
+                Response<Note> noteResponse = noteProcessor.Create(NoteModel.ToLogicModel());
+
+                if (!noteResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = noteResponse.Succeeded;
+                    ViewBag.Message = noteResponse.Message;
+                    ViewBag.Code = noteResponse.Code;
+
+                    return View();
+                }
                 ViewBag.Succeeded = categoryResponse.Succeeded;
 
                 //diffrent redirect options? book example

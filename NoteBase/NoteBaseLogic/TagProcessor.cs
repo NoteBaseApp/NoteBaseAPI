@@ -54,9 +54,9 @@ namespace NoteBaseLogic
         }
 
         //need to remake this for using person id
-        public Response<Tag> GetByPerson(int _PersonId)
+        public Response<Tag> GetByPerson(int _personId)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_PersonId);
+            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_personId);
             Response<Tag> response = new(DALreponse.Succeeded)
             {
                 Message = DALreponse.Message

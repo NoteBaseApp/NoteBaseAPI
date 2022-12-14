@@ -7,12 +7,12 @@ namespace NoteBaseDAL
     public class NoteDAL : INoteDAL
     {
         private readonly string ConnString;
-        private TagDAL tagDAL;
+        private TagDAL TagDAL;
 
         public NoteDAL(string _connString)
         {
             ConnString = _connString;
-            tagDAL = new TagDAL(_connString);
+            TagDAL = new TagDAL(_connString);
         }
 
         public DALResponse<NoteDTO> Create(NoteDTO _note)
@@ -140,7 +140,7 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
 
                             foreach (TagDTO tagDTO in DALResponse.Data)
                             {
@@ -193,7 +193,7 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
 
                             foreach (TagDTO tagDTO in DALResponse.Data)
                             {
@@ -246,7 +246,7 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
 
                             foreach (TagDTO tagDTO in DALResponse.Data)
                             {
@@ -299,7 +299,7 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
 
                             foreach (TagDTO tagDTO in DALResponse.Data)
                             {
@@ -352,7 +352,7 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
 
                             foreach (TagDTO tagDTO in DALResponse.Data)
                             {

@@ -87,6 +87,46 @@ namespace NoteBaseLogic.Tests
         }
 
         [TestMethod()]
+        public void CreateTest_Failed_NoTitle()
+        {
+            //arrange
+            INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
+            Note note = new(0, "", "Ik heb #programeer huiswerk", 1);
+
+            Response<Note> expected = new(false)
+            {
+                Message = "Title can't be empty"
+            };
+
+            //act
+            Response<Note> actual = noteProcessor.Create(note);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Assert.AreEqual(expected.Message, actual.Message);
+        }
+
+        [TestMethod()]
+        public void CreateTest_Failed_NoText()
+        {
+            //arrange
+            INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
+            Note note = new(0, "Huiswerk", "", 1);
+
+            Response<Note> expected = new(false)
+            {
+                Message = "Text can't be empty"
+            };
+
+            //act
+            Response<Note> actual = noteProcessor.Create(note);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Assert.AreEqual(expected.Message, actual.Message);
+        }
+
+        [TestMethod()]
         public void AddTagsTest_Succeed()
         {
             

@@ -21,17 +21,16 @@ namespace NoteBaseLogic.Tests
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
             Category category = new(0, "School", 1);
-            Category expectedCategory = new(12, "School", 1);
-
-            Response<Category> expected = new(true);
-            expected.AddItem(expectedCategory);
 
             //act
             Response<Category> actual = categoryProcessor.Create(category);
 
             //assert
-            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Category expectedCategory = new(12, "School", 1);
+            Response<Category> expected = new(true);
+            expected.AddItem(expectedCategory);
 
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Data[0].ID, actual.Data[0].ID);
             Assert.AreEqual(expected.Data[0].Title, actual.Data[0].Title);
             Assert.AreEqual(expected.Data[0].PersonId, actual.Data[0].PersonId);
@@ -44,15 +43,15 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
             Category category = new(0, "Games", 1);
 
+            //act
+            Response<Category> actual = categoryProcessor.Create(category);
+
+            //assert
             Response<Category> expected = new(false)
             {
                 Message = "Category With this title already exists"
             };
 
-            //act
-            Response<Category> actual = categoryProcessor.Create(category);
-
-            //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Message, actual.Message);
         }
@@ -64,15 +63,15 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
             Category category = new(0, "", 1);
 
+            //act
+            Response<Category> actual = categoryProcessor.Create(category);
+
+            //assert
             Response<Category> expected = new(false)
             {
                 Message = "Title can't be empty"
             };
 
-            //act
-            Response<Category> actual = categoryProcessor.Create(category);
-
-            //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Message, actual.Message);
         }
@@ -83,12 +82,12 @@ namespace NoteBaseLogic.Tests
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
 
-            Response<Category> expected = new(true);
-
             //act
             Response<Category> actual = categoryProcessor.Delete(1);
 
             //assert
+            Response<Category> expected = new(true);
+
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
         }
 
@@ -98,15 +97,15 @@ namespace NoteBaseLogic.Tests
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
 
-            Response<Category> expected = new(false) 
-            { 
-                Message = "Notes exist with this category"
-            };
-
             //act
             Response<Category> actual = categoryProcessor.Delete(2);
 
             //assert
+            Response<Category> expected = new(false)
+            {
+                Message = "Notes exist with this category"
+            };
+
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Message, actual.Message);
         }
@@ -117,15 +116,15 @@ namespace NoteBaseLogic.Tests
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
 
+            //act
+            Response<Category> actual = categoryProcessor.Delete(999);
+
+            //assert
             Response<Category> expected = new(false)
             {
                 Message = "Category doesn't exist"
             };
 
-            //act
-            Response<Category> actual = categoryProcessor.Delete(999);
-
-            //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Message, actual.Message);
         }
@@ -136,17 +135,16 @@ namespace NoteBaseLogic.Tests
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
             Category category = new(1, "Games", 1);
-            Category expectedCategory = new(1, "Games", 1);
-
-            Response<Category> expected = new(true);
-            expected.AddItem(expectedCategory);
 
             //act
             Response<Category> actual = categoryProcessor.Update(category);
 
             //assert
-            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Category expectedCategory = new(1, "Games", 1);
+            Response<Category> expected = new(true);
+            expected.AddItem(expectedCategory);
 
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Data[0].ID, actual.Data[0].ID);
             Assert.AreEqual(expected.Data[0].Title, actual.Data[0].Title);
             Assert.AreEqual(expected.Data[0].PersonId, actual.Data[0].PersonId);
@@ -159,15 +157,15 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
             Category category = new(999, "Games", 1);
 
+            //act
+            Response<Category> actual = categoryProcessor.Update(category);
+
+            //assert
             Response<Category> expected = new(false)
             {
                 Message = "Category doesn't exist"
             };
 
-            //act
-            Response<Category> actual = categoryProcessor.Update(category);
-
-            //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Message, actual.Message);
         }
@@ -179,15 +177,15 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
             Category category = new(1, "", 1);
 
+            //act
+            Response<Category> actual = categoryProcessor.Update(category);
+
+            //assert
             Response<Category> expected = new(false)
             {
                 Message = "Title can't be empty"
             };
 
-            //act
-            Response<Category> actual = categoryProcessor.Update(category);
-
-            //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Message, actual.Message);
         }

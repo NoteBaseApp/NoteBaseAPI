@@ -15,9 +15,9 @@ namespace NoteBaseDAL
             TagDAL = new TagDAL(_connString);
         }
 
-        public DALResponse<NoteDTO> Create(NoteDTO _note)
+        public int Create(NoteDTO _note)
         {
-            DALResponse<NoteDTO> response = new(true);
+            int result = 0;
 
             try
             {
@@ -37,12 +37,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.Create(" + _note.Title + ") ERROR: Could not Create Note";
-                            }
+                            result = reader.GetInt32(0);
                         }
                         connection.Close();
                     }
@@ -51,26 +46,15 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Create(" + _note.Title + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Create(" + _note.Title + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> CreateNoteTag(int _noteId, int _tagId)
+        public int CreateNoteTag(int _noteId, int _tagId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            int result = 0;
 
             try
             {
@@ -88,12 +72,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: Could not Create NoteTag";
-                            }
+                            result = reader.GetInt32(0);
                         }
                         connection.Close();
                     }
@@ -102,26 +81,15 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetById(int _noteId)
+        public NoteDTO GetById(int _noteId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            NoteDTO result = new(0, "", "", 0);
 
             try
             {
@@ -140,14 +108,14 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
+                            List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                            foreach (TagDTO tagDTO in DALResponse.Data)
+                            foreach (TagDTO tagDTO in tags)
                             {
                                 noteDTO.TryAddTagDTO(tagDTO);
                             }
 
-                            response.AddItem(noteDTO);
+                            result = noteDTO;
                         }
                         connection.Close();
                     }
@@ -155,26 +123,15 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetById(" + _noteId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetById(" + _noteId + ") ERROR: " + e.Message,
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetByPerson(int _personId)
+        public List<NoteDTO> GetByPerson(int _personId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            List<NoteDTO> result = new();
 
             try
             {
@@ -193,14 +150,14 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
+                            List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                            foreach (TagDTO tagDTO in DALResponse.Data)
+                            foreach (TagDTO tagDTO in tags)
                             {
                                 noteDTO.TryAddTagDTO(tagDTO);
                             }
 
-                            response.AddItem(noteDTO);
+                            result.Add(noteDTO);
                         }
                         connection.Close();
                     }
@@ -208,26 +165,15 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetByTitle(string _title)
+        public NoteDTO GetByTitle(string _title)
         {
-            DALResponse<NoteDTO> response = new(true);
+            NoteDTO result = new(0, "", "", 0);
 
             try
             {
@@ -246,14 +192,14 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
+                            List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                            foreach (TagDTO tagDTO in DALResponse.Data)
+                            foreach (TagDTO tagDTO in tags)
                             {
                                 noteDTO.TryAddTagDTO(tagDTO);
                             }
 
-                            response.AddItem(noteDTO);
+                            result = noteDTO;
                         }
                         connection.Close();
                     }
@@ -261,26 +207,15 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByTitle(" + _title + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByTitle(" + _title + ") ERROR: " + e.Message,
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetByCategory(int _catId)
+        public List<NoteDTO> GetByCategory(int _catId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            List<NoteDTO> result = new();
 
             try
             {
@@ -299,14 +234,14 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
+                            List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                            foreach (TagDTO tagDTO in DALResponse.Data)
+                            foreach (TagDTO tagDTO in tags)
                             {
                                 noteDTO.TryAddTagDTO(tagDTO);
                             }
 
-                            response.AddItem(noteDTO);
+                            result.Add(noteDTO);
                         }
                         connection.Close();
                     }
@@ -314,26 +249,15 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByCategory(" + _catId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByCategory(" + _catId + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetByTag(int _tagId)
+        public List<NoteDTO> GetByTag(int _tagId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            List<NoteDTO> result = new();
 
             try
             {
@@ -352,14 +276,14 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
+                            List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                            foreach (TagDTO tagDTO in DALResponse.Data)
+                            foreach (TagDTO tagDTO in tags)
                             {
                                 noteDTO.TryAddTagDTO(tagDTO);
                             }
 
-                            response.AddItem(noteDTO);
+                            result.Add(noteDTO);
                         }
                         connection.Close();
                     }
@@ -367,26 +291,15 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByTag(" + _tagId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByTag(" + _tagId + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> Update(NoteDTO _note)
+        public int Update(NoteDTO _note)
         {
-            DALResponse<NoteDTO> response = new(true);
+            int result = 0;
 
             try
             {
@@ -406,12 +319,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.Update(" + _note.ID + ") ERROR: Could not Update Note";
-                            }
+                            result = reader.GetInt32(0);
                         }
                         connection.Close();
                     }
@@ -420,26 +328,15 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Update(" + _note.ID + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Update(" + _note.ID + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> Delete(int _noteId)
+        public int Delete(int _noteId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            int result = 0;
 
             try
             {
@@ -456,12 +353,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.Delete(" + _noteId + ") ERROR: Could not delete Note";
-                            }
+                            result = reader.GetInt32(0);
                         }
                         connection.Close();
                     }
@@ -470,26 +362,15 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Delete(" + _noteId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Delete(" + _noteId + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> DeleteNoteTag(int _noteId)
+        public int DeleteNoteTag(int _noteId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            int result = 0;
 
             try
             {
@@ -506,12 +387,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.DeleteNoteTag(" + _noteId + ") ERROR: Could not delete NoteTag";
-                            }
+                            result = reader.GetInt32(0);
                         }
                         connection.Close();
                     }
@@ -520,21 +396,10 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "NoteDAL.DeleteNoteTag(" + _noteId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.DeleteNoteTag(" + _noteId + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
     }
 }

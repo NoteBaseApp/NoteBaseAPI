@@ -18,9 +18,9 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public DALResponse<PersonDTO> Create(PersonDTO _person)
+        public int Create(PersonDTO _person)
         {
-            DALResponse<PersonDTO> response = new(true);
+            int result = 0;
 
             try
             {
@@ -38,12 +38,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "PersonDAL.Create(" + _person.ID + ") ERROR: Could not Create Person";
-                            }
+                            result = reader.GetInt32(0);
                         }
                     }
                 }
@@ -51,26 +46,15 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "PersonDAL.Create(" + _person.ID + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<PersonDTO> GetByEmail(string _personEmail)
+        public PersonDTO GetByEmail(string _personEmail)
         {
-            DALResponse<PersonDTO> response = new(true);
+            PersonDTO result = new(0, "", "");
 
             try
             {
@@ -87,38 +71,25 @@ namespace NoteBaseDAL
 
                         while (reader.Read())
                         {
-                            PersonDTO personDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
-
-                            response.AddItem(personDTO);
+                            result = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
                         }
                     }
                 }
             }
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "PersonDAL.GetByEmail(" + _personEmail + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<PersonDTO> Update(PersonDTO _person)
+        public int Update(PersonDTO _person)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<PersonDTO> Delete(int _personId)
+        public int Delete(int _personId)
         {
             throw new NotImplementedException();
         }

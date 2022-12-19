@@ -18,9 +18,9 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public DALResponse<CategoryDTO> Create(CategoryDTO _cat)
+        public int Create(CategoryDTO _cat)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            int result = 0;
 
             try
             {
@@ -39,12 +39,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "CategoryDAL.Create(" + _cat.Title + ") ERROR: Could not Create Category";
-                            }
+                            result = reader.GetInt32(0);
                         }
                         connection.Close();
                     }
@@ -53,25 +48,14 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
-        public DALResponse<CategoryDTO> GetById(int _catId)
+        public CategoryDTO GetById(int _catId)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            CategoryDTO result = new(0, "", 0);
 
             try
             {
@@ -88,9 +72,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-
-                            response.AddItem(categoryDTO);
+                            result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
                         }
                         connection.Close();
                     }
@@ -98,26 +80,15 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<CategoryDTO> GetByPerson(int _personId)
+        public List<CategoryDTO> GetByPerson(int _personId)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            List<CategoryDTO> result = new();
 
             try
             {
@@ -136,7 +107,7 @@ namespace NoteBaseDAL
                         {
                             CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
 
-                            response.AddItem(categoryDTO);
+                            result.Add(categoryDTO);
                         }
                         connection.Close();
                     }
@@ -144,26 +115,15 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<CategoryDTO> GetByTitle(string _title)
+        public CategoryDTO GetByTitle(string _title)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            CategoryDTO result = new(0, "", 0);
 
             try
             {
@@ -180,9 +140,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-
-                            response.AddItem(categoryDTO);
+                            result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
                         }
                         connection.Close();
                     }
@@ -190,26 +148,15 @@ namespace NoteBaseDAL
             }
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetByTitle(" + _title + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetByTitle(" + _title + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<CategoryDTO> Update(CategoryDTO _cat)
+        public int Update(CategoryDTO _cat)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            int result = 0;
 
             try
             {
@@ -227,12 +174,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "CategoryDAL.Update(" + _cat.ID + ") ERROR: Could not Update Category";
-                            }
+                            result = reader.GetInt32(0);
                         }
                         connection.Close();
                     }
@@ -241,26 +183,15 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<CategoryDTO> Delete(int _catId)
+        public int Delete(int _catId)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            int result = 0;
 
             try
             {
@@ -277,12 +208,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "CategoryDAL.Delete(" + _catId + ") ERROR: Could not Delete Category";
-                            }
+                            result = reader.GetInt32(0);
                         }
                         connection.Close();
                     }
@@ -291,21 +217,10 @@ namespace NoteBaseDAL
             //het opvangen van een mogelijke error
             catch (SqlException e)
             {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message
-                };
+                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
-            return response;
+            return result;
         }
 
     }

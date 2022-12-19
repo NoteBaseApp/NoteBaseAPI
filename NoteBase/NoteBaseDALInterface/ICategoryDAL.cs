@@ -4,11 +4,11 @@ namespace NoteBaseDALInterface
 {
     public interface ICategoryDAL
     {
-        DALResponse<CategoryDTO> Create(CategoryDTO _cat);
-        DALResponse<CategoryDTO> GetById(int _catId);
-        DALResponse<CategoryDTO> GetByPerson(int _personId);
-        DALResponse<CategoryDTO> GetByTitle(string _Title);
-        DALResponse<CategoryDTO> Update(CategoryDTO _cat);
-        DALResponse<CategoryDTO> Delete(int _catId);
+        int Create(CategoryDTO _cat);
+        CategoryDTO GetById(int _catId);
+        List<CategoryDTO> GetByPerson(int _personId);
+        CategoryDTO GetByTitle(string _Title);
+        int Update(CategoryDTO _cat);
+        int Delete(int _catId);
     }
 }

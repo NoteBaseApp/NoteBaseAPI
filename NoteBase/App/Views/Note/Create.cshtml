@@ -1,11 +1,11 @@
-﻿@model App.Models.NoteModel
+﻿@model NoteModel
 
 <h1>Notitie aanmaken</h1>
-<hr />
+<hr/>
 <div class="row">
-    @if (ViewBag.Succeeded != null && !ViewBag.Succeeded)
+    @if (!ViewBag.Succeeded)
     {
-        <h3>er is iets mis gegaan: @ViewBag.Message</h3>
+        <p>Er is iets mis gegaan: @ViewBag.Message</p>
     }
     <div class="col-md-4">
         <form asp-action="Create">

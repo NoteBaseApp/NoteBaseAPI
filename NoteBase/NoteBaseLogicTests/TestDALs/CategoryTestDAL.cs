@@ -18,13 +18,18 @@ namespace NoteBaseLogicTests.TestDALs
         public DALResponse<CategoryDTO> GetById(int _catId)
         {
             DALResponse<CategoryDTO> response = new(true);
+            CategoryDTO categoryDTO = new(_catId, "", 1);
 
             if (_catId == 999)
             {
                 return new(true);
             }
 
-            CategoryDTO categoryDTO = new(_catId, "", 1);
+            if (_catId == 1)
+            {
+                categoryDTO = new(1, "Games", 1);
+            }
+
             response.AddItem(categoryDTO);
             return response;
         }

@@ -32,45 +32,61 @@ namespace App.Controllers
         // GET: Category/Details/5
         public ActionResult Details(int id)
         {
-            Response<Category> categoryResponse = categoryProcessor.GetById(id);
-            ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
-
-            //trying to fix not loading after adding category
-            /* for (int i = 0; i < 10; i++)
+            try
             {
-                categoryResponse = categoryProcessor.GetById(id);
-                categoryModelResponse = new(categoryResponse.Succeeded)
-                {
-                    Code = categoryResponse.Code,
-                    Message = categoryResponse.Message
-                };
+                Response<Category> categoryResponse = categoryProcessor.GetById(id);
 
-                if (categoryModelResponse.Data.Count > 0)
+                if (!categoryResponse.Succeeded)
                 {
-                    break;
+                    ViewBag.Succeeded = categoryResponse.Succeeded;
+                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
                 }
 
-                Thread.Sleep(50);
-            } */
+                //trying to fix not loading after adding category
+                /* for (int i = 0; i < 10; i++)
+                {
+                    categoryResponse = categoryProcessor.GetById(id);
 
-            if (categoryResponse.Data.Count == 0)
-            {
-                categoryModelResponse.Succeeded = false;
-                return View(categoryModelResponse);
+                    if (categoryResponse.Data.Count > 0)
+                    {
+                        break;
+                    }
+
+                    Thread.Sleep(50);
+                } */
+
+                if (categoryResponse.Data.Count == 0)
+                {
+                    ViewBag.Succeeded = false;
+                    ViewBag.Message = "Categorie niet gevonden";
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
+                }
+
+                Category category = categoryResponse.Data[0];
+                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+
+                ViewBag.Succeeded = categoryResponse.Succeeded;
+
+                return View(new CategoryModel(category));
             }
-
-            Category category = categoryResponse.Data[0];
-            category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
-
-            categoryModelResponse.AddItem(new(category));
-
-            return View(categoryModelResponse);
+            catch (Exception e)
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
+                return View();
+            }
 
         }
 
         // GET: Category/Create
         public ActionResult Create()
         {
+            ViewBag.Succeeded = true;
             return View();
         }
 
@@ -79,25 +95,37 @@ namespace App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
-            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-            person = personResponse.Data[0];
-
             try
             {
-                CategoryModel categoryModel = new(0, collection["Title"], person.ID);
-                Response<Category> response = categoryProcessor.Create(categoryModel.ToLogicModel());
+                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
 
-                if (!response.Succeeded)
+                if (!personResponse.Succeeded)
                 {
-                    ViewBag.Succeeded = response.Succeeded;
-                    ViewBag.Message = response.Message;
-                    ViewBag.Code = response.Code;
+                    ViewBag.Succeeded = personResponse.Succeeded;
+                    ViewBag.Message = personResponse.Message;
+                    ViewBag.Code = personResponse.Code;
 
                     return View();
                 }
 
+                person = personResponse.Data[0];
+
+                CategoryModel categoryModel = new(0, collection["Title"], person.ID);
+                Response<Category> categoryResponse = categoryProcessor.Create(categoryModel.ToLogicModel());
+
+                if (!categoryResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = categoryResponse.Succeeded;
+                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
+                }
+
+                ViewBag.Succeeded = categoryResponse.Succeeded;
+
                 //diffrent redirect options? book example
-                return RedirectToAction(nameof(Details), response.Data[0].ID);
+                return RedirectToAction(nameof(Details), categoryResponse.Data[0].ID);
             }
             catch(Exception e)
             {
@@ -110,21 +138,29 @@ namespace App.Controllers
         // GET: Category/Edit/5
         public ActionResult Edit(int id)
         {
-            Response<Category> categoryResponse = categoryProcessor.GetById(id);
-
-            if (!categoryResponse.Succeeded)
+            try
             {
-                ViewBag.Succeeded = categoryResponse.Succeeded;
-                ViewBag.Message = categoryResponse.Message;
-                ViewBag.Code = categoryResponse.Code;
+                Response<Category> categoryResponse = categoryProcessor.GetById(id);
 
+                if (!categoryResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = categoryResponse.Succeeded;
+                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
+                }
+
+                ViewBag.Succeeded = categoryResponse.Succeeded;
+
+                return View(new CategoryModel(categoryResponse.Data[0]));
+            }
+            catch (Exception e)
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
                 return View();
             }
-
-            ResponseModel<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded);
-            categoryModelResponse.AddItem(new(categoryResponse.Data[0]));
-
-            return View(categoryModelResponse.Data[0]);
         }
 
         // POST: Category/Edit/5
@@ -145,6 +181,8 @@ namespace App.Controllers
 
                     return View();
                 }
+
+                ViewBag.Succeeded = response.Succeeded;
 
                 //diffrent redirect options?
                 return RedirectToAction(nameof(Details), response.Data[0].ID);

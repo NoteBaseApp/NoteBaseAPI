@@ -19,7 +19,7 @@ namespace NoteBaseLogic
         {
             Response<Category> response = new(false);
 
-            if (_cat.Title == ""|| _cat.Title == null)
+            if (_cat.Title == "")
             {
                 response.Message = "Title can't be empty";
 

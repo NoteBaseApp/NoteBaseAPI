@@ -26,19 +26,18 @@ namespace NoteBaseLogic.Tests
             //arrange
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
             Note note = new(0, "School", "Ik zit op #Fontys in #Eindhoven", 1);
-            Note expectedNote = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1);
-            expectedNote.TryAddTag(new(11, "fontys"));
-            expectedNote.TryAddTag(new(12, "eindhoven"));
-
-            Response<Note> expected = new(true);
-            expected.AddItem(expectedNote);
 
             //act
             Response<Note> actual = noteProcessor.Create(note);
 
             //assert
-            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Note expectedNote = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1);
+            expectedNote.TryAddTag(new(11, "fontys"));
+            expectedNote.TryAddTag(new(12, "eindhoven"));
+            Response<Note> expected = new(true);
+            expected.AddItem(expectedNote);
 
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
             Assert.AreEqual(expected.Data[0].ID, actual.Data[0].ID);
             Assert.AreEqual(expected.Data[0].Title, actual.Data[0].Title);
             Assert.AreEqual(expected.Data[0].PersonId, actual.Data[0].PersonId);
@@ -60,7 +59,6 @@ namespace NoteBaseLogic.Tests
 
             //assert
             Assert.AreEqual(expected.Succeeded, actual.Succeeded);
-
             Assert.AreEqual(expected.Data[0].ID, actual.Data[0].ID);
             Assert.AreEqual(expected.Data[0].Title, actual.Data[0].Title);
             Assert.AreEqual(expected.Data[0].PersonId, actual.Data[0].PersonId);
@@ -76,6 +74,46 @@ namespace NoteBaseLogic.Tests
             Response<Note> expected = new(false)
             {
                 Message = "No valid category was given"
+            };
+
+            //act
+            Response<Note> actual = noteProcessor.Create(note);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Assert.AreEqual(expected.Message, actual.Message);
+        }
+
+        [TestMethod()]
+        public void CreateTest_Failed_NoTitle()
+        {
+            //arrange
+            INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
+            Note note = new(0, "", "Ik heb #programeer huiswerk", 1);
+
+            Response<Note> expected = new(false)
+            {
+                Message = "Title can't be empty"
+            };
+
+            //act
+            Response<Note> actual = noteProcessor.Create(note);
+
+            //assert
+            Assert.AreEqual(expected.Succeeded, actual.Succeeded);
+            Assert.AreEqual(expected.Message, actual.Message);
+        }
+
+        [TestMethod()]
+        public void CreateTest_Failed_NoText()
+        {
+            //arrange
+            INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
+            Note note = new(0, "Huiswerk", "", 1);
+
+            Response<Note> expected = new(false)
+            {
+                Message = "Text can't be empty"
             };
 
             //act

@@ -30,27 +30,54 @@ namespace App.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-            person = personResponse.Data[0];
-
-            ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
-            Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
-
-            Response<CategoryModel> categoryModelResponse = new(categoryResponse.Succeeded) 
-            { 
-                Code = categoryResponse.Code,
-                Message = categoryResponse.Message
-            };
-
-            foreach (Category category in categoryResponse.Data)
+            try
             {
-                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
+
+                if (!personResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = personResponse.Succeeded;
+                    ViewBag.Message = personResponse.Message;
+                    ViewBag.Code = personResponse.Code;
+
+                    return View();
+                }
+
+                person = personResponse.Data[0];
+
+                ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
+                Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
+
+                if (!categoryResponse.Succeeded)
+                {
+                    ViewBag.Succeeded = categoryResponse.Succeeded;
+                    ViewBag.Message = categoryResponse.Message;
+                    ViewBag.Code = categoryResponse.Code;
+
+                    return View();
+                }
+
+                List<CategoryModel> categoryModelList = new();
+
+                foreach (Category category in categoryResponse.Data)
+                {
+                    category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
                 
-                categoryModelResponse.AddItem(new(category));
+                    categoryModelList.Add(new(category));
+                }
+
+                ViewBag.Succeeded = categoryResponse.Succeeded;
+                ViewBag.Message = categoryResponse.Message;
+                ViewBag.Code = categoryResponse.Code;
+
+                return View(categoryModelList);
             }
-
-
-            return View(categoryModelResponse);
+            catch (Exception e)
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = e.Message;
+                return View();
+            }
         }
 
         public IActionResult Privacy()

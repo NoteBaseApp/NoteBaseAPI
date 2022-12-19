@@ -1,21 +1,27 @@
-﻿@using App.Models
-@model ResponseModel<CategoryModel>
+﻿@model CategoryModel
 
 <div>
-    @if (!Model.Succeeded)
+    @if (!ViewBag.Succeeded)
     {
-        <p>er is iets mis gegaan: @Model.Message</p>
+        <p>Er is iets mis gegaan: @ViewBag.Message</p>
     }
     else {
-        <h1>@Model.Data[0].Title</h1>
-        <a asp-controller="Category" asp-action="Edit" asp-route-Id="Model.categoryresponseModel.Data[0].ID">Bewerken</a>
-        <a asp-controller="Category" asp-action="Delete" asp-route-Id="Model.categoryresponseModel.Data[0].ID">Verwijderen</a>
+        <h1>@Model.Title</h1>
+        <a asp-controller="Category" asp-action="Edit" asp-route-Id="Model.ID">Bewerken</a>
+        <a asp-controller="Category" asp-action="Delete" asp-route-Id="Model.ID">Verwijderen</a>
         <hr/>
 
         <div class="note-container">
-            @foreach (NoteModel note in Model.Data[0].NoteList)
+            @if (Model.NoteList.Count() == 0)
             {
-                @Html.Partial("_Note", note)
+                <p>Deze categorie heeft geen notities</p>
+            }
+            else
+            {
+                @foreach (NoteModel note in Model.NoteList)
+                {
+                    @Html.Partial("_Note", note)
+                }
             }
         </div>
     }

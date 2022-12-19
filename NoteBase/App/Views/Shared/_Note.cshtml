@@ -11,9 +11,9 @@
             <p>
                 @for (int i = 0; i < Model.TagList.Count() - 1; i++)
                 {
-                    <span>@Model.TagList[i].Title ,</span>
+                    <a asp-controller="Tag" asp-action="Index" asp-route-Id="@Model.TagList[i].ID"><span>@Model.TagList[i].Title ,</span></a>
                 }
-                <span>@Model.TagList.Last().Title</span>
+                <a asp-controller="Tag" asp-action="Index" asp-route-Id="@Model.TagList.Last().ID"><span>@Model.TagList.Last().Title</span></a>
             </p>
         }
     </div>

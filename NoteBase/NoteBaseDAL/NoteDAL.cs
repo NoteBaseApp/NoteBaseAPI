@@ -7,12 +7,12 @@ namespace NoteBaseDAL
     public class NoteDAL : INoteDAL
     {
         private readonly string ConnString;
-        private TagDAL tagDAL;
+        private TagDAL TagDAL;
 
         public NoteDAL(string _connString)
         {
             ConnString = _connString;
-            tagDAL = new TagDAL(_connString);
+            TagDAL = new TagDAL(_connString);
         }
 
         public DALResponse<NoteDTO> Create(NoteDTO _note)
@@ -140,7 +140,7 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
 
                             foreach (TagDTO tagDTO in DALResponse.Data)
                             {
@@ -193,7 +193,7 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
 
                             foreach (TagDTO tagDTO in DALResponse.Data)
                             {
@@ -246,7 +246,7 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
 
                             foreach (TagDTO tagDTO in DALResponse.Data)
                             {
@@ -299,7 +299,7 @@ namespace NoteBaseDAL
                         {
                             NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
 
-                            DALResponse<TagDTO> DALResponse = tagDAL.GetByNote(noteDTO.ID);
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
 
                             foreach (TagDTO tagDTO in DALResponse.Data)
                             {
@@ -316,7 +316,7 @@ namespace NoteBaseDAL
             {
                 response = new(false)
                 {
-                    Message = "NoteDAL.Get(" + _catId + ") ERROR: " + e.Message,
+                    Message = "NoteDAL.GetByCategory(" + _catId + ") ERROR: " + e.Message,
                     Code = e.Number
                 };
             }
@@ -324,7 +324,60 @@ namespace NoteBaseDAL
             {
                 response = new(false)
                 {
-                    Message = "NoteDAL.Get(" + _catId + ") ERROR: " + e.Message
+                    Message = "NoteDAL.GetByCategory(" + _catId + ") ERROR: " + e.Message
+                };
+            }
+
+            return response;
+        }
+
+        public DALResponse<NoteDTO> GetByTag(int _tagId)
+        {
+            DALResponse<NoteDTO> response = new(true);
+
+            try
+            {
+                using (SqlConnection connection = new(ConnString))
+                {
+                    string query = @"SELECT ID, Title, Text, CategoryId FROM TagNotes WHERE TagID = @tagId";
+
+                    using (SqlCommand command = new(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@tagId", _tagId);
+                        connection.Open();
+
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
+
+                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
+
+                            foreach (TagDTO tagDTO in DALResponse.Data)
+                            {
+                                noteDTO.TryAddTagDTO(tagDTO);
+                            }
+
+                            response.AddItem(noteDTO);
+                        }
+                        connection.Close();
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.GetByTag(" + _tagId + ") ERROR: " + e.Message,
+                    Code = e.Number
+                };
+            }
+            catch (Exception e)
+            {
+                response = new(false)
+                {
+                    Message = "NoteDAL.GetByTag(" + _tagId + ") ERROR: " + e.Message
                 };
             }
 

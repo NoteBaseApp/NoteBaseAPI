@@ -16,10 +16,19 @@ namespace NoteBaseLogic
 
         public Response<Tag> Create(Tag _tag)
         {
+            Response<Tag> response = new(false);
+
+            if (_tag.Title == "")
+            {
+                response.Message = "Title can't be empty";
+
+                return response;
+            }
+
             DALResponse<TagDTO> DALreponse = TagDAL.Create(_tag.ToDTO());
 
             //create response
-            Response<Tag> response = new(DALreponse.Succeeded)
+            response = new(DALreponse.Succeeded)
             {
                 Message = DALreponse.Message
             };
@@ -45,9 +54,9 @@ namespace NoteBaseLogic
         }
 
         //need to remake this for using person id
-        public Response<Tag> GetByPerson(int _PersonId)
+        public Response<Tag> GetByPerson(int _personId)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_PersonId);
+            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_personId);
             Response<Tag> response = new(DALreponse.Succeeded)
             {
                 Message = DALreponse.Message

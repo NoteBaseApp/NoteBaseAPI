@@ -20,6 +20,20 @@ namespace NoteBaseLogic
         {
             Response<Note> noteReponse = new(false);
 
+            if (_note.Title == "")
+            {
+                noteReponse.Message = "Title can't be empty";
+
+                return noteReponse;
+            }
+
+            if (_note.Text == "")
+            {
+                noteReponse.Message = "Text can't be empty";
+
+                return noteReponse;
+            }
+
             if (_note.CategoryId == 0)
             {
                 noteReponse.Message = "No valid category was given";
@@ -148,6 +162,27 @@ namespace NoteBaseLogic
             return response;
         }
 
+        public Response<Note> GetByTag(int _tagId)
+        {
+            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByTag(_tagId);
+
+            Response<Note> response = new(noteDALreponse.Succeeded)
+            {
+                Message = noteDALreponse.Message,
+                Code = noteDALreponse.Code
+            };
+
+            foreach (NoteDTO noteDTO in noteDALreponse.Data)
+            {
+                response.AddItem(new(noteDTO));
+            }
+
+            return response;
+
+
+            throw new NotImplementedException();
+        }
+
         public Response<Note> Update(Note _note)
         {
             Response<Note> notereponse = new(false);
@@ -255,7 +290,5 @@ namespace NoteBaseLogic
 
             return response;
         }
-
-        
     }
 }

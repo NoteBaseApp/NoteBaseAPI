@@ -175,14 +175,20 @@ namespace NoteBaseLogic
                 throw new Exception("Note doesn't exist");
             }
 
-
-            int noteTagDeleteReponse = NoteDAL.DeleteNoteTag(_note.ID);
-            if (noteTagDeleteReponse == 0)
+            if (_note.TagList.Count > 0)
             {
-                throw new Exception("Could not Delete NoteTag");
+                int noteTagDeleteReponse = NoteDAL.DeleteNoteTag(_note.ID);
+                if (noteTagDeleteReponse == 0)
+                {
+                    throw new Exception("Could not Delete NoteTag");
+                }
             }
 
             int noteDeleteReponse = NoteDAL.Delete(_note.ID);
+            if (noteDeleteReponse == 0)
+            {
+                throw new Exception("Could not Delete Note");
+            }
 
             foreach (Tag tag in _note.TagList)
             {

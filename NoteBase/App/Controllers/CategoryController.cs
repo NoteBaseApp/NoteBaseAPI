@@ -34,16 +34,7 @@ namespace App.Controllers
         {
             try
             {
-                Response<Category> categoryResponse = categoryProcessor.GetById(id);
-
-                if (!categoryResponse.Succeeded)
-                {
-                    ViewBag.Succeeded = categoryResponse.Succeeded;
-                    ViewBag.Message = categoryResponse.Message;
-                    ViewBag.Code = categoryResponse.Code;
-
-                    return View();
-                }
+                Category category = categoryProcessor.GetById(id);
 
                 //trying to fix not loading after adding category
                 /* for (int i = 0; i < 10; i++)
@@ -58,26 +49,22 @@ namespace App.Controllers
                     Thread.Sleep(50);
                 } */
 
-                if (categoryResponse.Data.Count == 0)
+                if (category.ID == 0)
                 {
                     ViewBag.Succeeded = false;
-                    ViewBag.Message = "Categorie niet gevonden";
-                    ViewBag.Code = categoryResponse.Code;
 
                     return View();
                 }
 
-                Category category = categoryResponse.Data[0];
                 category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
 
-                ViewBag.Succeeded = categoryResponse.Succeeded;
+                ViewBag.Succeeded = true;
 
                 return View(new CategoryModel(category));
             }
             catch (Exception e)
             {
                 ViewBag.Succeeded = false;
-                ViewBag.Message = e.Message;
                 return View();
             }
 
@@ -97,40 +84,26 @@ namespace App.Controllers
         {
             try
             {
-                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-
-                if (!personResponse.Succeeded)
-                {
-                    ViewBag.Succeeded = personResponse.Succeeded;
-                    ViewBag.Message = personResponse.Message;
-                    ViewBag.Code = personResponse.Code;
-
-                    return View();
-                }
-
-                person = personResponse.Data[0];
+                this.person = personProcessor.GetByEmail(User.Identity.Name);
 
                 CategoryModel categoryModel = new(0, collection["Title"], person.ID);
-                Response<Category> categoryResponse = categoryProcessor.Create(categoryModel.ToLogicModel());
+                Category category = categoryProcessor.Create(categoryModel.ToLogicModel());
 
-                if (!categoryResponse.Succeeded)
+                if (category.ID == 0)
                 {
-                    ViewBag.Succeeded = categoryResponse.Succeeded;
-                    ViewBag.Message = categoryResponse.Message;
-                    ViewBag.Code = categoryResponse.Code;
+                    ViewBag.Succeeded = false;
 
                     return View();
                 }
 
-                ViewBag.Succeeded = categoryResponse.Succeeded;
+                ViewBag.Succeeded = true;
 
                 //diffrent redirect options? book example
-                return RedirectToAction(nameof(Details), categoryResponse.Data[0].ID);
+                return RedirectToAction(nameof(Details), category.ID);
             }
             catch(Exception e)
             {
                 ViewBag.Succeeded = false;
-                ViewBag.Message = e.Message;
                 return View();
             }
         }
@@ -140,25 +113,22 @@ namespace App.Controllers
         {
             try
             {
-                Response<Category> categoryResponse = categoryProcessor.GetById(id);
+                Category category = categoryProcessor.GetById(id);
 
-                if (!categoryResponse.Succeeded)
+                if (category.ID == 0)
                 {
-                    ViewBag.Succeeded = categoryResponse.Succeeded;
-                    ViewBag.Message = categoryResponse.Message;
-                    ViewBag.Code = categoryResponse.Code;
+                    ViewBag.Succeeded = false;
 
                     return View();
                 }
 
-                ViewBag.Succeeded = categoryResponse.Succeeded;
+                ViewBag.Succeeded = true;
 
-                return View(new CategoryModel(categoryResponse.Data[0]));
+                return View(new CategoryModel(category));
             }
             catch (Exception e)
             {
                 ViewBag.Succeeded = false;
-                ViewBag.Message = e.Message;
                 return View();
             }
         }
@@ -170,27 +140,24 @@ namespace App.Controllers
         {
             try
             {
-                CategoryModel categoryModel = new(id, collection["Title"], personProcessor.GetByEmail(User.Identity.Name).Data[0].ID);
-                Response<Category> response = categoryProcessor.Update(categoryModel.ToLogicModel());
+                CategoryModel categoryModel = new(id, collection["Title"], personProcessor.GetByEmail(User.Identity.Name).ID);
+                Category category = categoryProcessor.Update(categoryModel.ToLogicModel());
 
-                if (!response.Succeeded)
+                if (category.ID == 0)
                 {
-                    ViewBag.Succeeded = response.Succeeded;
-                    ViewBag.Message = response.Message;
-                    ViewBag.Code = response.Code;
+                    ViewBag.Succeeded = false;
 
                     return View();
                 }
 
-                ViewBag.Succeeded = response.Succeeded;
+                ViewBag.Succeeded = true;
 
                 //diffrent redirect options?
-                return RedirectToAction(nameof(Details), response.Data[0].ID);
+                return RedirectToAction(nameof(Details), category.ID);
             }
             catch (Exception e)
             {
                 ViewBag.Succeeded = false;
-                ViewBag.Message = e.Message;
                 return View();
             }
         }
@@ -211,18 +178,22 @@ namespace App.Controllers
             ViewBag.Post = true;
             try
             {
-                Response<Category> response = categoryProcessor.Delete(id);
+                int catDeleteResult = categoryProcessor.Delete(id);
 
-                ViewBag.Succeeded = response.Succeeded;
-                ViewBag.Message = response.Message;
-                ViewBag.Code = response.Code;
+                if (catDeleteResult == 0)
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+
+                ViewBag.Succeeded = true;
 
                 return View();
             }
             catch (Exception e)
             {
                 ViewBag.Succeeded = false;
-                ViewBag.Message = e.Message;
                 return View();
             }
 

@@ -33,12 +33,9 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@Title", _tag.Title);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
+                        connection.Close();
                     }
                 }
             }
@@ -72,6 +69,8 @@ namespace NoteBaseDAL
                         {
                             result = new TagDTO(reader.GetInt32(0), reader.GetString(1));
                         }
+
+                        connection.Close();
                     }
                 }
             }
@@ -106,6 +105,8 @@ namespace NoteBaseDAL
 
                             result.Add(tripDTO);
                         }
+
+                        connection.Close();
                     }
                 }
             }
@@ -140,6 +141,8 @@ namespace NoteBaseDAL
 
                             result.Add(tripDTO);
                         }
+
+                        connection.Close();
                     }
                 }
             }
@@ -172,6 +175,8 @@ namespace NoteBaseDAL
                         {
                            result = new TagDTO(reader.GetInt32(0), reader.GetString(1));
                         }
+
+                        connection.Close();
                     }
                 }
             }
@@ -199,12 +204,9 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@ID", _tag.ID);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
+                        connection.Close();
                     }
                 }
             }
@@ -231,12 +233,9 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@ID", _tagId);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
+                        connection.Close();
                     }
                 }
             }

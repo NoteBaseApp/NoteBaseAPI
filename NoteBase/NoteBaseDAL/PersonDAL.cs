@@ -34,12 +34,9 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@Email", _person.Email);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
+                        connection.Close();
                     }
                 }
             }
@@ -69,10 +66,13 @@ namespace NoteBaseDAL
 
                         SqlDataReader reader = command.ExecuteReader();
 
-                        while (reader.Read())
+                        if (reader.Read())
                         {
                             result = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
                         }
+
+                        connection.Close();
+
                     }
                 }
             }

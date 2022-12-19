@@ -17,7 +17,6 @@ namespace NoteBaseLogicTests.TestDALs
 
         public CategoryDTO GetById(int _catId)
         {
-            DALResponse<CategoryDTO> response = new(true);
             CategoryDTO categoryDTO = new(_catId, "", 1);
 
             if (_catId == 999)

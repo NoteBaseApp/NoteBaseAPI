@@ -34,13 +34,8 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@PersonId", _cat.PersonId);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
                         connection.Close();
                     }
                 }
@@ -170,12 +165,8 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@catId", _cat.ID);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
                         connection.Close();
                     }
                 }
@@ -204,12 +195,8 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@catId", _catId);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
                         connection.Close();
                     }
                 }

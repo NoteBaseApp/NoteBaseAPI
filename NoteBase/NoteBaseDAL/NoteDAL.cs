@@ -33,12 +33,8 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@PersonId", _note.PersonId);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
                         connection.Close();
                     }
                 }
@@ -315,12 +311,8 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@ID", _note.ID);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
                         connection.Close();
                     }
                 }
@@ -349,12 +341,8 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@ID", _noteId);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
                         connection.Close();
                     }
                 }
@@ -383,12 +371,8 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@NoteID", _noteId);
                         connection.Open();
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        result = command.ExecuteNonQuery();
 
-                        if (reader.Read())
-                        {
-                            result = reader.GetInt32(0);
-                        }
                         connection.Close();
                     }
                 }

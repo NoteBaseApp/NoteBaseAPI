@@ -15,167 +15,85 @@ namespace NoteBaseLogic
             NoteProcessor = _noteProcessor;
         }
 
-        public Response<Category> Create(Category _cat)
+        public Category Create(Category _cat)
         {
-            Response<Category> response = new(false);
-
             if (_cat.Title == "")
             {
-                response.Message = "Title can't be empty";
-
-                return response;
+                throw new ArgumentException("Title can't be empty");
             }
 
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByTitle(_cat.Title);
-            if (catDALreponse.Data.Count > 0)
+            Category cat = GetByTitle(_cat.Title);
+            if (cat.ID != 0)
             {
-                response.Message = "Category With this title already exists";
-
-                return response;
+                throw new Exception("Category With this title already exists");
             }
 
-            catDALreponse = CategoryDAL.Create(_cat.ToDTO());
+            CategoryDAL.Create(_cat.ToDTO());
 
-            response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            if (!response.Succeeded)
-            {
-                return response;
-            }
-
-            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetByTitle(_cat.Title);
-            response.AddItem(new(catDALreponseGet.Data[0]));
-
-            return response;
+            return GetByTitle(_cat.Title);
         }
 
-        public Response<Category> GetById(int _catId)
+        public Category GetById(int _catId)
         {
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
+            CategoryDTO catDTO = CategoryDAL.GetById(_catId);
 
-            Response<Category> response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            if (catDALreponse.Data.Count == 0)
-            {
-                return response;
-            }
-
-            Category category = new(catDALreponse.Data[0]);
-
-            response.AddItem(category);
-
-            return response;
+            return new(catDTO);
         }
 
-        public Response<Category> GetByPerson(int _personId)
+        public List<Category> GetByPerson(int _personId)
         {
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByPerson(_personId);
+            List<Category> result = new();
 
-            Response<Category> response = new(catDALreponse.Succeeded)
+            List<CategoryDTO> catDTOs = CategoryDAL.GetByPerson(_personId);
+            foreach (CategoryDTO categoryDTO in catDTOs)
             {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            foreach (CategoryDTO categoryDTO in catDALreponse.Data)
-            {
-                response.AddItem(new(categoryDTO));
+                result.Add(new(categoryDTO));
             }
 
-            return response;
+            return result;
         }
 
-        public Response<Category> GetByTitle(string _title)
+        public Category GetByTitle(string _title)
         {
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByTitle(_title);
+            CategoryDTO catDTO = CategoryDAL.GetByTitle(_title);
 
-            Response<Category> response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            response.AddItem(new(catDALreponse.Data[0]));
-
-            return response;
+            return new(catDTO);
         }
 
-        public Response<Category> Update(Category _cat)
+        public Category Update(Category _cat)
         {
-            Response<Category> response = new(false);
-
-            if (_cat.Title == "" || _cat.Title == null)
+            if (_cat.Title == "")
             {
-                response.Message = "Title can't be empty";
-
-                return response;
+                throw new ArgumentException("Title can't be empty");
             }
 
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_cat.ID);
-            if (catDALreponse.Data.Count == 0)
+            Category cat = GetByTitle(_cat.Title);
+            if (cat.ID != 0)
             {
-                response.Message = "Category doesn't exist";
-
-                return response;
+                throw new Exception("Category With this title already exists");
             }
 
-            catDALreponse = CategoryDAL.Update(_cat.ToDTO());
+            CategoryDAL.Update(_cat.ToDTO());
 
-            response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            if (!response.Succeeded)
-            {
-                return response;
-            }
-
-            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetById(_cat.ID);
-            response.AddItem(new(catDALreponseGet.Data[0]));
-
-            return response;
+            return GetById(_cat.ID);
         }
 
-        public Response<Category> Delete(int _catId)
+        public int Delete(int _catId)
         {
-            Response<Category> response = new(false);
-
-            Response<Note> noteDALreponse = NoteProcessor.GetByCategory(_catId);
-            if (noteDALreponse.Data.Count > 0)
+            List<Note> notes = NoteProcessor.GetByCategory(_catId);
+            if (notes.Count > 0)
             {
-                response.Message = "Notes exist with this category";
-
-                return response;
+                throw new Exception("Notes exist with this category");
             }
 
 
-            Response<Category> catreponse = GetById(_catId);
-            if (catreponse.Data.Count == 0)
+            Category cat = GetById(_catId);
+            if (cat.ID == 0)
             {
-                response.Message = "Category doesn't exist";
-
-                return response;
+                throw new Exception("Category doesn't exist");
             }
 
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Delete(_catId);
-
-            response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            return response;
+            return CategoryDAL.Delete(_catId);
         }
 
     }

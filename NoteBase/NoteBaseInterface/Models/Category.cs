@@ -63,9 +63,9 @@ namespace NoteBaseLogicInterface.Models
 
         public void FillNoteList(INoteProcessor noteProcessor)
         {
-            Response<Note> noteResponse = noteProcessor.GetByCategory(ID);
+            List<Note> notes = noteProcessor.GetByCategory(ID);
 
-            foreach (Note note in noteResponse.Data)
+            foreach (Note note in notes)
             {
                 TryAddNote(note);
             }

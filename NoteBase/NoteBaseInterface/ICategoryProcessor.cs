@@ -9,11 +9,11 @@ namespace NoteBaseLogicInterface
 {
     public interface ICategoryProcessor
     {
-        Response<Category> Create(Category _cat);
-        Response<Category> GetById(int _catId);
-        Response<Category> GetByPerson(int _personId);
-        Response<Category> GetByTitle(string _title);
-        Response<Category> Update(Category _cat);
-        Response<Category> Delete(int _catId);
+        Category Create(Category _cat);
+        Category GetById(int _catId);
+        List<Category> GetByPerson(int _personId);
+        Category GetByTitle(string _title);
+        Category Update(Category _cat);
+        int Delete(int _catId);
     }
 }

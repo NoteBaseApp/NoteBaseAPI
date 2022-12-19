@@ -12,32 +12,24 @@ namespace NoteBaseLogic
             PersonDAL = _personDAL;
         }
 
-        public Response<Person> Create(Person _person)
+        public int Create(Person _person)
         {
             throw new NotImplementedException();
         }
 
-        public Response<Person> GetByEmail(string _email)
+        public Person GetByEmail(string _email)
         {
-            DALResponse<PersonDTO> DALreponse = PersonDAL.GetByEmail(_email);
+            PersonDTO personDTO = PersonDAL.GetByEmail(_email);
 
-            Response<Person> response = new(DALreponse.Succeeded)
-            {
-                Message = DALreponse.Message
-            };
-
-            Person person = new(DALreponse.Data[0]);
-            response.AddItem(person);
-
-            return response;
+            return new(personDTO);
         }
 
-        public Response<Person> Update(Person _person)
+        public int Update(Person _person)
         {
             throw new NotImplementedException();
         }
 
-        public Response<Person> Delete(int _personId)
+        public int Delete(int _personId)
         {
             throw new NotImplementedException();
         }

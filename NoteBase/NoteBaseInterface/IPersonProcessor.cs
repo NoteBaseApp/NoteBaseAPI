@@ -9,9 +9,9 @@ namespace NoteBaseLogicInterface
 {
     public interface IPersonProcessor
     {
-        Response<Person> Create(Person _person);
-        Response<Person> GetByEmail(string _email);
-        Response<Person> Update(Person _person);
-        Response<Person> Delete(int _personId);
+        int Create(Person _person);
+        Person GetByEmail(string _email);
+        int Update(Person _person);
+        int Delete(int _personId);
     }
 }

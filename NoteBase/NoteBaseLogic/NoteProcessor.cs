@@ -16,279 +16,180 @@ namespace NoteBaseLogic
             TagProcessor = _tagProcessor;
         }
 
-        public Response<Note> Create(Note _note)
+        public Note Create(Note _note)
         {
-            Response<Note> noteReponse = new(false);
-
             if (_note.Title == "")
             {
-                noteReponse.Message = "Title can't be empty";
-
-                return noteReponse;
+                throw new ArgumentException("Title can't be empty");
             }
 
             if (_note.Text == "")
             {
-                noteReponse.Message = "Text can't be empty";
-
-                return noteReponse;
+                throw new ArgumentException("Text can't be empty");
             }
 
             if (_note.CategoryId == 0)
             {
-                noteReponse.Message = "No valid category was given";
-
-                return noteReponse;
+                throw new ArgumentException("No valid category was given");
             }
+
+            Note note = GetByTitle(_note.Title);
+            if (note.ID != 0)
+            {
+                throw new Exception("Note With this title already exists");
+            }
+
+            NoteDAL.Create(_note.ToDTO());
 
             _note.AddTags();
-            DALResponse<NoteDTO> noteDALreponse = NoteDAL.Create(_note.ToDTO());
-            if (noteDALreponse.Succeeded)
-            {
-                noteReponse = GetByTitle(_note.Title);
-            }
 
-            Response<Note> response = new(noteDALreponse.Succeeded)
-            {
-                Message = noteDALreponse.Message,
-                Code = noteDALreponse.Code
-            };
+            note = GetByTitle(_note.Title);
 
-            foreach (Tag tag in _note.TagList)
+            foreach (Tag newtag in _note.TagList)
             {
-                Response<Tag> tagResponse = TagProcessor.GetByTitle(tag.Title);
+                Tag tag = TagProcessor.GetByTitle(newtag.Title);
 
-                if (tagResponse.Data.Count == 0)
+                if (tag.ID == 0)
                 {
-                    TagProcessor.Create(tag);
-                    tagResponse = TagProcessor.GetByTitle(tag.Title);
+                    TagProcessor.Create(newtag);
+                    tag = TagProcessor.GetByTitle(newtag.Title);
                 }
 
-                if (tagResponse.Data.Count  == 0)
-                {
-                    response.Succeeded = tagResponse.Succeeded;
-                    response.Message = tagResponse.Message;
-
-                    return response;
-                }
-                else if (noteReponse.Data.Count == 0)
-                {
-                    response.Succeeded = noteReponse.Succeeded;
-                    response.Message = noteReponse.Message;
-
-                    return response;
-                }
-                NoteDAL.CreateNoteTag(noteReponse.Data[0].ID, tagResponse.Data[0].ID);
+                NoteDAL.CreateNoteTag(note.ID, tag.ID);
             }
 
-            noteReponse = GetByTitle(_note.Title);
-
-            response.AddItem(noteReponse.Data[0]);
-
-            return response;
+            return note;
         }
 
-        public Response<Note> GetById(int _noteId)
+        public Note GetById(int _noteId)
         {
-            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetById(_noteId);
+            NoteDTO noteDTO = NoteDAL.GetById(_noteId);
 
-            Response<Note> response = new(noteDALreponse.Succeeded)
-            {
-                Message = noteDALreponse.Message,
-                Code = noteDALreponse.Code
-            };
+            return new(noteDTO);
+        }
 
-            if (!noteDALreponse.Succeeded || noteDALreponse.Data.Count == 0)
+        public List<Note> GetByPerson(int _personId)
+        {
+            List<Note> result = new();
+
+            List<NoteDTO> noteDTOs = NoteDAL.GetByPerson(_personId);
+
+            foreach (NoteDTO noteDTO in noteDTOs)
             {
-                return response;
+                result.Add(new(noteDTO));
             }
 
-            Note note = new(noteDALreponse.Data[0]);
-
-            response.AddItem(note);
-
-            return response;
+            return result;
         }
 
-        public Response<Note> GetByPerson(int _personId)
+
+        public Note GetByTitle(string _Title)
         {
-            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByPerson(_personId);
+            NoteDTO noteDTO = NoteDAL.GetByTitle(_Title);
 
-            Response<Note> response = new(noteDALreponse.Succeeded)
-            {
-                Message = noteDALreponse.Message,
-                Code = noteDALreponse.Code
-            };
+            return new(noteDTO);
+        }
 
-            foreach (NoteDTO noteDTO in noteDALreponse.Data)
+        public List<Note> GetByCategory(int _catId)
+        {
+            List<Note> result = new();
+
+            List<NoteDTO> noteDTOs = NoteDAL.GetByCategory(_catId);
+            foreach (NoteDTO noteDTO in noteDTOs)
             {
-                response.AddItem(new(noteDTO));
+                result.Add(new(noteDTO));
             }
 
-            return response;
+            return result;
         }
 
-
-        public Response<Note> GetByTitle(string _Title)
+        public List<Note> GetByTag(int _tagId)
         {
-            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByTitle(_Title);
+            List<Note> result = new();
 
-            Response<Note> response = new(noteDALreponse.Succeeded)
+            List<NoteDTO> noteDTOs = NoteDAL.GetByTag(_tagId);
+            foreach (NoteDTO noteDTO in noteDTOs)
             {
-                Message = noteDALreponse.Message,
-                Code = noteDALreponse.Code
-            };
-
-            response.AddItem(new(noteDALreponse.Data[0]));
-
-            return response;
-        }
-
-        public Response<Note> GetByCategory(int _catId)
-        {
-            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByCategory(_catId);
-
-            Response<Note> response = new(noteDALreponse.Succeeded)
-            {
-                Message = noteDALreponse.Message,
-                Code = noteDALreponse.Code
-            };
-
-            foreach (NoteDTO noteDTO in noteDALreponse.Data)
-            {
-                response.AddItem(new(noteDTO));
+                result.Add(new(noteDTO));
             }
 
-            return response;
+            return result;
         }
 
-        public Response<Note> GetByTag(int _tagId)
+        public Note Update(Note _note)
         {
-            DALResponse<NoteDTO> noteDALreponse = NoteDAL.GetByTag(_tagId);
-
-            Response<Note> response = new(noteDALreponse.Succeeded)
+            if (_note.Title == "")
             {
-                Message = noteDALreponse.Message,
-                Code = noteDALreponse.Code
-            };
-
-            foreach (NoteDTO noteDTO in noteDALreponse.Data)
-            {
-                response.AddItem(new(noteDTO));
+                throw new ArgumentException("Title can't be empty");
             }
 
-            return response;
-
-
-            throw new NotImplementedException();
-        }
-
-        public Response<Note> Update(Note _note)
-        {
-            Response<Note> notereponse = new(false);
+            if (_note.Text == "")
+            {
+                throw new ArgumentException("Text can't be empty");
+            }
 
             if (_note.CategoryId == 0)
             {
-                notereponse.Message = "No valid category was given";
-
-                return notereponse;
+                throw new ArgumentException("No valid category was given");
             }
+
+            Note note = GetByTitle(_note.Title);
+            if (note.ID != 0)
+            {
+                throw new Exception("Note With this title already exists");
+            }
+
+            int noteUpdateResponse = NoteDAL.Update(_note.ToDTO());
 
             _note.AddTags();
-            DALResponse<NoteDTO> noteDALreponse = NoteDAL.Update(_note.ToDTO());
-            if (noteDALreponse.Succeeded)
-            {
-                notereponse = GetByTitle(_note.Title);
-            }
-
-            Response<Note> response = new(noteDALreponse.Succeeded)
-            {
-                Message = noteDALreponse.Message,
-                Code = noteDALreponse.Code
-            };
 
             NoteDAL.DeleteNoteTag(_note.ID);
 
-            foreach (Tag tag in _note.TagList)
+            foreach (Tag newTag in _note.TagList)
             {
-                Response<Tag> tagResponse = TagProcessor.GetByTitle(tag.Title);
+                Tag tag = TagProcessor.GetByTitle(newTag.Title);
 
-                if (tagResponse.Data.Count == 0)
+                if (tag.ID == 0)
                 {
-                    TagProcessor.Create(tag);
-                    tagResponse = TagProcessor.GetByTitle(tag.Title);
-                }
-
-                if (tagResponse.Data.Count == 0)
-                {
-                    response.Succeeded = tagResponse.Succeeded;
-                    response.Message = tagResponse.Message;
-
-                    return response;
-                }
-                else if (notereponse.Data.Count == 0)
-                {
-                    response.Succeeded = notereponse.Succeeded;
-                    response.Message = notereponse.Message;
-
-                    return response;
+                    TagProcessor.Create(newTag);
+                    tag = TagProcessor.GetByTitle(newTag.Title);
                 }
 
                 //update notetag table
-                NoteDAL.CreateNoteTag(_note.ID, tagResponse.Data[0].ID);
+                NoteDAL.CreateNoteTag(_note.ID, tag.ID);
             }
 
-            notereponse = GetById(_note.ID);
+            foreach (Tag tag in _note.TagList)
+            {
+                TagProcessor.TryDelete(tag.ID, _note.PersonId);
+            }
 
-            response.AddItem(notereponse.Data[0]);
-
-            return response;
+            return GetById(_note.ID);
         }
 
-        public Response<Note> Delete(Note _note, int _PersonId)
+        public int Delete(Note _note, int _PersonId)
         {
-            Response<Note> response = new(true);
-
-            Response<Note> noteReponse = GetById(_note.ID);
-            if (noteReponse.Data.Count == 0)
+            Note note = GetById(_note.ID);
+            if (note.ID == 0)
             {
-                response.Message = "Note doesn't exist";
-
-                return response;
+                throw new Exception("Note doesn't exist");
             }
 
 
-            DALResponse<NoteDTO> noteDalReponse = NoteDAL.DeleteNoteTag(_note.ID);
-            if (!noteDalReponse.Succeeded)
+            int noteTagDeleteReponse = NoteDAL.DeleteNoteTag(_note.ID);
+            if (noteTagDeleteReponse == 0)
             {
-                response = new(noteDalReponse.Succeeded)
-                {
-                    Message = noteDalReponse.Message,
-                    Code = noteDalReponse.Code
-                };
-
-                return response;
+                throw new Exception("Could not Delete NoteTag");
             }
 
-            noteDalReponse = NoteDAL.Delete(_note.ID);
-
-            if (!noteDalReponse.Succeeded)
-            {
-                response = new(noteDalReponse.Succeeded)
-                {
-                    Message = noteDalReponse.Message,
-                    Code = noteDalReponse.Code
-                };
-
-                return response;
-            }
+            int noteDeleteReponse = NoteDAL.Delete(_note.ID);
 
             foreach (Tag tag in _note.TagList)
             {
                 TagProcessor.TryDelete(tag.ID, _PersonId);
             }
 
-            return response;
+            return noteDeleteReponse;
         }
     }
 }

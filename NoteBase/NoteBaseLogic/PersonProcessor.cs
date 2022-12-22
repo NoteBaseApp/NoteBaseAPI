@@ -12,7 +12,7 @@ namespace NoteBaseLogic
             PersonDAL = _personDAL;
         }
 
-        public int Create(Person _person)
+        public int Create(string _name, string _email)
         {
             throw new NotImplementedException();
         }
@@ -24,7 +24,7 @@ namespace NoteBaseLogic
             return new(personDTO);
         }
 
-        public int Update(Person _person)
+        public int Update(int _id, string _name, string _email)
         {
             throw new NotImplementedException();
         }

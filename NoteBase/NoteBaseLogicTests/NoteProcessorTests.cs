@@ -25,10 +25,13 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
-            Note note = new(0, "School", "Ik zit op #Fontys in #Eindhoven", 1);
+            string title = "School";
+            string text = "Ik zit op #Fontys in #Eindhoven";
+            int categoryId = 1;
+            int personId = 1;
 
             //act
-            Note actual = noteProcessor.Create(note);
+            Note actual = noteProcessor.Create(title, text, categoryId, personId);
 
             //assert
             Note expected = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1);
@@ -45,10 +48,13 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
-            Note note = new(0, "Gaming", "Ik ga zaterdag gamen", 1);
+            string title = "Gaming";
+            string text = "Ik ga zaterdag gamen";
+            int categoryId = 1;
+            int personId = 1;
 
             //act
-            Note actual = noteProcessor.Create(note);
+            Note actual = noteProcessor.Create(title, text, categoryId, personId);
 
             //assert
             Note expected = new(21, "Gaming", "Ik ga zaterdag gamen", 1);
@@ -65,10 +71,13 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
-            Note note = new(0, "Huiswerk", "Ik heb #programeer huiswerk", 0);
+            string title = "Huiswerk";
+            string text = "Ik heb #programeer huiswerk";
+            int categoryId = 0;
+            int personId = 1;
 
             //act
-            noteProcessor.Create(note);
+            noteProcessor.Create(title, text, categoryId, personId);
         }
 
         [TestMethod()]
@@ -78,10 +87,13 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
-            Note note = new(0, "", "Ik heb #programeer huiswerk", 1);
+            string title = "";
+            string text = "Ik heb #programeer huiswerk";
+            int categoryId = 1;
+            int personId = 1;
 
             //act
-            noteProcessor.Create(note);
+            noteProcessor.Create(title, text, categoryId, personId);
         }
 
         [TestMethod()]
@@ -91,13 +103,16 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
-            Note note = new(0, "Huiswerk", "", 1);
+            string title = "Huiswerk";
+            string text = "";
+            int categoryId = 1;
+            int personId = 1;
 
             //act
-            noteProcessor.Create(note);
+            noteProcessor.Create(title, text, categoryId, personId);
         }
 
-        [TestMethod()]
+        /* [TestMethod()]
         public void AddTagsTest_Succeed()
         {
             
@@ -114,6 +129,6 @@ namespace NoteBaseLogic.Tests
                 Assert.AreEqual(expected[i].Title, note.TagList[i].Title);
             }
             
-        }
+        }*/
     }
 }

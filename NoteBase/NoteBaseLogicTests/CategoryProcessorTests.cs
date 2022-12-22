@@ -20,10 +20,11 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
-            Category category = new(0, "School", 1);
+            string titel = "School";
+            int personId = 1;
 
             //act
-            Category actual = categoryProcessor.Create(category);
+            Category actual = categoryProcessor.Create(titel, personId);
 
             //assert
             Category expected = new(12, "School", 1);
@@ -40,10 +41,11 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
-            Category category = new(0, "Games", 1);
+            string titel = "NOGames";
+            int personId = 1;
 
             //act
-            categoryProcessor.Create(category);
+            categoryProcessor.Create(titel, personId);
         }
 
         [TestMethod()]
@@ -53,10 +55,11 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
-            Category category = new(0, "", 1);
+            string titel = "";
+            int personId = 1;
 
             //act
-            categoryProcessor.Create(category);
+            categoryProcessor.Create(titel, personId);
         }
 
         [TestMethod()]
@@ -103,10 +106,11 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
-            Category category = new(1, "Games", 1);
+            int id = 1;
+            string titel = "Games";
 
             //act
-            Category actual = categoryProcessor.Update(category);
+            Category actual = categoryProcessor.Update(id, titel);
 
             //assert
             Category expected = new(1, "Games", 1);
@@ -123,10 +127,11 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
-            Category category = new(999, "Games", 1);
+            int id = 999;
+            string titel = "Games";
 
             //act
-            categoryProcessor.Update(category);
+            categoryProcessor.Update(id, titel);
         }
 
         [TestMethod()]
@@ -136,10 +141,11 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
-            Category category = new(1, "", 1);
+            int id = 1;
+            string titel = "";
 
             //act
-            categoryProcessor.Update(category);
+            categoryProcessor.Update(id, titel);
         }
     }
 }

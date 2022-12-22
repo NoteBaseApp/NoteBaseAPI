@@ -18,7 +18,7 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public int Create(CategoryDTO _cat)
+        public int Create(string _title, int _personId)
         {
             int result = 0;
 
@@ -30,8 +30,8 @@ namespace NoteBaseDAL
 
                     using (SqlCommand command = new(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Title", _cat.Title);
-                        command.Parameters.AddWithValue("@PersonId", _cat.PersonId);
+                        command.Parameters.AddWithValue("@Title", _title);
+                        command.Parameters.AddWithValue("@PersonId", _personId);
                         connection.Open();
 
                         result = command.ExecuteNonQuery();
@@ -149,7 +149,7 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Update(CategoryDTO _cat)
+        public int Update(int _id, string _title)
         {
             int result = 0;
 
@@ -161,8 +161,8 @@ namespace NoteBaseDAL
 
                     using (SqlCommand command = new(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Title", _cat.Title);
-                        command.Parameters.AddWithValue("@catId", _cat.ID);
+                        command.Parameters.AddWithValue("@Title", _title);
+                        command.Parameters.AddWithValue("@catId", _id);
                         connection.Open();
 
                         result = command.ExecuteNonQuery();

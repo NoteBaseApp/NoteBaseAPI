@@ -15,7 +15,7 @@ namespace NoteBaseDAL
             TagDAL = new TagDAL(_connString);
         }
 
-        public int Create(NoteDTO _note)
+        public int Create(string _title, string _text, int _categoryId, int _personId)
         {
             int result = 0;
 
@@ -27,10 +27,10 @@ namespace NoteBaseDAL
 
                     using (SqlCommand command = new(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Title", _note.Title);
-                        command.Parameters.AddWithValue("@Text", _note.Text);
-                        command.Parameters.AddWithValue("@CategoryID", _note.CategoryId);
-                        command.Parameters.AddWithValue("@PersonId", _note.PersonId);
+                        command.Parameters.AddWithValue("@Title", _title);
+                        command.Parameters.AddWithValue("@Text", _text);
+                        command.Parameters.AddWithValue("@CategoryID", _categoryId);
+                        command.Parameters.AddWithValue("@PersonId", _personId);
                         connection.Open();
 
                         result = command.ExecuteNonQuery();
@@ -108,7 +108,7 @@ namespace NoteBaseDAL
 
                             foreach (TagDTO tagDTO in tags)
                             {
-                                noteDTO.TryAddTagDTO(tagDTO);
+                                noteDTO.tagList.Add(tagDTO);
                             }
 
                             result = noteDTO;
@@ -150,7 +150,7 @@ namespace NoteBaseDAL
 
                             foreach (TagDTO tagDTO in tags)
                             {
-                                noteDTO.TryAddTagDTO(tagDTO);
+                                noteDTO.tagList.Add(tagDTO);
                             }
 
                             result.Add(noteDTO);
@@ -192,7 +192,7 @@ namespace NoteBaseDAL
 
                             foreach (TagDTO tagDTO in tags)
                             {
-                                noteDTO.TryAddTagDTO(tagDTO);
+                                noteDTO.tagList.Add(tagDTO);
                             }
 
                             result = noteDTO;
@@ -234,7 +234,7 @@ namespace NoteBaseDAL
 
                             foreach (TagDTO tagDTO in tags)
                             {
-                                noteDTO.TryAddTagDTO(tagDTO);
+                                noteDTO.tagList.Add(tagDTO);
                             }
 
                             result.Add(noteDTO);
@@ -276,7 +276,7 @@ namespace NoteBaseDAL
 
                             foreach (TagDTO tagDTO in tags)
                             {
-                                noteDTO.TryAddTagDTO(tagDTO);
+                                noteDTO.tagList.Add(tagDTO);
                             }
 
                             result.Add(noteDTO);
@@ -293,7 +293,7 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Update(NoteDTO _note)
+        public int Update(int _id, string _title, string _text, int _categoryId)
         {
             int result = 0;
 
@@ -305,10 +305,10 @@ namespace NoteBaseDAL
 
                     using (SqlCommand command = new(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Title", _note.Title);
-                        command.Parameters.AddWithValue("@Text", _note.Text);
-                        command.Parameters.AddWithValue("@CategoryID", _note.CategoryId);
-                        command.Parameters.AddWithValue("@ID", _note.ID);
+                        command.Parameters.AddWithValue("@Title", _title);
+                        command.Parameters.AddWithValue("@Text", _text);
+                        command.Parameters.AddWithValue("@CategoryID", _categoryId);
+                        command.Parameters.AddWithValue("@ID", _id);
                         connection.Open();
 
                         result = command.ExecuteNonQuery();

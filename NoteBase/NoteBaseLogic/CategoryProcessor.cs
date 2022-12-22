@@ -15,22 +15,22 @@ namespace NoteBaseLogic
             NoteProcessor = _noteProcessor;
         }
 
-        public Category Create(Category _cat)
+        public Category Create(string _title, int _personId)
         {
-            if (_cat.Title == "")
+            if (_title == "")
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            Category cat = GetByTitle(_cat.Title);
+            Category cat = GetByTitle(_title);
             if (cat.ID != 0)
             {
                 throw new Exception("Category With this title already exists");
             }
 
-            CategoryDAL.Create(_cat.ToDTO());
+            CategoryDAL.Create(_title, _personId);
 
-            return GetByTitle(_cat.Title);
+            return GetByTitle(_title);
         }
 
         public Category GetById(int _catId)
@@ -60,22 +60,28 @@ namespace NoteBaseLogic
             return new(catDTO);
         }
 
-        public Category Update(Category _cat)
+        public Category Update(int _id, string _title)
         {
-            if (_cat.Title == "")
+            Category cat = GetById(_id);
+            if (cat.ID == 0)
+            {
+                throw new Exception("Category doesn't exist");
+            }
+
+            if (_title == "")
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            Category cat = GetByTitle(_cat.Title);
+            cat = GetByTitle(_title);
             if (cat.ID != 0)
             {
                 throw new Exception("Category With this title already exists");
             }
 
-            CategoryDAL.Update(_cat.ToDTO());
+            CategoryDAL.Update(_id, _title);
 
-            return GetById(_cat.ID);
+            return GetById(_id);
         }
 
         public int Delete(int _catId)

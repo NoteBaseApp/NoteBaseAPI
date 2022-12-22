@@ -96,9 +96,7 @@ namespace App.Controllers
                 }
                 ViewBag.CategoryList = categoryModels;
 
-                NoteModel NoteModel = new(0, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]));
-                NoteModel.PersonId = person.ID;
-                Note note = noteProcessor.Create(NoteModel.ToLogicModel());
+                Note note = noteProcessor.Create(collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]), person.ID);
 
                 if (note.ID == 0)
                 {
@@ -165,8 +163,7 @@ namespace App.Controllers
             {
                 this.person = personProcessor.GetByEmail(User.Identity.Name);
 
-                NoteModel noteModel = new(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]));
-                Note note = noteProcessor.Update(noteModel.ToLogicModel());
+                Note note = noteProcessor.Update(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]), person.ID);
 
                 List<Category> categories = categoryProcessor.GetByPerson(person.ID);
 

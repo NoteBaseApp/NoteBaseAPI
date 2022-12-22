@@ -10,21 +10,10 @@ namespace App.Models
         [DisplayName("Titel")]
         public string Title { get; private set; }
 
-        public TagModel(int _id, string _title)
-        {
-            ID = _id;
-            Title = _title;
-        }
-
         public TagModel(Tag _tag)
         {
             ID = _tag.ID;
             Title = _tag.Title;
-        }
-
-        public Tag ToLogicModel()
-        {
-            return new Tag(ID, Title);
         }
     }
 }

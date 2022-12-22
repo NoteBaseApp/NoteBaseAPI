@@ -19,7 +19,7 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public int Create(TagDTO _tag)
+        public int Create(string _title)
         {
             int result = 0;
             try
@@ -30,7 +30,7 @@ namespace NoteBaseDAL
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Title", _tag.Title);
+                        command.Parameters.AddWithValue("@Title", _title);
                         connection.Open();
 
                         result = command.ExecuteNonQuery();
@@ -188,7 +188,7 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Update(TagDTO _tag)
+        public int Update(int _tagId, string _title)
         {
             int result = 0;
 
@@ -200,8 +200,8 @@ namespace NoteBaseDAL
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Title", _tag.Title);
-                        command.Parameters.AddWithValue("@ID", _tag.ID);
+                        command.Parameters.AddWithValue("@Title", _title);
+                        command.Parameters.AddWithValue("@ID", _tagId);
                         connection.Open();
 
                         result = command.ExecuteNonQuery();

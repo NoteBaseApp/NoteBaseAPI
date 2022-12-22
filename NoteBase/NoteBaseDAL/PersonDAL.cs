@@ -18,7 +18,7 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public int Create(PersonDTO _person)
+        public int Create(string _name, string _email)
         {
             int result = 0;
 
@@ -30,8 +30,8 @@ namespace NoteBaseDAL
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Name", _person.Name);
-                        command.Parameters.AddWithValue("@Email", _person.Email);
+                        command.Parameters.AddWithValue("@Name", _name);
+                        command.Parameters.AddWithValue("@Email", _email);
                         connection.Open();
 
                         result = command.ExecuteNonQuery();
@@ -84,7 +84,7 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Update(PersonDTO _person)
+        public int Update(int _id, string _name, string _email)
         {
             throw new NotImplementedException();
         }

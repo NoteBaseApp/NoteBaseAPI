@@ -11,7 +11,7 @@ namespace NoteBaseLogicTests.TestDALs
 {
     internal class NoteTestDAL : INoteDAL
     {
-        public int Create(NoteDTO _note)
+        public int Create(string _title, string _text, int _categoryId, int _personId)
         {
             return 1;
         }
@@ -74,12 +74,12 @@ namespace NoteBaseLogicTests.TestDALs
             if (_Title == "School" && GetByTitleCals > 0)
             {
                NoteDTO note = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1);
-                note.TryAddTagDTO(new(11, "fontys"));
-                note.TryAddTagDTO(new(12, "eindhoven"));
+                note.tagList.Add(new(11, "fontys"));
+                note.tagList.Add(new(12, "eindhoven"));
 
                 return note;
             }
-            else if (_Title == "Gaming")
+            else if (_Title == "Gaming" && GetByTitleCals > 0)
             {
                 return new(21, "Gaming", "Ik ga zaterdag gamen", 1);
             }
@@ -89,7 +89,7 @@ namespace NoteBaseLogicTests.TestDALs
             return new(0, "", "", 0);
         }
 
-        public int Update(NoteDTO _note)
+        public int Update(int id, string _title, string _text, int _categoryId)
         {
             throw new NotImplementedException();
         }

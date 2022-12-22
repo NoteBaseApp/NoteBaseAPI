@@ -36,19 +36,6 @@ namespace App.Controllers
             {
                 Category category = categoryProcessor.GetById(id);
 
-                //trying to fix not loading after adding category
-                /* for (int i = 0; i < 10; i++)
-                {
-                    categoryResponse = categoryProcessor.GetById(id);
-
-                    if (categoryResponse.Data.Count > 0)
-                    {
-                        break;
-                    }
-
-                    Thread.Sleep(50);
-                } */
-
                 if (category.ID == 0)
                 {
                     ViewBag.Succeeded = false;
@@ -86,8 +73,7 @@ namespace App.Controllers
             {
                 this.person = personProcessor.GetByEmail(User.Identity.Name);
 
-                CategoryModel categoryModel = new(0, collection["Title"], person.ID);
-                Category category = categoryProcessor.Create(categoryModel.ToLogicModel());
+                Category category = categoryProcessor.Create(collection["Title"], person.ID);
 
                 if (category.ID == 0)
                 {
@@ -140,8 +126,7 @@ namespace App.Controllers
         {
             try
             {
-                CategoryModel categoryModel = new(id, collection["Title"], personProcessor.GetByEmail(User.Identity.Name).ID);
-                Category category = categoryProcessor.Update(categoryModel.ToLogicModel());
+                Category category = categoryProcessor.Update(id, collection["Title"]);
 
                 if (category.ID == 0)
                 {

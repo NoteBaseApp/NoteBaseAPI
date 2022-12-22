@@ -23,27 +23,6 @@ namespace NoteBaseLogicInterface.Models
             ID = _categoryDTO.ID;
             Title = _categoryDTO.Title;
             PersonId = _categoryDTO.PersonId;
-
-            foreach (NoteDTO noteDTO in _categoryDTO.NoteList)
-            {
-                Note note = new(noteDTO);
-                if (IsNoteCompatible(note))
-                {
-                    TryAddNote(note);
-                }
-            }
-        }
-
-        public CategoryDTO ToDTO()
-        {
-            CategoryDTO categoryDTO = new(ID, Title, PersonId);
-
-            foreach (Note note in noteList)
-            {
-                categoryDTO.TryAddNoteDTO(note.ToDTO());
-            }
-
-            return categoryDTO;
         }
 
         public void TryAddNote(Note _note)

@@ -9,9 +9,9 @@ namespace NoteBaseDALInterface
 {
     public interface IPersonDAL
     {
-        public int Create(PersonDTO _person);
+        public int Create(string _name, string _email);
         public PersonDTO GetByEmail(string _personEmail);
-        public int Update(PersonDTO _person);
+        public int Update(int _id, string _name, string _email);
         public int Delete(int _personId);
     }
 }

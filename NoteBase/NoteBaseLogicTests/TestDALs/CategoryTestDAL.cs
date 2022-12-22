@@ -5,7 +5,7 @@ namespace NoteBaseLogicTests.TestDALs
 {
     internal class CategoryTestDAL : ICategoryDAL
     {
-        public int Create(CategoryDTO _cat)
+        public int Create(string _title, int _personId)
         {
             return 1;
         }
@@ -55,9 +55,9 @@ namespace NoteBaseLogicTests.TestDALs
             return new(0, "", 0);
         }
 
-        public int Update(CategoryDTO _cat)
+        public int Update(int _id, string _title)
         {
-            if (_cat.ID == 999)
+            if (_id == 999)
             {
                 return 0;
             }

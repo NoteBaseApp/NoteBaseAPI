@@ -26,10 +26,5 @@ namespace NoteBaseLogicInterface.Models
             Name = personDTO.Name;
             Email = personDTO.Email;
         }
-
-        public PersonDTO ToDTO()
-        {
-            return new(ID, Name, Email);
-        }
     }
 }

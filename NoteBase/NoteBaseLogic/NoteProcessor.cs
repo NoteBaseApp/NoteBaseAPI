@@ -3,6 +3,8 @@ using NoteBaseDALInterface.Models;
 using NoteBaseInterface;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace NoteBaseLogic
 {
@@ -16,42 +18,43 @@ namespace NoteBaseLogic
             TagProcessor = _tagProcessor;
         }
 
-        public Note Create(Note _note)
+        public Note Create(string _title, string _text, int _categoryId, int _personId)
         {
-            if (_note.Title == "")
+            if (_title == "")
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            if (_note.Text == "")
+            if (_text == "")
             {
                 throw new ArgumentException("Text can't be empty");
             }
 
-            if (_note.CategoryId == 0)
+            if (_categoryId == 0)
             {
                 throw new ArgumentException("No valid category was given");
             }
 
-            Note note = GetByTitle(_note.Title);
+            Note note = GetByTitle(_title);
             if (note.ID != 0)
             {
                 throw new Exception("Note With this title already exists");
             }
 
-            NoteDAL.Create(_note.ToDTO());
+            //throw exeption when create fails?
+            int createResult = NoteDAL.Create(_title, _text, _categoryId, _personId);
 
-            _note.AddTags();
+            List<Tag> tags = AddTags(_text);
 
-            note = GetByTitle(_note.Title);
+            note = GetByTitle(_title);
 
-            foreach (Tag newtag in _note.TagList)
+            foreach (Tag newtag in tags)
             {
                 Tag tag = TagProcessor.GetByTitle(newtag.Title);
 
                 if (tag.ID == 0)
                 {
-                    TagProcessor.Create(newtag);
+                    TagProcessor.Create(newtag.Title);
                     tag = TagProcessor.GetByTitle(newtag.Title);
                 }
 
@@ -59,6 +62,28 @@ namespace NoteBaseLogic
             }
 
             return note;
+        }
+
+        //what if somebody usses a tag with a hashtag in it like #C#
+        public List<Tag> AddTags(string _text)
+        {
+            List<Tag> result = new();
+
+            string[] allWords = _text.Split(" ");
+            for (int i = 0; i < allWords.Length; i++)
+            {
+                string word = allWords[i];
+                if (word.StartsWith("#"))
+                {
+                    Tag tag = new(0, word.Substring(1).ToLower());
+                    if (!result.Contains(tag))
+                    {
+                        result.Add(tag);
+                    }
+                }
+            }
+
+            return result;
         }
 
         public Note GetById(int _noteId)
@@ -116,55 +141,55 @@ namespace NoteBaseLogic
             return result;
         }
 
-        public Note Update(Note _note)
+        public Note Update(int _id, string _title, string _text, int _categoryId, int _personId)
         {
-            if (_note.Title == "")
+            if (_title == "")
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            if (_note.Text == "")
+            if (_text == "")
             {
                 throw new ArgumentException("Text can't be empty");
             }
 
-            if (_note.CategoryId == 0)
+            if (_categoryId == 0)
             {
                 throw new ArgumentException("No valid category was given");
             }
 
-            Note note = GetByTitle(_note.Title);
+            Note note = GetByTitle(_title);
             if (note.ID != 0)
             {
                 throw new Exception("Note With this title already exists");
             }
 
-            int noteUpdateResponse = NoteDAL.Update(_note.ToDTO());
+            //throw exeption when update fails?
+            int UpdateResult = NoteDAL.Update(_id, _title, _text, _categoryId);
 
-            _note.AddTags();
+            List<Tag> tags = AddTags(_text);
 
-            NoteDAL.DeleteNoteTag(_note.ID);
+            note = GetByTitle(_title);
 
-            foreach (Tag newTag in _note.TagList)
+            foreach (Tag newtag in tags)
             {
-                Tag tag = TagProcessor.GetByTitle(newTag.Title);
+                Tag tag = TagProcessor.GetByTitle(newtag.Title);
 
                 if (tag.ID == 0)
                 {
-                    TagProcessor.Create(newTag);
-                    tag = TagProcessor.GetByTitle(newTag.Title);
+                    TagProcessor.Create(newtag.Title);
+                    tag = TagProcessor.GetByTitle(newtag.Title);
                 }
 
-                //update notetag table
-                NoteDAL.CreateNoteTag(_note.ID, tag.ID);
+                NoteDAL.CreateNoteTag(note.ID, tag.ID);
             }
 
-            foreach (Tag tag in _note.TagList)
+            foreach (Tag tag in tags)
             {
-                TagProcessor.TryDelete(tag.ID, _note.PersonId);
+                TagProcessor.TryDelete(tag.ID, _personId);
             }
 
-            return GetById(_note.ID);
+            return GetById(_id);
         }
 
         public int Delete(Note _note, int _PersonId)

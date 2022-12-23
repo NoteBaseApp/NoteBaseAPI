@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace NoteBaseDAL
 {
@@ -19,21 +20,26 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public int Create(string _title)
+        public TagDTO Create(string _title)
         {
-            int result = 0;
+            TagDTO result = new(0, _title);
             try
             {
                 using (SqlConnection connection = new SqlConnection(ConnString))
                 {
-                    string query = @"INSERT INTO Tag (Title) VALUES (@Title)";
+                    string query = @"INSERT INTO Tag (Title) VALUES (@Title); SELECT SCOPE_IDENTITY();";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Title", _title);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            result = new((Int32)reader.GetDecimal(0), _title);
+                        }
 
                         connection.Close();
                     }
@@ -188,9 +194,9 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Update(int _tagId, string _title)
+        public TagDTO Update(int _tagId, string _title)
         {
-            int result = 0;
+            TagDTO result = new(_tagId, _title);
 
             try
             {
@@ -204,7 +210,7 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@ID", _tagId);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
 
                         connection.Close();
                     }
@@ -218,7 +224,7 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Delete(int _tagId)
+        public void Delete(int _tagId)
         {
             int result = 0;
 
@@ -233,7 +239,7 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@ID", _tagId);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
 
                         connection.Close();
                     }
@@ -243,8 +249,6 @@ namespace NoteBaseDAL
             {
                 throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
-
-            return result;
         }
     }
 }

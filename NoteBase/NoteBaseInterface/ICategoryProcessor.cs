@@ -13,7 +13,7 @@ namespace NoteBaseLogicInterface
         Category GetById(int _catId);
         List<Category> GetByPerson(int _personId);
         Category GetByTitle(string _title);
-        Category Update(int _id, string _title);
-        int Delete(int _catId);
+        Category Update(int _id, string _title,int _personId);
+        void Delete(int _catId);
     }
 }

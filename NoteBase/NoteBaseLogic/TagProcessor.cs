@@ -14,14 +14,14 @@ namespace NoteBaseLogic
             TagDAL = _tagDAL;
         }
 
-        public int Create(string _title)
+        public Tag Create(string _title)
         {
             if (_title == "")
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            return TagDAL.Create(_title);
+            return new(TagDAL.Create(_title));
         }
 
         public Tag GetById(int _tagId)
@@ -52,19 +52,19 @@ namespace NoteBaseLogic
             return new(tagDTO);
         }
 
-        public int Update(int _id, string _title)
+        public Tag Update(int _id, string _title)
         {
             if (_title == "")
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            return TagDAL.Update(_id, _title);
+            return new(TagDAL.Update(_id, _title));
         }
 
-        public int TryDelete(int _tagId, int _PersonId)
+        public void TryDelete(int _tagId, int _PersonId)
         {
-            List<Tag> Tags = GetByPerson(_PersonId);
+            /*List<Tag> Tags = GetByPerson(_PersonId);
 
             foreach (Tag tag in Tags)
             {
@@ -72,9 +72,9 @@ namespace NoteBaseLogic
                 {
                     return 0;
                 }
-            }
+            }*/
 
-            return TagDAL.Delete(_tagId);
+            TagDAL.Delete(_tagId);
         }
     }
 }

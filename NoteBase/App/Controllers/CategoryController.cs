@@ -126,7 +126,9 @@ namespace App.Controllers
         {
             try
             {
-                Category category = categoryProcessor.Update(id, collection["Title"]);
+                this.person = personProcessor.GetByEmail(User.Identity.Name);
+
+                Category category = categoryProcessor.Update(id, collection["Title"], person.ID);
 
                 if (category.ID == 0)
                 {
@@ -163,14 +165,7 @@ namespace App.Controllers
             ViewBag.Post = true;
             try
             {
-                int catDeleteResult = categoryProcessor.Delete(id);
-
-                if (catDeleteResult == 0)
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
+                categoryProcessor.Delete(id);
 
                 ViewBag.Succeeded = true;
 

@@ -15,15 +15,15 @@ namespace NoteBaseDAL
             TagDAL = new TagDAL(_connString);
         }
 
-        public int Create(string _title, string _text, int _categoryId, int _personId)
+        public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
         {
-            int result = 0;
+            NoteDTO result = new(0, _title, _text, _categoryId);
 
             try
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"INSERT INTO Note (Title, Text, CategoryID, PersonId) VALUES (@Title, @Text, @CategoryID, @PersonId)";
+                    string query = @"INSERT INTO Note (Title, Text, CategoryID, PersonId) VALUES (@Title, @Text, @CategoryID, @PersonId); SELECT SCOPE_IDENTITY();";
 
                     using (SqlCommand command = new(query, connection))
                     {
@@ -33,7 +33,13 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@PersonId", _personId);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if(reader.Read())
+                        {
+                            result = new((Int32)reader.GetDecimal(0), _title, _text, _categoryId);
+                            result.PersonId = _personId;
+                        }
 
                         connection.Close();
                     }
@@ -48,10 +54,8 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int CreateNoteTag(int _noteId, int _tagId)
+        public void CreateNoteTag(int _noteId, int _tagId)
         {
-            int result = 0;
-
             try
             {
                 using (SqlConnection connection = new(ConnString))
@@ -68,7 +72,12 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            result = reader.GetInt32(0);
+                            int rowsAffected = reader.GetInt32(0);
+
+                            if (rowsAffected == 0)
+                            {
+                                throw new Exception("NoteTag could not be Created");
+                            }
                         }
                         connection.Close();
                     }
@@ -79,8 +88,6 @@ namespace NoteBaseDAL
             {
                 throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
-
-            return result;
         }
 
         public NoteDTO GetById(int _noteId)
@@ -293,15 +300,15 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Update(int _id, string _title, string _text, int _categoryId)
+        public NoteDTO Update(int _id, string _title, string _text, int _categoryId)
         {
-            int result = 0;
+            NoteDTO result = new(_id, _title, _text, _categoryId);
 
             try
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"UPDATE Note SET Title = @Title, Text = @Text, CategoryID = @CategoryID WHERE ID = @ID";
+                    string query = @"UPDATE Note SET Title = @Title, Text = @Text, CategoryID = @CategoryID WHERE ID = @ID;";
 
                     using (SqlCommand command = new(query, connection))
                     {
@@ -311,7 +318,7 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@ID", _id);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
 
                         connection.Close();
                     }
@@ -326,10 +333,8 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Delete(int _noteId)
+        public void Delete(int _noteId)
         {
-            int result = 0;
-
             try
             {
                 using (SqlConnection connection = new(ConnString))
@@ -341,7 +346,13 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@ID", _noteId);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        //is dit nodig?
+                        if (rowsAffected == 0)
+                        {
+                            throw new Exception("Note could not be deleted");
+                        }
 
                         connection.Close();
                     }
@@ -352,14 +363,10 @@ namespace NoteBaseDAL
             {
                 throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
-
-            return result;
         }
 
-        public int DeleteNoteTag(int _noteId)
+        public void DeleteNoteTag(int _noteId)
         {
-            int result = 0;
-
             try
             {
                 using (SqlConnection connection = new(ConnString))
@@ -371,7 +378,12 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@NoteID", _noteId);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        if (rowsAffected == 0)
+                        {
+                            throw new Exception("NoteTag could not be deleted");
+                        }
 
                         connection.Close();
                     }
@@ -382,8 +394,6 @@ namespace NoteBaseDAL
             {
                 throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
-
-            return result;
         }
     }
 }

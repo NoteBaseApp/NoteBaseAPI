@@ -28,9 +28,7 @@ namespace NoteBaseLogic
                 throw new Exception("Category With this title already exists");
             }
 
-            CategoryDAL.Create(_title, _personId);
-
-            return GetByTitle(_title);
+            return new(CategoryDAL.Create(_title, _personId));
         }
 
         public Category GetById(int _catId)
@@ -60,7 +58,7 @@ namespace NoteBaseLogic
             return new(catDTO);
         }
 
-        public Category Update(int _id, string _title)
+        public Category Update(int _id, string _title,int _personId)
         {
             Category cat = GetById(_id);
             if (cat.ID == 0)
@@ -79,12 +77,10 @@ namespace NoteBaseLogic
                 throw new Exception("Category With this title already exists");
             }
 
-            CategoryDAL.Update(_id, _title);
-
-            return GetById(_id);
+            return new(CategoryDAL.Update(_id, _title, _personId));
         }
 
-        public int Delete(int _catId)
+        public void Delete(int _catId)
         {
             List<Note> notes = NoteProcessor.GetByCategory(_catId);
             if (notes.Count > 0)
@@ -99,7 +95,7 @@ namespace NoteBaseLogic
                 throw new Exception("Category doesn't exist");
             }
 
-            return CategoryDAL.Delete(_catId);
+            CategoryDAL.Delete(_catId);
         }
 
     }

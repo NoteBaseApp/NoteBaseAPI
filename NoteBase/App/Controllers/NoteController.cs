@@ -163,8 +163,6 @@ namespace App.Controllers
             {
                 this.person = personProcessor.GetByEmail(User.Identity.Name);
 
-                Note note = noteProcessor.Update(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]), person.ID);
-
                 List<Category> categories = categoryProcessor.GetByPerson(person.ID);
 
                 List<CategoryModel> categoryModels = new();
@@ -174,6 +172,8 @@ namespace App.Controllers
                 }
 
                 ViewBag.CategoryList = categoryModels;
+
+                Note note = noteProcessor.Update(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]), person.ID);
 
                 if (note.ID == 0 || categoryModels.Count == 0)
                 {
@@ -219,13 +219,7 @@ namespace App.Controllers
                     return View();
                 }
 
-                int noteDeleteResult = noteProcessor.Delete(note, person.ID);
-
-                if (noteDeleteResult == 0)
-                {
-                    ViewBag.Succeeded = false;
-                    return View();
-                }
+                noteProcessor.Delete(note, person.ID);
 
                 ViewBag.Succeeded = true;
 

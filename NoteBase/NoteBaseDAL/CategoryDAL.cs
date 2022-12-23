@@ -18,15 +18,15 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public int Create(string _title, int _personId)
+        public CategoryDTO Create(string _title, int _personId)
         {
-            int result = 0;
+            CategoryDTO result = new(0, _title, _personId);
 
             try
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"INSERT INTO Category (Title, PersonId) VALUES (@Title, @PersonId)";
+                    string query = @"INSERT INTO Category (Title, PersonId) VALUES (@Title, @PersonId); SELECT SCOPE_IDENTITY();";
 
                     using (SqlCommand command = new(query, connection))
                     {
@@ -34,7 +34,12 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@PersonId", _personId);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            result = new((Int32)reader.GetDecimal(0), _title, _personId);
+                        }
 
                         connection.Close();
                     }
@@ -149,9 +154,9 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Update(int _id, string _title)
+        public CategoryDTO Update(int _id, string _title, int _personId)
         {
-            int result = 0;
+            CategoryDTO result = new(_id, _title, _personId);
 
             try
             {
@@ -165,7 +170,7 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@catId", _id);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
 
                         connection.Close();
                     }
@@ -180,9 +185,8 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Delete(int _catId)
+        public void Delete(int _catId)
         {
-            int result = 0;
 
             try
             {
@@ -195,7 +199,13 @@ namespace NoteBaseDAL
                         command.Parameters.AddWithValue("@catId", _catId);
                         connection.Open();
 
-                        result = command.ExecuteNonQuery();
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        //is dit nodig?
+                        if (rowsAffected == 0)
+                        {
+                            throw new Exception("Category could not be deleted");
+                        }
 
                         connection.Close();
                     }
@@ -206,8 +216,6 @@ namespace NoteBaseDAL
             {
                 throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
-
-            return result;
         }
 
     }

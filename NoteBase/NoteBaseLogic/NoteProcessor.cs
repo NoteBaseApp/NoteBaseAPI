@@ -42,11 +42,9 @@ namespace NoteBaseLogic
             }
 
             //throw exeption when create fails?
-            int createResult = NoteDAL.Create(_title, _text, _categoryId, _personId);
+            note = new(NoteDAL.Create(_title, _text, _categoryId, _personId));
 
-            List<Tag> tags = AddTags(_text);
-
-            note = GetByTitle(_title);
+            List<Tag> tags = ExtractTags(_text);
 
             foreach (Tag newtag in tags)
             {
@@ -61,11 +59,11 @@ namespace NoteBaseLogic
                 NoteDAL.CreateNoteTag(note.ID, tag.ID);
             }
 
-            return note;
+            return GetByTitle(_title);
         }
 
         //what if somebody usses a tag with a hashtag in it like #C#
-        public List<Tag> AddTags(string _text)
+        public List<Tag> ExtractTags(string _text)
         {
             List<Tag> result = new();
 
@@ -159,17 +157,15 @@ namespace NoteBaseLogic
             }
 
             Note note = GetByTitle(_title);
-            if (note.ID != 0)
+            if (note.ID != 0 && note.ID != _id)
             {
                 throw new Exception("Note With this title already exists");
             }
 
             //throw exeption when update fails?
-            int UpdateResult = NoteDAL.Update(_id, _title, _text, _categoryId);
+            note = new(NoteDAL.Update(_id, _title, _text, _categoryId));
 
-            List<Tag> tags = AddTags(_text);
-
-            note = GetByTitle(_title);
+            List<Tag> tags = ExtractTags(_text);
 
             foreach (Tag newtag in tags)
             {
@@ -192,7 +188,7 @@ namespace NoteBaseLogic
             return GetById(_id);
         }
 
-        public int Delete(Note _note, int _PersonId)
+        public void Delete(Note _note, int _PersonId)
         {
             Note note = GetById(_note.ID);
             if (note.ID == 0)
@@ -202,25 +198,15 @@ namespace NoteBaseLogic
 
             if (_note.TagList.Count > 0)
             {
-                int noteTagDeleteReponse = NoteDAL.DeleteNoteTag(_note.ID);
-                if (noteTagDeleteReponse == 0)
-                {
-                    throw new Exception("Could not Delete NoteTag");
-                }
+                NoteDAL.DeleteNoteTag(_note.ID);
             }
 
-            int noteDeleteReponse = NoteDAL.Delete(_note.ID);
-            if (noteDeleteReponse == 0)
-            {
-                throw new Exception("Could not Delete Note");
-            }
+            NoteDAL.Delete(_note.ID);
 
             foreach (Tag tag in _note.TagList)
             {
                 TagProcessor.TryDelete(tag.ID, _PersonId);
             }
-
-            return noteDeleteReponse;
         }
     }
 }

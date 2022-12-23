@@ -11,22 +11,24 @@ namespace NoteBaseLogicTests.TestDALs
 {
     internal class NoteTestDAL : INoteDAL
     {
-        public int Create(string _title, string _text, int _categoryId, int _personId)
+        public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
         {
-            return 1;
+            NoteDTO result = new(0, _title, _text, _categoryId);
+            result.PersonId = _personId;
+            return result;
         }
 
-        public int CreateNoteTag(int _noteId, int _tagId)
+        public void CreateNoteTag(int _noteId, int _tagId)
         {
-            return 1;
+            
         }
 
-        public int Delete(int _noteId)
+        public void Delete(int _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public int DeleteNoteTag(int _noteId)
+        public void DeleteNoteTag(int _noteId)
         {
             throw new NotImplementedException();
         }
@@ -89,7 +91,7 @@ namespace NoteBaseLogicTests.TestDALs
             return new(0, "", "", 0);
         }
 
-        public int Update(int id, string _title, string _text, int _categoryId)
+        public NoteDTO Update(int id, string _title, string _text, int _categoryId)
         {
             throw new NotImplementedException();
         }

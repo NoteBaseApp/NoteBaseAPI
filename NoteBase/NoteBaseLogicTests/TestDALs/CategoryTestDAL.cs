@@ -5,14 +5,18 @@ namespace NoteBaseLogicTests.TestDALs
 {
     internal class CategoryTestDAL : ICategoryDAL
     {
-        public int Create(string _title, int _personId)
+        public CategoryDTO Create(string _title, int _personId)
         {
-            return 1;
+            if (_title == "School")
+            {
+                return new(12, _title, _personId);
+            }
+            return new(0, _title, _personId);
         }
 
-        public int Delete(int _catId)
+        public void Delete(int _catId)
         {
-            return 1;
+            
         }
 
         public CategoryDTO GetById(int _catId)
@@ -55,14 +59,14 @@ namespace NoteBaseLogicTests.TestDALs
             return new(0, "", 0);
         }
 
-        public int Update(int _id, string _title)
+        public CategoryDTO Update(int _id, string _title, int _personId)
         {
-            if (_id == 999)
+            /* if (_id == 999)
             {
-                return 0;
-            }
+                return new(_id, _title, _personId);
+            }*/
 
-            return 1;
+            return new(_id, _title, _personId);
         }
     }
 }

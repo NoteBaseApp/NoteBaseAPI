@@ -10,12 +10,12 @@ namespace NoteBaseLogicTests.TestDALs
 {
     internal class TagTestDAL : ITagDAL
     {
-        public int Create(string _title)
+        public TagDTO Create(string _title)
         {
-            return 1;
+            return new(0, _title);
         }
 
-        public int Delete(int _tagId)
+        public void Delete(int _tagId)
         {
             throw new NotImplementedException();
         }
@@ -49,7 +49,7 @@ namespace NoteBaseLogicTests.TestDALs
             throw new NotImplementedException();
         }
 
-        public int Update(int _id, string _title)
+        public TagDTO Update(int _id, string _title)
         {
             throw new NotImplementedException();
         }

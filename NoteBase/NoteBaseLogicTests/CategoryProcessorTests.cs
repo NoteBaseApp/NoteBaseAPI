@@ -69,12 +69,11 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
 
             //act
-            int actual = categoryProcessor.Delete(1);
+            categoryProcessor.Delete(1);
 
             //assert
-            int expected = 1;
-
-            Assert.AreEqual(expected, actual);
+            //how do i test this?
+            Assert.IsTrue(true);
         }
 
         [TestMethod()]
@@ -108,9 +107,10 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
             int id = 1;
             string titel = "Games";
+            int personId = 1;
 
             //act
-            Category actual = categoryProcessor.Update(id, titel);
+            Category actual = categoryProcessor.Update(id, titel, personId);
 
             //assert
             Category expected = new(1, "Games", 1);
@@ -129,9 +129,10 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
             int id = 999;
             string titel = "Games";
+            int personId = 1;
 
             //act
-            categoryProcessor.Update(id, titel);
+            categoryProcessor.Update(id, titel, personId);
         }
 
         [TestMethod()]
@@ -143,9 +144,10 @@ namespace NoteBaseLogic.Tests
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
             int id = 1;
             string titel = "";
+            int personId = 1;
 
             //act
-            categoryProcessor.Update(id, titel);
+            categoryProcessor.Update(id, titel, personId);
         }
     }
 }

@@ -17,9 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NoteBaseInterface\NoteBaseLogicInterface.csproj" />
-    <ProjectReference Include="..\NoteBaseLogicFactory\NoteBaseLogicFactory.csproj" />
-    <ProjectReference Include="..\NoteBaseLogic\NoteBaseLogic.csproj" />
+    <ProjectReference Include="..\NoteBaseInterface\LogicInterface.csproj" />
+    <ProjectReference Include="..\NoteBaseLogicFactory\LogicFactory.csproj" />
+    <ProjectReference Include="..\NoteBaseLogic\Logic.csproj" />
   </ItemGroup>
 
 </Project>

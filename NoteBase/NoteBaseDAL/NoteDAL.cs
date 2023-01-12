@@ -7,12 +7,12 @@ namespace NoteBaseDAL
     public class NoteDAL : INoteDAL
     {
         private readonly string ConnString;
-        private TagDAL TagDAL;
+        private readonly TagDAL TagDAL;
 
         public NoteDAL(string _connString)
         {
             ConnString = _connString;
-            TagDAL = new TagDAL(_connString);
+            TagDAL = new(_connString);
         }
 
         public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
@@ -37,8 +37,10 @@ namespace NoteBaseDAL
 
                         if(reader.Read())
                         {
-                            result = new((Int32)reader.GetDecimal(0), _title, _text, _categoryId);
-                            result.PersonId = _personId;
+                            result = new((Int32)reader.GetDecimal(0), _title, _text, _categoryId)
+                            {
+                                PersonId = _personId
+                            };
                         }
 
                         connection.Close();

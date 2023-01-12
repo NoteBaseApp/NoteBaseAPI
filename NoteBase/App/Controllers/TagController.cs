@@ -42,7 +42,7 @@ namespace App.Controllers
                 ViewBag.Succeeded = true;
                 return View(noteModels);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Succeeded = false;
                 return View();

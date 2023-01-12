@@ -55,7 +55,7 @@ namespace App.Controllers
 
                 return View(categoryModels);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Succeeded = false;
                 return View();

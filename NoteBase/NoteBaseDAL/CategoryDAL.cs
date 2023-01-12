@@ -59,11 +59,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"SELECT ID, Title, PersonId FROM Category WHERE ID = @catId";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@catId", _catId);
                         connection.Open();
@@ -92,11 +92,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"SELECT ID, Title, PersonId FROM Category WHERE PersonId = @PersonId";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@PersonId", _personId);
                         connection.Open();
@@ -127,11 +127,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"SELECT ID, Title, PersonId FROM Category WHERE Title = @Title";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@Title", _title);
                         connection.Open();

@@ -49,7 +49,7 @@ namespace App.Controllers
 
                 return View(new CategoryModel(category));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Succeeded = false;
                 return View();
@@ -87,7 +87,7 @@ namespace App.Controllers
                 //diffrent redirect options? book example
                 return RedirectToAction(nameof(Details), category.ID);
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 ViewBag.Succeeded = false;
                 return View();
@@ -112,7 +112,7 @@ namespace App.Controllers
 
                 return View(new CategoryModel(category));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Succeeded = false;
                 return View();
@@ -142,7 +142,7 @@ namespace App.Controllers
                 //diffrent redirect options?
                 return RedirectToAction(nameof(Details), category.ID);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Succeeded = false;
                 return View();
@@ -171,7 +171,7 @@ namespace App.Controllers
 
                 return View();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Succeeded = false;
                 return View();

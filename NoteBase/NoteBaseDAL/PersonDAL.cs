@@ -24,11 +24,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"INSERT INTO Person (Name, Email) VALUES (@Name, @Email)";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@Name", _name);
                         command.Parameters.AddWithValue("@Email", _email);
@@ -55,11 +55,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"SELECT ID, Name, Email FROM Person WHERE Email = @Email";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@Email", _personEmail);
                         connection.Open();

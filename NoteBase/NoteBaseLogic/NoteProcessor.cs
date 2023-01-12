@@ -63,7 +63,7 @@ namespace NoteBaseLogic
         }
 
         //what if somebody usses a tag with a hashtag in it like #C#
-        public List<Tag> ExtractTags(string _text)
+        private List<Tag> ExtractTags(string _text)
         {
             List<Tag> result = new();
 
@@ -73,7 +73,7 @@ namespace NoteBaseLogic
                 string word = allWords[i];
                 if (word.StartsWith("#"))
                 {
-                    Tag tag = new(0, word.Substring(1).ToLower());
+                    Tag tag = new(0, word[1..].ToLower());
                     if (!result.Contains(tag))
                     {
                         result.Add(tag);

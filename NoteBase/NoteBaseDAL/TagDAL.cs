@@ -25,11 +25,11 @@ namespace NoteBaseDAL
             TagDTO result = new(0, _title);
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"INSERT INTO Tag (Title) VALUES (@Title); SELECT SCOPE_IDENTITY();";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@Title", _title);
                         connection.Open();
@@ -60,11 +60,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"SELECT ID, Title From Tag WHERE ID = @ID";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@ID", _tagId);
                         connection.Open();
@@ -94,11 +94,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"SELECT ID, Title FROM NoteTags WHERE PersonId = @PersonId";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@PersonId", _PersonId);
                         connection.Open();
@@ -107,7 +107,7 @@ namespace NoteBaseDAL
 
                         while (reader.Read())
                         {
-                            TagDTO tripDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
+                            TagDTO tripDTO = new(reader.GetInt32(0), reader.GetString(1));
 
                             result.Add(tripDTO);
                         }
@@ -130,11 +130,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"SELECT ID, Title FROM NoteTags WHERE NoteID = @NoteId";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@NoteId", _noteId);
                         connection.Open();
@@ -143,7 +143,7 @@ namespace NoteBaseDAL
 
                         while (reader.Read())
                         {
-                            TagDTO tripDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
+                            TagDTO tripDTO = new(reader.GetInt32(0), reader.GetString(1));
 
                             result.Add(tripDTO);
                         }
@@ -166,11 +166,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"SELECT ID, Title From Tag WHERE Title = @Title";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@Title", _Title);
                         connection.Open();
@@ -200,11 +200,11 @@ namespace NoteBaseDAL
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"UPDATE Tag SET Title = @Title WHERE ID = @ID";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@Title", _title);
                         command.Parameters.AddWithValue("@ID", _tagId);
@@ -226,15 +226,13 @@ namespace NoteBaseDAL
 
         public void Delete(int _tagId)
         {
-            int result = 0;
-
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                using (SqlConnection connection = new(ConnString))
                 {
                     string query = @"DELETE From Tag WHERE ID = @ID";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         command.Parameters.AddWithValue("@ID", _tagId);
                         connection.Open();

@@ -36,7 +36,7 @@ namespace NoteBaseLogicInterface.Models
 
             foreach (TagDTO tagDTO in _noteDTO.tagList)
             {
-                Tag tag = new Tag(tagDTO);
+                Tag tag = new(tagDTO);
                 if (IsTagCompatible(tag))
                 {
                     TryAddTag(tag);

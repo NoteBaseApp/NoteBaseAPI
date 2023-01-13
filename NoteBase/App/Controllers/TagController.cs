@@ -4,9 +4,11 @@ using NoteBaseLogicInterface.Models;
 using NoteBaseLogicInterface;
 using NoteBaseInterface;
 using App.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace App.Controllers
 {
+    [Authorize]
     public class TagController : Controller
     {
         private readonly IConfiguration _config;

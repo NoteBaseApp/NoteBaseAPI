@@ -1,4 +1,5 @@
 ﻿using App.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
@@ -6,6 +7,7 @@ using NoteBaseLogicInterface.Models;
 
 namespace App.Controllers
 {
+    [Authorize]
     public class NoteController : Controller
     {
         private readonly IConfiguration _config;

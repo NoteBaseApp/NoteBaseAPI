@@ -3,6 +3,7 @@ using NoteBaseDALInterface.Models;
 using NoteBaseInterface;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -139,7 +140,7 @@ namespace NoteBaseLogic
             return result;
         }
 
-        public Note Update(int _id, string _title, string _text, int _categoryId, int _personId)
+        public Note Update(int _id, string _title, string _text, int _categoryId, int _personId, List<Tag> _tags)
         {
             if (_title == "")
             {
@@ -165,9 +166,14 @@ namespace NoteBaseLogic
             //throw exeption when update fails?
             note = new(NoteDAL.Update(_id, _title, _text, _categoryId));
 
-            List<Tag> tags = ExtractTags(_text);
+            if (_tags.Count > 0)
+            {
+                NoteDAL.DeleteNoteTag(_id);
+            }
 
-            foreach (Tag newtag in tags)
+            List<Tag> newTags = ExtractTags(_text);
+
+            foreach (Tag newtag in newTags)
             {
                 Tag tag = TagProcessor.GetByTitle(newtag.Title);
 
@@ -180,9 +186,13 @@ namespace NoteBaseLogic
                 NoteDAL.CreateNoteTag(note.ID, tag.ID);
             }
 
-            foreach (Tag tag in tags)
+            foreach (Tag tag in _tags)
             {
-                TagProcessor.TryDelete(tag.ID, _personId);
+                //get all tags with same title. if there are non delete the tag
+                if (newTags.Where(t => t.Title == tag.Title).Count() == 0)
+                {
+                    TagProcessor.TryDelete(tag.ID, _personId);
+                }
             }
 
             return GetById(_id);

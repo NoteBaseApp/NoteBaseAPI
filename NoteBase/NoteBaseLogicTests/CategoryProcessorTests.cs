@@ -127,7 +127,7 @@ namespace NoteBaseLogic.Tests
         {
             //arrange
             ICategoryProcessor categoryProcessor = Factory.CreateCategoryProcessor();
-            int id = 999;
+            int id = 0;
             string titel = "Games";
             int personId = 1;
 

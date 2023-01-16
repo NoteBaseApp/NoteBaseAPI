@@ -108,7 +108,7 @@ namespace App.Controllers
 
                 ViewBag.Succeeded = true;
 
-                //diffrent redirect options? book example
+                //for somereason when redirecting the details try to get the item before it has been added to database
                 return RedirectToAction(nameof(Details), note.ID);
             }
             catch(Exception)
@@ -175,7 +175,10 @@ namespace App.Controllers
 
                 ViewBag.CategoryList = categoryModels;
 
-                Note note = noteProcessor.Update(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]), person.ID);
+                //retrieve note first to get the tags
+                Note note = noteProcessor.GetById(id);
+
+                note = noteProcessor.Update(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]), person.ID, note.TagList.ToList());
 
                 if (note.ID == 0 || categoryModels.Count == 0)
                 {

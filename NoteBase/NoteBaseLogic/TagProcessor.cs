@@ -64,16 +64,19 @@ namespace NoteBaseLogic
 
         public void TryDelete(int _tagId, int _PersonId)
         {
-            /*List<Tag> Tags = GetByPerson(_PersonId);
+            //get all used tags by person
+            List<Tag> Tags = GetByPerson(_PersonId);
 
+            //is tag in use? return
             foreach (Tag tag in Tags)
             {
                 if (tag.ID == _tagId)
                 {
-                    return 0;
+                    return;
                 }
-            }*/
+            }
 
+            //else delete it
             TagDAL.Delete(_tagId);
         }
     }

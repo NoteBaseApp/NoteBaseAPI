@@ -84,7 +84,7 @@ namespace App.Controllers
 
                 ViewBag.Succeeded = true;
 
-                //diffrent redirect options? book example
+                //for somereason when redirecting the details try to get the item before it has been added to database
                 return RedirectToAction(nameof(Details), category.ID);
             }
             catch(Exception)

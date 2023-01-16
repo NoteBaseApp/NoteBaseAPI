@@ -60,8 +60,7 @@ namespace NoteBaseLogic
 
         public Category Update(int _id, string _title,int _personId)
         {
-            Category cat = GetById(_id);
-            if (cat.ID == 0)
+            if (_id == 0)
             {
                 throw new Exception("Category doesn't exist");
             }
@@ -71,7 +70,7 @@ namespace NoteBaseLogic
                 throw new ArgumentException("Title can't be empty");
             }
 
-            cat = GetByTitle(_title);
+            Category cat = GetByTitle(_title);
             if (cat.ID != 0)
             {
                 throw new Exception("Category With this title already exists");

@@ -22,33 +22,25 @@ namespace NoteBaseDAL
         {
             CategoryDTO result = new(0, _title, _personId);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"INSERT INTO Category (Title, PersonId) VALUES (@Title, @PersonId); SELECT SCOPE_IDENTITY();";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"INSERT INTO Category (Title, PersonId) VALUES (@Title, @PersonId); SELECT SCOPE_IDENTITY();";
+                    command.Parameters.AddWithValue("@Title", _title);
+                    command.Parameters.AddWithValue("@PersonId", _personId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@Title", _title);
-                        command.Parameters.AddWithValue("@PersonId", _personId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            result = new((Int32)reader.GetDecimal(0), _title, _personId);
-                        }
-
-                        connection.Close();
+                        result = new((Int32)reader.GetDecimal(0), _title, _personId);
                     }
+
+                    connection.Close();
                 }
-            }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
             return result;
@@ -57,30 +49,23 @@ namespace NoteBaseDAL
         {
             CategoryDTO result = new(0, "", 0);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"SELECT ID, Title, PersonId FROM Category WHERE ID = @catId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, PersonId FROM Category WHERE ID = @catId";
+                    command.Parameters.AddWithValue("@catId", _catId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@catId", _catId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-                        }
-                        connection.Close();
+                        result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
                     }
+                    connection.Close();
                 }
-            }
-            catch (SqlException e)
-            {
-                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
             return result;
@@ -90,32 +75,25 @@ namespace NoteBaseDAL
         {
             List<CategoryDTO> result = new();
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"SELECT ID, Title, PersonId FROM Category WHERE PersonId = @PersonId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, PersonId FROM Category WHERE PersonId = @PersonId";
+                    command.Parameters.AddWithValue("@PersonId", _personId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@PersonId", _personId);
-                        connection.Open();
+                        CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
 
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        while (reader.Read())
-                        {
-                            CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-
-                            result.Add(categoryDTO);
-                        }
-                        connection.Close();
+                        result.Add(categoryDTO);
                     }
+                    connection.Close();
                 }
-            }
-            catch (SqlException e)
-            {
-                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
             return result;
@@ -125,30 +103,23 @@ namespace NoteBaseDAL
         {
             CategoryDTO result = new(0, "", 0);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"SELECT ID, Title, PersonId FROM Category WHERE Title = @Title";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, PersonId FROM Category WHERE Title = @Title";
+                    command.Parameters.AddWithValue("@Title", _title);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@Title", _title);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-                        }
-                        connection.Close();
+                        result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
                     }
+                    connection.Close();
                 }
-            }
-            catch (SqlException e)
-            {
-                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
             return result;
@@ -158,28 +129,20 @@ namespace NoteBaseDAL
         {
             CategoryDTO result = new(_id, _title, _personId);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"UPDATE Category SET Title = @Title WHERE ID = @catId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"UPDATE Category SET Title = @Title WHERE ID = @catId";
+                    command.Parameters.AddWithValue("@Title", _title);
+                    command.Parameters.AddWithValue("@catId", _id);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Title", _title);
-                        command.Parameters.AddWithValue("@catId", _id);
-                        connection.Open();
+                    command.ExecuteNonQuery();
 
-                        command.ExecuteNonQuery();
-
-                        connection.Close();
-                    }
+                    connection.Close();
                 }
-            }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
             return result;
@@ -188,33 +151,25 @@ namespace NoteBaseDAL
         public void Delete(int _catId)
         {
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"DELETE FROM Category WHERE ID = @catId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"DELETE FROM Category WHERE ID = @catId";
+                    command.Parameters.AddWithValue("@catId", _catId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    //is dit nodig?
+                    if (rowsAffected == 0)
                     {
-                        command.Parameters.AddWithValue("@catId", _catId);
-                        connection.Open();
-
-                        int rowsAffected = command.ExecuteNonQuery();
-
-                        //is dit nodig?
-                        if (rowsAffected == 0)
-                        {
-                            throw new Exception("Category could not be deleted");
-                        }
-
-                        connection.Close();
+                        throw new Exception("Category could not be deleted");
                     }
+
+                    connection.Close();
                 }
-            }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
         }
 

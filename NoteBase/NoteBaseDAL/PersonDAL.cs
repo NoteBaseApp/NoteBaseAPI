@@ -22,28 +22,20 @@ namespace NoteBaseDAL
         {
             int result = 0;
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"INSERT INTO Person (Name, Email) VALUES (@Name, @Email)";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"INSERT INTO Person (Name, Email) VALUES (@Name, @Email)";
+                    command.Parameters.AddWithValue("@Name", _name);
+                    command.Parameters.AddWithValue("@Email", _email);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Name", _name);
-                        command.Parameters.AddWithValue("@Email", _email);
-                        connection.Open();
+                    result = command.ExecuteNonQuery();
 
-                        result = command.ExecuteNonQuery();
-
-                        connection.Close();
-                    }
+                    connection.Close();
                 }
-            }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
             return result;
@@ -53,32 +45,25 @@ namespace NoteBaseDAL
         {
             PersonDTO result = new(0, "", "");
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"SELECT ID, Name, Email FROM Person WHERE Email = @Email";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Name, Email FROM Person WHERE Email = @Email";
+                    command.Parameters.AddWithValue("@Email", _personEmail);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@Email", _personEmail);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            result = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
-                        }
-
-                        connection.Close();
-
+                        result = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
                     }
+
+                    connection.Close();
+
                 }
-            }
-            catch (SqlException e)
-            {
-                throw new Exception("de volgende error is opgetreden " + e.Number + "\n" + e.Message);
             }
 
             return result;

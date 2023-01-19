@@ -7,40 +7,34 @@
 
 <div class="">
     <h1>Notitie overzicht</h1>
-    @if (!ViewBag.Succeeded)
+    @if (Model.Count() == 0)
     {
-        <p>Er is iets mis gegaan: @ViewBag.Message</p>
+        <p>Je hebt geen categorieën</p>
     }
-    else {
-        @if (Model.Count() == 0)
+    else
+    {
+        @foreach (CategoryModel category in Model)
         {
-            <p>Je hebt geen categorieën</p>
-        }
-        else
-        {
-            @foreach (CategoryModel category in Model)
-            {
-                <div>
-                    <h2><a asp-controller="Category" asp-action="Details" asp-route-Id="@category.ID">@category.Title</a></h2>
-                    <a asp-controller="Category" asp-action="Edit" asp-route-Id="@category.ID">Bewerken</a>
-                    <a asp-controller="Category" asp-action="Delete" asp-route-Id="@category.ID">Verwijderen</a>
-                    <hr>
+            <div>
+                <h2><a asp-controller="Category" asp-action="Details" asp-route-Id="@category.ID">@category.Title</a></h2>
+                <a asp-controller="Category" asp-action="Edit" asp-route-Id="@category.ID">Bewerken</a>
+                <a asp-controller="Category" asp-action="Delete" asp-route-Id="@category.ID">Verwijderen</a>
+                <hr>
 
-                    <div class="note-container">
-                        @if (category.NoteList.Count() == 0)
+                <div class="note-container">
+                    @if (category.NoteList.Count() == 0)
+                    {
+                        <p>Deze categorie heeft geen notities</p>
+                    }
+                    else
+                    {
+                        @foreach (NoteModel note in category.NoteList)
                         {
-                            <p>Deze categorie heeft geen notities</p>
+                            @Html.Partial("_Note", note)
                         }
-                        else
-                        {
-                            @foreach (NoteModel note in category.NoteList)
-                            {
-                                @Html.Partial("_Note", note)
-                            }
-                        }
-                    </div>
+                    }
                 </div>
-            }
+            </div>
         }
     }
 </div>

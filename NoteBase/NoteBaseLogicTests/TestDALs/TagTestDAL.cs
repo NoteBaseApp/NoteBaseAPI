@@ -10,58 +10,51 @@ namespace NoteBaseLogicTests.TestDALs
 {
     internal class TagTestDAL : ITagDAL
     {
-        public DALResponse<TagDTO> Create(TagDTO _tag)
+        public TagDTO Create(string _title)
         {
-            return new(true);
+            return new(0, _title);
         }
 
-        public DALResponse<TagDTO> Delete(int _tagId)
+        public void Delete(int _tagId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<TagDTO> GetById(int _tagId)
+        public TagDTO GetById(int _tagId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<TagDTO> GetByPerson(string _userMail)
+        public List<TagDTO> GetByPerson(string _userMail)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<TagDTO> GetByTitle(string _Title)
+        public TagDTO GetByTitle(string _Title)
         {
-            DALResponse<TagDTO> response = new(true);
-
             if (_Title == "fontys")
             {
-                response.AddItem(new(11, "fontys"));
+                return new(11, "fontys");
             } 
             else if (_Title == "eindhoven")
             {
-                response.AddItem(new(12, "fontys"));
+                return new(12, "fontys");
             }
 
-            return response;
+            return new(0, "");
         }
 
-        public DALResponse<TagDTO> GetByNote(int _noteId)
+        public List<TagDTO> GetByNote(int _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<TagDTO> Update(int _tagId, TagDTO _tag)
+        public TagDTO Update(int _id, string _title)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<TagDTO> Update(TagDTO _tag)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DALResponse<TagDTO> GetByPerson(int _PersonId)
+        public List<TagDTO> GetByPerson(int _PersonId)
         {
             throw new NotImplementedException();
         }

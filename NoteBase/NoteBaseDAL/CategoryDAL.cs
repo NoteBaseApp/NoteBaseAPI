@@ -18,294 +18,158 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public DALResponse<CategoryDTO> Create(CategoryDTO _cat)
+        public CategoryDTO Create(string _title, int _personId)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            CategoryDTO result = new(0, _title, _personId);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"INSERT INTO Category (Title, PersonId) VALUES (@Title, @PersonId); SELECT SCOPE_IDENTITY();";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"INSERT INTO Category (Title, PersonId) VALUES (@Title, @PersonId)";
+                    command.Parameters.AddWithValue("@Title", _title);
+                    command.Parameters.AddWithValue("@PersonId", _personId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@Title", _cat.Title);
-                        command.Parameters.AddWithValue("@PersonId", _cat.PersonId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-
-                        if (reader.Read())
-                        {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "CategoryDAL.Create(" + _cat.Title + ") ERROR: Could not Create Category";
-                            }
-                        }
-                        connection.Close();
+                        result = new((Int32)reader.GetDecimal(0), _title, _personId);
                     }
+
+                    connection.Close();
                 }
             }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Create(" + _cat.Title + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
-        public DALResponse<CategoryDTO> GetById(int _catId)
+        public CategoryDTO GetById(int _catId)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            CategoryDTO result = new(0, "", 0);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                string query = @"SELECT ID, Title, PersonId FROM Category WHERE ID = @catId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, PersonId FROM Category WHERE ID = @catId";
+                    command.Parameters.AddWithValue("@catId", _catId);
+                    connection.Open();
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@catId", _catId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-
-                            response.AddItem(categoryDTO);
-                        }
-                        connection.Close();
+                        result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
                     }
+                    connection.Close();
                 }
             }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetById(" + _catId + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<CategoryDTO> GetByPerson(int _personId)
+        public List<CategoryDTO> GetByPerson(int _personId)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            List<CategoryDTO> result = new();
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                string query = @"SELECT ID, Title, PersonId FROM Category WHERE PersonId = @PersonId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, PersonId FROM Category WHERE PersonId = @PersonId";
+                    command.Parameters.AddWithValue("@PersonId", _personId);
+                    connection.Open();
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@PersonId", _personId);
-                        connection.Open();
+                        CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
 
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        while (reader.Read())
-                        {
-                            CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-
-                            response.AddItem(categoryDTO);
-                        }
-                        connection.Close();
+                        result.Add(categoryDTO);
                     }
+                    connection.Close();
                 }
             }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetByPerson(" + _personId + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<CategoryDTO> GetByTitle(string _title)
+        public CategoryDTO GetByTitle(string _title)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            CategoryDTO result = new(0, "", 0);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new SqlConnection(ConnString))
+                string query = @"SELECT ID, Title, PersonId FROM Category WHERE Title = @Title";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, PersonId FROM Category WHERE Title = @Title";
+                    command.Parameters.AddWithValue("@Title", _title);
+                    connection.Open();
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@Title", _title);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-
-                            response.AddItem(categoryDTO);
-                        }
-                        connection.Close();
+                        result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
                     }
+                    connection.Close();
                 }
             }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetByTitle(" + _title + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.GetByTitle(" + _title + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<CategoryDTO> Update(CategoryDTO _cat)
+        public CategoryDTO Update(int _id, string _title, int _personId)
         {
-            DALResponse<CategoryDTO> response = new(true);
+            CategoryDTO result = new(_id, _title, _personId);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"UPDATE Category SET Title = @Title WHERE ID = @catId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"UPDATE Category SET Title = @Title WHERE ID = @catId";
+                    command.Parameters.AddWithValue("@Title", _title);
+                    command.Parameters.AddWithValue("@catId", _id);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Title", _cat.Title);
-                        command.Parameters.AddWithValue("@catId", _cat.ID);
-                        connection.Open();
+                    command.ExecuteNonQuery();
 
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "CategoryDAL.Update(" + _cat.ID + ") ERROR: Could not Update Category";
-                            }
-                        }
-                        connection.Close();
-                    }
+                    connection.Close();
                 }
             }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Update(" + _cat.ID + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<CategoryDTO> Delete(int _catId)
+        public void Delete(int _catId)
         {
-            DALResponse<CategoryDTO> response = new(true);
-
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"DELETE FROM Category WHERE ID = @catId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"DELETE FROM Category WHERE ID = @catId";
+                    command.Parameters.AddWithValue("@catId", _catId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    //is dit nodig?
+                    if (rowsAffected == 0)
                     {
-                        command.Parameters.AddWithValue("@catId", _catId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "CategoryDAL.Delete(" + _catId + ") ERROR: Could not Delete Category";
-                            }
-                        }
-                        connection.Close();
+                        throw new Exception("Category could not be deleted");
                     }
+
+                    connection.Close();
                 }
             }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "CategoryDAL.Delete(" + _catId + ") ERROR: " + e.Message
-                };
-            }
-
-            return response;
         }
 
     }

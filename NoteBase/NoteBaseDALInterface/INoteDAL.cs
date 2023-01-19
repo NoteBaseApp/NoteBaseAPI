@@ -4,15 +4,15 @@ namespace NoteBaseDALInterface
 {
     public interface INoteDAL
     {
-        DALResponse<NoteDTO> Create(NoteDTO _note);
-        DALResponse<NoteDTO> CreateNoteTag(int _noteId, int _tagId);
-        DALResponse<NoteDTO> GetById(int _noteId);
-        DALResponse<NoteDTO> GetByPerson(int _personId);
-        DALResponse<NoteDTO> GetByTitle(string _Title);
-        DALResponse<NoteDTO> GetByCategory(int _categoryId);
-        DALResponse<NoteDTO> GetByTag(int _tagId);
-        DALResponse<NoteDTO> Update(NoteDTO _note);
-        DALResponse<NoteDTO> Delete(int _noteId);
-        DALResponse<NoteDTO> DeleteNoteTag(int _noteId);
+        NoteDTO Create(string _title, string _text, int _categoryId, int _personId);
+        void CreateNoteTag(int _noteId, int _tagId);
+        NoteDTO GetById(int _noteId);
+        List<NoteDTO> GetByPerson(int _personId);
+        NoteDTO GetByTitle(string _Title);
+        List<NoteDTO> GetByCategory(int _categoryId);
+        List<NoteDTO> GetByTag(int _tagId);
+        NoteDTO Update(int _id, string _title, string _text, int _categoryId);
+        void Delete(int _noteId);
+        void DeleteNoteTag(int _noteId);
     }
 }

@@ -7,534 +7,317 @@ namespace NoteBaseDAL
     public class NoteDAL : INoteDAL
     {
         private readonly string ConnString;
-        private TagDAL TagDAL;
+        private readonly TagDAL TagDAL;
 
         public NoteDAL(string _connString)
         {
             ConnString = _connString;
-            TagDAL = new TagDAL(_connString);
+            TagDAL = new(_connString);
         }
 
-        public DALResponse<NoteDTO> Create(NoteDTO _note)
+        public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            NoteDTO result = new(0, _title, _text, _categoryId, _personId);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"INSERT INTO Note (Title, Text, CategoryID, PersonId) VALUES (@Title, @Text, @CategoryID, @PersonId); SELECT SCOPE_IDENTITY();";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"INSERT INTO Note (Title, Text, CategoryID, PersonId) VALUES (@Title, @Text, @CategoryID, @PersonId)";
+                    command.Parameters.AddWithValue("@Title", _title);
+                    command.Parameters.AddWithValue("@Text", _text);
+                    command.Parameters.AddWithValue("@CategoryID", _categoryId);
+                    command.Parameters.AddWithValue("@PersonId", _personId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.Read())
                     {
-                        command.Parameters.AddWithValue("@Title", _note.Title);
-                        command.Parameters.AddWithValue("@Text", _note.Text);
-                        command.Parameters.AddWithValue("@CategoryID", _note.CategoryId);
-                        command.Parameters.AddWithValue("@PersonId", _note.PersonId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.Create(" + _note.Title + ") ERROR: Could not Create Note";
-                            }
-                        }
-                        connection.Close();
+                        result = new((Int32)reader.GetDecimal(0), _title, _text, _categoryId, _personId);
                     }
+
+                    connection.Close();
                 }
             }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Create(" + _note.Title + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Create(" + _note.Title + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> CreateNoteTag(int _noteId, int _tagId)
+        public void CreateNoteTag(int _noteId, int _tagId)
         {
-            DALResponse<NoteDTO> response = new(true);
-
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"INSERT INTO NoteTag (NoteID, TagID) VALUES (@NoteID, @TagID)";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"INSERT INTO NoteTag (NoteID, TagID) VALUES (@NoteID, @TagID)";
+                    command.Parameters.AddWithValue("@NoteID", _noteId);
+                    command.Parameters.AddWithValue("@TagID", _tagId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@NoteID", _noteId);
-                        command.Parameters.AddWithValue("@TagID", _tagId);
-                        connection.Open();
+                        int rowsAffected = reader.GetInt32(0);
 
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
+                        if (rowsAffected == 0)
                         {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: Could not Create NoteTag";
-                            }
+                            throw new Exception("NoteTag could not be Created");
                         }
-                        connection.Close();
                     }
+                    connection.Close();
                 }
             }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.CreateNoteTag(" + _noteId + ", " + _tagId + ") ERROR: " + e.Message
-                };
-            }
-
-            return response;
         }
 
-        public DALResponse<NoteDTO> GetById(int _noteId)
+        public NoteDTO GetById(int _noteId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            NoteDTO result = new(0, "", "", 0, 0);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"SELECT ID, Title, Text, CategoryID, PersonId From Note WHERE ID = @ID";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryID From Note WHERE ID = @ID";
+                    command.Parameters.AddWithValue("@ID", _noteId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@ID", _noteId);
-                        connection.Open();
+                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                        if (reader.Read())
+                        foreach (TagDTO tagDTO in tags)
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
-
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
-
-                            foreach (TagDTO tagDTO in DALResponse.Data)
-                            {
-                                noteDTO.TryAddTagDTO(tagDTO);
-                            }
-
-                            response.AddItem(noteDTO);
+                            noteDTO.tagList.Add(tagDTO);
                         }
-                        connection.Close();
+
+                        result = noteDTO;
                     }
+                    connection.Close();
                 }
             }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetById(" + _noteId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetById(" + _noteId + ") ERROR: " + e.Message,
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetByPerson(int _personId)
+        public List<NoteDTO> GetByPerson(int _personId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            List<NoteDTO> result = new();
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"SELECT ID, Title, Text, CategoryId, PersonId FROM Note WHERE PersonId = @PersonId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryId FROM Note WHERE PersonId = @PersonId";
+                    command.Parameters.AddWithValue("@PersonId", _personId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@PersonId", _personId);
-                        connection.Open();
+                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                        while (reader.Read())
+                        foreach (TagDTO tagDTO in tags)
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
-
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
-
-                            foreach (TagDTO tagDTO in DALResponse.Data)
-                            {
-                                noteDTO.TryAddTagDTO(tagDTO);
-                            }
-
-                            response.AddItem(noteDTO);
+                            noteDTO.tagList.Add(tagDTO);
                         }
-                        connection.Close();
+
+                        result.Add(noteDTO);
                     }
+                    connection.Close();
                 }
             }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Get(" + _personId + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetByTitle(string _title)
+        public NoteDTO GetByTitle(string _title)
         {
-            DALResponse<NoteDTO> response = new(true);
+            NoteDTO result = new(0, "", "", 0, 0);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"SELECT ID, Title, Text, CategoryID, PersonId From Note WHERE Title = @Title";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryID From Note WHERE Title = @Title";
+                    command.Parameters.AddWithValue("@Title", _title);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@Title", _title);
-                        connection.Open();
+                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                        if (reader.Read())
+                        foreach (TagDTO tagDTO in tags)
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
-
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
-
-                            foreach (TagDTO tagDTO in DALResponse.Data)
-                            {
-                                noteDTO.TryAddTagDTO(tagDTO);
-                            }
-
-                            response.AddItem(noteDTO);
+                            noteDTO.tagList.Add(tagDTO);
                         }
-                        connection.Close();
+
+                        result = noteDTO;
                     }
+                    connection.Close();
                 }
             }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByTitle(" + _title + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByTitle(" + _title + ") ERROR: " + e.Message,
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetByCategory(int _catId)
+        public List<NoteDTO> GetByCategory(int _catId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            List<NoteDTO> result = new();
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"SELECT ID, Title, Text, CategoryId, PersonId FROM Note WHERE CategoryId = @categoryId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryId FROM Note WHERE CategoryId = @categoryId";
+                    command.Parameters.AddWithValue("@categoryId", _catId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@categoryId", _catId);
-                        connection.Open();
+                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                        while (reader.Read())
+                        foreach (TagDTO tagDTO in tags)
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
-
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
-
-                            foreach (TagDTO tagDTO in DALResponse.Data)
-                            {
-                                noteDTO.TryAddTagDTO(tagDTO);
-                            }
-
-                            response.AddItem(noteDTO);
+                            noteDTO.tagList.Add(tagDTO);
                         }
-                        connection.Close();
+
+                        result.Add(noteDTO);
                     }
+                    connection.Close();
                 }
             }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByCategory(" + _catId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByCategory(" + _catId + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetByTag(int _tagId)
+        public List<NoteDTO> GetByTag(int _tagId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            List<NoteDTO> result = new();
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"SELECT ID, Title, Text, CategoryId, PersonId FROM TagNotes WHERE TagID = @tagId";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryId FROM TagNotes WHERE TagID = @tagId";
+                    command.Parameters.AddWithValue("@tagId", _tagId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
                     {
-                        command.Parameters.AddWithValue("@tagId", _tagId);
-                        connection.Open();
+                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
-                        SqlDataReader reader = command.ExecuteReader();
+                        List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
-                        while (reader.Read())
+                        foreach (TagDTO tagDTO in tags)
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
-
-                            DALResponse<TagDTO> DALResponse = TagDAL.GetByNote(noteDTO.ID);
-
-                            foreach (TagDTO tagDTO in DALResponse.Data)
-                            {
-                                noteDTO.TryAddTagDTO(tagDTO);
-                            }
-
-                            response.AddItem(noteDTO);
+                            noteDTO.tagList.Add(tagDTO);
                         }
-                        connection.Close();
+
+                        result.Add(noteDTO);
                     }
+                    connection.Close();
                 }
             }
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByTag(" + _tagId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.GetByTag(" + _tagId + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> Update(NoteDTO _note)
+        public NoteDTO Update(int _id, string _title, string _text, int _categoryId)
         {
-            DALResponse<NoteDTO> response = new(true);
+            NoteDTO result = new(_id, _title, _text, _categoryId, 0);
 
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"UPDATE Note SET Title = @Title, Text = @Text, CategoryID = @CategoryID WHERE ID = @ID;";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"UPDATE Note SET Title = @Title, Text = @Text, CategoryID = @CategoryID WHERE ID = @ID";
+                    command.Parameters.AddWithValue("@Title", _title);
+                    command.Parameters.AddWithValue("@Text", _text);
+                    command.Parameters.AddWithValue("@CategoryID", _categoryId);
+                    command.Parameters.AddWithValue("@ID", _id);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Title", _note.Title);
-                        command.Parameters.AddWithValue("@Text", _note.Text);
-                        command.Parameters.AddWithValue("@CategoryID", _note.CategoryId);
-                        command.Parameters.AddWithValue("@ID", _note.ID);
-                        connection.Open();
+                    command.ExecuteNonQuery();
 
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.Update(" + _note.ID + ") ERROR: Could not Update Note";
-                            }
-                        }
-                        connection.Close();
-                    }
+                    connection.Close();
                 }
             }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Update(" + _note.ID + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Update(" + _note.ID + ") ERROR: " + e.Message
-                };
-            }
 
-            return response;
+            return result;
         }
 
-        public DALResponse<NoteDTO> Delete(int _noteId)
+        public void Delete(int _noteId)
         {
-            DALResponse<NoteDTO> response = new(true);
-
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"DELETE FROM Note WHERE ID = @ID";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"DELETE FROM Note WHERE ID = @ID";
+                    command.Parameters.AddWithValue("@ID", _noteId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    //is dit nodig?
+                    if (rowsAffected == 0)
                     {
-                        command.Parameters.AddWithValue("@ID", _noteId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.Delete(" + _noteId + ") ERROR: Could not delete Note";
-                            }
-                        }
-                        connection.Close();
+                        throw new Exception("Note could not be deleted");
                     }
+
+                    connection.Close();
                 }
             }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Delete(" + _noteId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.Delete(" + _noteId + ") ERROR: " + e.Message
-                };
-            }
-
-            return response;
         }
 
-        public DALResponse<NoteDTO> DeleteNoteTag(int _noteId)
+        public void DeleteNoteTag(int _noteId)
         {
-            DALResponse<NoteDTO> response = new(true);
-
-            try
+            using (SqlConnection connection = new(ConnString))
             {
-                using (SqlConnection connection = new(ConnString))
+                string query = @"DELETE FROM NoteTag WHERE NoteID = @NoteID";
+
+                using (SqlCommand command = new(query, connection))
                 {
-                    string query = @"DELETE FROM NoteTag WHERE NoteID = @NoteID";
+                    command.Parameters.AddWithValue("@NoteID", _noteId);
+                    connection.Open();
 
-                    using (SqlCommand command = new(query, connection))
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected == 0)
                     {
-                        command.Parameters.AddWithValue("@NoteID", _noteId);
-                        connection.Open();
-
-                        SqlDataReader reader = command.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            int result = reader.GetInt32(0);
-                            if (result == 0)
-                            {
-                                response.Succeeded = false;
-                                response.Message = "NoteDAL.DeleteNoteTag(" + _noteId + ") ERROR: Could not delete NoteTag";
-                            }
-                        }
-                        connection.Close();
+                        throw new Exception("NoteTag could not be deleted");
                     }
+
+                    connection.Close();
                 }
             }
-            //het opvangen van een mogelijke error
-            catch (SqlException e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.DeleteNoteTag(" + _noteId + ") ERROR: " + e.Message,
-                    Code = e.Number
-                };
-            }
-            catch (Exception e)
-            {
-                response = new(false)
-                {
-                    Message = "NoteDAL.DeleteNoteTag(" + _noteId + ") ERROR: " + e.Message
-                };
-            }
-
-            return response;
         }
     }
 }

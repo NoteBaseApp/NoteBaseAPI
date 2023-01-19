@@ -30,54 +30,20 @@ namespace App.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            try
+            this.person = personProcessor.GetByEmail(User.Identity.Name);
+
+            ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
+            List<Category> categories = categoryProcessor.GetByPerson(person.ID);
+            List<CategoryModel> categoryModels = new();
+
+            foreach (Category category in categories)
             {
-                Response<Person> personResponse = personProcessor.GetByEmail(User.Identity.Name);
-
-                if (!personResponse.Succeeded)
-                {
-                    ViewBag.Succeeded = personResponse.Succeeded;
-                    ViewBag.Message = personResponse.Message;
-                    ViewBag.Code = personResponse.Code;
-
-                    return View();
-                }
-
-                person = personResponse.Data[0];
-
-                ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
-                Response<Category> categoryResponse = categoryProcessor.GetByPerson(person.ID);
-
-                if (!categoryResponse.Succeeded)
-                {
-                    ViewBag.Succeeded = categoryResponse.Succeeded;
-                    ViewBag.Message = categoryResponse.Message;
-                    ViewBag.Code = categoryResponse.Code;
-
-                    return View();
-                }
-
-                List<CategoryModel> categoryModelList = new();
-
-                foreach (Category category in categoryResponse.Data)
-                {
-                    category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
                 
-                    categoryModelList.Add(new(category));
-                }
-
-                ViewBag.Succeeded = categoryResponse.Succeeded;
-                ViewBag.Message = categoryResponse.Message;
-                ViewBag.Code = categoryResponse.Code;
-
-                return View(categoryModelList);
+                categoryModels.Add(new(category));
             }
-            catch (Exception e)
-            {
-                ViewBag.Succeeded = false;
-                ViewBag.Message = e.Message;
-                return View();
-            }
+
+            return View(categoryModels);
         }
 
         public IActionResult Privacy()

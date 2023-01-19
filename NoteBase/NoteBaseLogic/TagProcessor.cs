@@ -14,119 +14,66 @@ namespace NoteBaseLogic
             TagDAL = _tagDAL;
         }
 
-        public Response<Tag> Create(Tag _tag)
+        public bool IsValidTitle(string _title)
         {
-            Response<Tag> response = new(false);
-
-            if (_tag.Title == "")
-            {
-                response.Message = "Title can't be empty";
-
-                return response;
-            }
-
-            DALResponse<TagDTO> DALreponse = TagDAL.Create(_tag.ToDTO());
-
-            //create response
-            response = new(DALreponse.Succeeded)
-            {
-                Message = DALreponse.Message
-            };
-
-            return response;
+            //needs work (entering just spaces should not be seen as valid)
+            return _title != "";
         }
 
-        public Response<Tag> GetById(int _tagId)
+        public Tag Create(string _title)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.GetById(_tagId);
-
-            List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
-            Tag tag = new(resposeTagDTO[0]);
-
-            //create response
-            Response<Tag> response = new(DALreponse.Succeeded)
+            if (!IsValidTitle(_title))
             {
-                Message = DALreponse.Message
-            };
-            response.AddItem(tag);
+                throw new ArgumentException("Title can't be empty");
+            }
 
-            return response;
+            return new(TagDAL.Create(_title));
+        }
+
+        public Tag GetById(int _tagId)
+        {
+            TagDTO tagDTO = TagDAL.GetById(_tagId);
+
+            return new(tagDTO);
         }
 
         //need to remake this for using person id
-        public Response<Tag> GetByPerson(int _personId)
+        public List<Tag> GetByPerson(int _personId)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.GetByPerson(_personId);
-            Response<Tag> response = new(DALreponse.Succeeded)
-            {
-                Message = DALreponse.Message
-            };
+            List<Tag> result = new();
 
-            foreach (TagDTO tagDTO in DALreponse.Data)
+            List<TagDTO> tagDTOs = TagDAL.GetByPerson(_personId);
+            foreach (TagDTO tagDTO in tagDTOs)
             {
-                Tag tag = new(tagDTO);
-                response.AddItem(tag);
+                result.Add(new(tagDTO));
             }
 
-            return response;
+            return result;
         }
 
-        public Response<Tag> GetByTitle(string _title)
+        public Tag GetByTitle(string _title)
         {
-            DALResponse<TagDTO> DALreponse = TagDAL.GetByTitle(_title);
-            Response<Tag> response = new(DALreponse.Succeeded)
-            {
-                Message = DALreponse.Message
-            };
+            TagDTO tagDTO = TagDAL.GetByTitle(_title);
 
-            foreach (TagDTO tagDTO in DALreponse.Data)
-            {
-                Tag tag = new(tagDTO);
-                response.AddItem(tag);
-            }
-
-            return response;
+            return new(tagDTO);
         }
 
-        public Response<Tag> Update(Tag _tag)
+        public void TryDelete(int _tagId, int _PersonId)
         {
-            TagDTO tagDTO = _tag.ToDTO();
+            //get all used tags by person
+            List<Tag> Tags = GetByPerson(_PersonId);
 
-            DALResponse<TagDTO> DALreponse = TagDAL.Update(tagDTO);
-
-            List<TagDTO> resposeTagDTO = (List<TagDTO>)DALreponse.Data;
-
-            //create response
-            Response<Tag> response = new(DALreponse.Succeeded)
-            {
-                Message = DALreponse.Message
-            };
-
-            return response;
-        }
-
-        public Response<Tag> TryDelete(int _tagId, int _PersonId)
-        {
-            Response<Tag> response = new(true);
-
-            IReadOnlyList<Tag> allTags = GetByPerson(_PersonId).Data;
-
-            foreach (Tag tag in allTags)
+            //is tag in use? return
+            foreach (Tag tag in Tags)
             {
                 if (tag.ID == _tagId)
                 {
-                    response = new(false)
-                    {
-                        Message = "Tag is still in used in a note",
-                    };
-
-                    return response;
+                    return;
                 }
             }
 
+            //else delete it
             TagDAL.Delete(_tagId);
-
-            return response;
         }
     }
 }

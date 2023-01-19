@@ -23,27 +23,6 @@ namespace NoteBaseLogicInterface.Models
             ID = _categoryDTO.ID;
             Title = _categoryDTO.Title;
             PersonId = _categoryDTO.PersonId;
-
-            foreach (NoteDTO noteDTO in _categoryDTO.NoteList)
-            {
-                Note note = new(noteDTO);
-                if (IsNoteCompatible(note))
-                {
-                    TryAddNote(note);
-                }
-            }
-        }
-
-        public CategoryDTO ToDTO()
-        {
-            CategoryDTO categoryDTO = new(ID, Title, PersonId);
-
-            foreach (Note note in noteList)
-            {
-                categoryDTO.TryAddNoteDTO(note.ToDTO());
-            }
-
-            return categoryDTO;
         }
 
         public void TryAddNote(Note _note)
@@ -63,9 +42,9 @@ namespace NoteBaseLogicInterface.Models
 
         public void FillNoteList(INoteProcessor noteProcessor)
         {
-            Response<Note> noteResponse = noteProcessor.GetByCategory(ID);
+            List<Note> notes = noteProcessor.GetByCategory(ID);
 
-            foreach (Note note in noteResponse.Data)
+            foreach (Note note in notes)
             {
                 TryAddNote(note);
             }

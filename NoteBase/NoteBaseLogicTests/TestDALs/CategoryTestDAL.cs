@@ -5,24 +5,27 @@ namespace NoteBaseLogicTests.TestDALs
 {
     internal class CategoryTestDAL : ICategoryDAL
     {
-        public DALResponse<CategoryDTO> Create(CategoryDTO _cat)
+        public CategoryDTO Create(string _title, int _personId)
         {
-            return new(true);
+            if (_title == "School")
+            {
+                return new(12, _title, _personId);
+            }
+            return new(0, _title, _personId);
         }
 
-        public DALResponse<CategoryDTO> Delete(int _catId)
+        public void Delete(int _catId)
         {
-            return new(true);
+            
         }
 
-        public DALResponse<CategoryDTO> GetById(int _catId)
+        public CategoryDTO GetById(int _catId)
         {
-            DALResponse<CategoryDTO> response = new(true);
             CategoryDTO categoryDTO = new(_catId, "", 1);
 
             if (_catId == 999)
             {
-                return new(true);
+                return new(0, "", 0);
             }
 
             if (_catId == 1)
@@ -30,51 +33,40 @@ namespace NoteBaseLogicTests.TestDALs
                 categoryDTO = new(1, "Games", 1);
             }
 
-            response.AddItem(categoryDTO);
-            return response;
+            return categoryDTO;
         }
 
-        public DALResponse<CategoryDTO> GetByPerson(int _personId)
+        public List<CategoryDTO> GetByPerson(int _personId)
         {
             throw new NotImplementedException();
         }
 
         int GetByTitleCals = 0;
 
-        public DALResponse<CategoryDTO> GetByTitle(string _Title)
+        public CategoryDTO GetByTitle(string _Title)
         {
-            DALResponse<CategoryDTO> response = new(true);
-
             if (_Title == "School" && GetByTitleCals > 0)
             {
-                response = new(true);
-                response.AddItem(new(12, "School", 1));
-
-                return response;
+                return new(12, "School", 1);
             }
-            else if (_Title == "Games")
+            else if (_Title == "NOGames")
             {
-                response = new(true);
-                response.AddItem(new(1, "Games", 1));
-
-                return response;
+                return new(1, "NOGames", 1);
             }
 
             GetByTitleCals++;
 
-            return response;
+            return new(0, "", 0);
         }
 
-        public DALResponse<CategoryDTO> Update(CategoryDTO _cat)
+        public CategoryDTO Update(int _id, string _title, int _personId)
         {
-            DALResponse<CategoryDTO> response = new(true);
-
-            if (_cat.ID == 999)
+            /* if (_id == 999)
             {
-                return new(false);
-            }
+                return new(_id, _title, _personId);
+            }*/
 
-            return response;
+            return new(_id, _title, _personId);
         }
     }
 }

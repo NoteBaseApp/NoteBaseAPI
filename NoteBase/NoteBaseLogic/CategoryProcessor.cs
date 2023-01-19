@@ -15,167 +15,100 @@ namespace NoteBaseLogic
             NoteProcessor = _noteProcessor;
         }
 
-        public Response<Category> Create(Category _cat)
+        public bool IsValidTitle(string _title)
         {
-            Response<Category> response = new(false);
-
-            if (_cat.Title == "")
-            {
-                response.Message = "Title can't be empty";
-
-                return response;
-            }
-
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByTitle(_cat.Title);
-            if (catDALreponse.Data.Count > 0)
-            {
-                response.Message = "Category With this title already exists";
-
-                return response;
-            }
-
-            catDALreponse = CategoryDAL.Create(_cat.ToDTO());
-
-            response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            if (!response.Succeeded)
-            {
-                return response;
-            }
-
-            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetByTitle(_cat.Title);
-            response.AddItem(new(catDALreponseGet.Data[0]));
-
-            return response;
+            //needs work (entering just spaces should not be seen as valid)
+            return _title != "";
         }
 
-        public Response<Category> GetById(int _catId)
+        public bool IsTitleUnique(string _title)
         {
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_catId);
-
-            Response<Category> response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            if (catDALreponse.Data.Count == 0)
-            {
-                return response;
-            }
-
-            Category category = new(catDALreponse.Data[0]);
-
-            response.AddItem(category);
-
-            return response;
+            return GetByTitle(_title).ID == 0;
         }
 
-        public Response<Category> GetByPerson(int _personId)
+        public bool DoesCategoryExits(int _id)
         {
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByPerson(_personId);
-
-            Response<Category> response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            foreach (CategoryDTO categoryDTO in catDALreponse.Data)
-            {
-                response.AddItem(new(categoryDTO));
-            }
-
-            return response;
+            return _id != 0 && GetById(_id).ID != 0;
         }
 
-        public Response<Category> GetByTitle(string _title)
+        public Category Create(string _title, int _personId)
         {
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetByTitle(_title);
-
-            Response<Category> response = new(catDALreponse.Succeeded)
+            if (!IsValidTitle(_title))
             {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
+                throw new ArgumentException("Title can't be empty");
+            }
 
-            response.AddItem(new(catDALreponse.Data[0]));
+            if (!IsTitleUnique(_title))
+            {
+                throw new Exception("Category With this title already exists");
+            }
 
-            return response;
+            return new(CategoryDAL.Create(_title, _personId));
         }
 
-        public Response<Category> Update(Category _cat)
+        public Category GetById(int _catId)
         {
-            Response<Category> response = new(false);
+            CategoryDTO catDTO = CategoryDAL.GetById(_catId);
 
-            if (_cat.Title == "" || _cat.Title == null)
-            {
-                response.Message = "Title can't be empty";
-
-                return response;
-            }
-
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.GetById(_cat.ID);
-            if (catDALreponse.Data.Count == 0)
-            {
-                response.Message = "Category doesn't exist";
-
-                return response;
-            }
-
-            catDALreponse = CategoryDAL.Update(_cat.ToDTO());
-
-            response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            if (!response.Succeeded)
-            {
-                return response;
-            }
-
-            DALResponse<CategoryDTO> catDALreponseGet = CategoryDAL.GetById(_cat.ID);
-            response.AddItem(new(catDALreponseGet.Data[0]));
-
-            return response;
+            return new(catDTO);
         }
 
-        public Response<Category> Delete(int _catId)
+        public List<Category> GetByPerson(int _personId)
         {
-            Response<Category> response = new(false);
+            List<Category> result = new();
 
-            Response<Note> noteDALreponse = NoteProcessor.GetByCategory(_catId);
-            if (noteDALreponse.Data.Count > 0)
+            List<CategoryDTO> catDTOs = CategoryDAL.GetByPerson(_personId);
+            foreach (CategoryDTO categoryDTO in catDTOs)
             {
-                response.Message = "Notes exist with this category";
+                result.Add(new(categoryDTO));
+            }
 
-                return response;
+            return result;
+        }
+
+        public Category GetByTitle(string _title)
+        {
+            CategoryDTO catDTO = CategoryDAL.GetByTitle(_title);
+
+            return new(catDTO);
+        }
+
+        public Category Update(int _id, string _title,int _personId)
+        {
+            if (!DoesCategoryExits(_id))
+            {
+                throw new Exception("Category doesn't exist");
+            }
+
+            if (!IsValidTitle(_title))
+            {
+                throw new ArgumentException("Title can't be empty");
+            }
+
+            if (!IsTitleUnique(_title))
+            {
+                throw new Exception("Category With this title already exists");
+            }
+
+            return new(CategoryDAL.Update(_id, _title, _personId));
+        }
+
+        public void Delete(int _catId)
+        {
+            List<Note> notes = NoteProcessor.GetByCategory(_catId);
+            if (notes.Count > 0)
+            {
+                throw new Exception("Notes exist with this category");
             }
 
 
-            Response<Category> catreponse = GetById(_catId);
-            if (catreponse.Data.Count == 0)
+            Category cat = GetById(_catId);
+            if (cat.ID == 0)
             {
-                response.Message = "Category doesn't exist";
-
-                return response;
+                throw new Exception("Category doesn't exist");
             }
 
-            DALResponse<CategoryDTO> catDALreponse = CategoryDAL.Delete(_catId);
-
-            response = new(catDALreponse.Succeeded)
-            {
-                Message = catDALreponse.Message,
-                Code = catDALreponse.Code
-            };
-
-            return response;
+            CategoryDAL.Delete(_catId);
         }
 
     }

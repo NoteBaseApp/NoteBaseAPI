@@ -4,9 +4,11 @@ using NoteBaseLogicInterface.Models;
 using NoteBaseLogicInterface;
 using NoteBaseInterface;
 using App.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace App.Controllers
 {
+    [Authorize]
     public class TagController : Controller
     {
         private readonly IConfiguration _config;
@@ -26,44 +28,25 @@ namespace App.Controllers
         {
             try
             {
-                Response<Tag> tagResponse = tagProcessor.GetById(id);
+                Tag tag = tagProcessor.GetById(id);
 
-                if (!tagResponse.Succeeded)
+                ViewBag.Tag = tag;
+
+                List<Note> notes = noteProcessor.GetByTag(id);
+
+                List<NoteModel> noteModels = new();
+
+                foreach (Note note in notes)
                 {
-                    ViewBag.Succeeded = tagResponse.Succeeded;
-                    ViewBag.Message = tagResponse.Message;
-                    ViewBag.Code = tagResponse.Code;
-
-                    return View();
+                    noteModels.Add(new NoteModel(note));
                 }
 
-                ViewBag.Tag = tagResponse.Data[0];
-
-                Response<Note> noteResponse = noteProcessor.GetByTag(id);
-
-                if (!noteResponse.Succeeded)
-                {
-                    ViewBag.Succeeded = noteResponse.Succeeded;
-                    ViewBag.Message = noteResponse.Message;
-                    ViewBag.Code = noteResponse.Code;
-
-                    return View();
-                }
-
-                List<NoteModel> notes = new();
-
-                foreach (Note note in noteResponse.Data)
-                {
-                    notes.Add(new NoteModel(note));
-                }
-
-                ViewBag.Succeeded = noteResponse.Succeeded;
-                return View(notes);
+                ViewBag.Succeeded = true;
+                return View(noteModels);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Succeeded = false;
-                ViewBag.Message = e.Message;
                 return View();
             }
         }

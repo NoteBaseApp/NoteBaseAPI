@@ -18,12 +18,13 @@ namespace NoteBaseLogicInterface.Models
         public IReadOnlyList<Tag> TagList { get { return tagList; } }
         public int PersonId { get; set; }
 
-        public Note(int _id, string _title, string _text, int _categoryId)
+        public Note(int _id, string _title, string _text, int _categoryId, int _personId)
         {
             ID = _id;
             Title = _title;
             Text = _text;
             CategoryId = _categoryId;
+            PersonId = _personId;
         }
 
         public Note(NoteDTO _noteDTO)
@@ -34,46 +35,12 @@ namespace NoteBaseLogicInterface.Models
             CategoryId = _noteDTO.CategoryId;
             PersonId = _noteDTO.PersonId;
 
-            foreach (TagDTO tagDTO in _noteDTO.TagList)
+            foreach (TagDTO tagDTO in _noteDTO.tagList)
             {
-                Tag tag = new Tag(tagDTO);
+                Tag tag = new(tagDTO);
                 if (IsTagCompatible(tag))
                 {
                     TryAddTag(tag);
-                }
-            }
-        }
-
-        public NoteDTO ToDTO()
-        {
-            NoteDTO noteDTO = new NoteDTO(ID, Title, Text, CategoryId);
-            noteDTO.PersonId = PersonId;
-
-            foreach (Tag tag in tagList)
-            {
-                TagDTO tagDTO = tag.ToDTO();
-
-                noteDTO.TryAddTagDTO(tagDTO);
-            }
-
-            return noteDTO;
-        }
-
-        //what if somebody usses a tag with a hashtag in it like #C#
-        //aslo move this to the Note Class
-        public void AddTags()
-        {
-            string[] allWords = Text.Split(" ");
-            for (int i = 0; i < allWords.Length; i++)
-            {
-                string word = allWords[i];
-                if (word.StartsWith("#"))
-                {
-                    Tag tag = new(i, word.Substring(1).ToLower());
-                    if (IsTagCompatible(tag))
-                    {
-                        TryAddTag(tag);
-                    }
                 }
             }
         }

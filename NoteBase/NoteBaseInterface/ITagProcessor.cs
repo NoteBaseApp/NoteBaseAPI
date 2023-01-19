@@ -5,11 +5,11 @@ namespace NoteBaseInterface
 {
     public interface ITagProcessor
     {
-        Response<Tag> Create(Tag _tag);
-        Response<Tag> GetById(int _tagId);
-        Response<Tag> GetByPerson(int _PersonId);
-        Response<Tag> GetByTitle(string _Title);
-        Response<Tag> Update(Tag _tag);
-        Response<Tag> TryDelete(int _tagId, int _PersonId);
+        bool IsValidTitle(string _title);
+        Tag Create(string _title);
+        Tag GetById(int _tagId);
+        List<Tag> GetByPerson(int _PersonId);
+        Tag GetByTitle(string _Title);
+        void TryDelete(int _tagId, int _PersonId);
     }
 }

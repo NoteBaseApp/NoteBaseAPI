@@ -18,10 +18,5 @@ namespace NoteBaseLogicInterface.Models
             ID = _tagDTO.ID;
             Title = _tagDTO.Title;
         }
-
-        public TagDTO ToDTO()
-        {
-            return new TagDTO(ID, Title);
-        }
     }
 }

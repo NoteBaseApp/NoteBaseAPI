@@ -11,13 +11,13 @@ JOIN Note AS N
 /*DROP VIEW NoteTags*/
 
 CREATE VIEW TagNotes AS
-SELECT N.ID, N.Title, N.Text, N.CategoryID, T.ID AS 'TagID'
+SELECT N.ID, N.Title, N.Text, N.CategoryID, N.PersonId, T.ID AS 'TagID'
 FROM Note AS N
 JOIN NoteTag AS NT
 	ON N.ID = NT.NoteID
 JOIN Tag AS T
 	ON T.ID = NT.TagID
-/*DROP VIEW UserNotes*/
+/*DROP VIEW TagNotes*/
 
 SELECT ID, Title, Text, CategoryId FROM TagNotes WHERE TagID = 1
 

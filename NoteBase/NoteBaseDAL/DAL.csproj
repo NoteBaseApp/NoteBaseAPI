@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NoteBaseDALInterface\NoteBaseDALInterface.csproj" />
+    <ProjectReference Include="..\NoteBaseDALInterface\DALInterface.csproj" />
   </ItemGroup>
 
 </Project>

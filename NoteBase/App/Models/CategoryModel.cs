@@ -15,13 +15,6 @@ namespace App.Models
         public IReadOnlyList<NoteModel> NoteList { get { return noteList; } }
         public int PersonId { get; set; }
 
-        public CategoryModel(int _id, string _title, int _personId)
-        {
-            ID = _id;
-            Title = _title;
-            PersonId = _personId;
-        }
-
         public CategoryModel(Category _category)
         {
             ID = _category.ID;
@@ -34,19 +27,7 @@ namespace App.Models
             }
         }
 
-        public Category ToLogicModel()
-        {
-            Category category = new(ID, Title, PersonId);
-
-            foreach (NoteModel note in noteList)
-            {
-                category.TryAddNote(note.ToLogicModel());
-            }
-
-            return category;
-        }
-
-        public void AddNote(NoteModel _note)
+        private void AddNote(NoteModel _note)
         {
             noteList.Add(_note);
         }

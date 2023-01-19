@@ -9,11 +9,14 @@ namespace NoteBaseLogicInterface
 {
     public interface ICategoryProcessor
     {
-        Response<Category> Create(Category _cat);
-        Response<Category> GetById(int _catId);
-        Response<Category> GetByPerson(int _personId);
-        Response<Category> GetByTitle(string _title);
-        Response<Category> Update(Category _cat);
-        Response<Category> Delete(int _catId);
+        bool IsValidTitle(string _title);
+        bool IsTitleUnique(string _title);
+        bool DoesCategoryExits(int _id);
+        Category Create(string _title, int _personId);
+        Category GetById(int _catId);
+        List<Category> GetByPerson(int _personId);
+        Category GetByTitle(string _title);
+        Category Update(int _id, string _title,int _personId);
+        void Delete(int _catId);
     }
 }

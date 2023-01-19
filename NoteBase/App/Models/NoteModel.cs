@@ -20,14 +20,6 @@ namespace App.Models
         public IReadOnlyList<TagModel> TagList { get { return tagList; } }
         public int PersonId { get; set; }
 
-        public NoteModel(int _id, string _title, string _text, int _categoryId)
-        {
-            ID = _id;
-            Title = _title;
-            Text = _text;
-            CategoryId = _categoryId;
-        }
-
         public NoteModel(Note _note)
         {
             ID = _note.ID;
@@ -41,22 +33,7 @@ namespace App.Models
             }
         }
 
-        public Note ToLogicModel()
-        {
-            Note note = new Note(ID, Title, Text, CategoryId);
-            note.PersonId = PersonId;
-
-            foreach (TagModel tagModel in tagList)
-            {
-                Tag tag = tagModel.ToLogicModel();
-
-                note.TryAddTag(tag);
-            }
-
-            return note;
-        }
-
-        public void AddTag(TagModel _tag)
+        private void AddTag(TagModel _tag)
         {
             tagList.Add(_tag);
         }

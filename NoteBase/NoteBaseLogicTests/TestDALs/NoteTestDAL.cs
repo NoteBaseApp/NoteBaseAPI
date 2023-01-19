@@ -11,75 +11,86 @@ namespace NoteBaseLogicTests.TestDALs
 {
     internal class NoteTestDAL : INoteDAL
     {
-        public DALResponse<NoteDTO> Create(NoteDTO _note)
+        public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
         {
-            return new(true);
+            NoteDTO result = new(0, _title, _text, _categoryId, _personId);
+            return result;
         }
 
-        public DALResponse<NoteDTO> CreateNoteTag(int _noteId, int _tagId)
+        public void CreateNoteTag(int _noteId, int _tagId)
         {
-            return new(true);
+            
         }
 
-        public DALResponse<NoteDTO> Delete(int _noteId)
+        public void Delete(int _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> DeleteNoteTag(int _noteId)
+        public void DeleteNoteTag(int _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> GetByCategory(int _categoryId)
+        public List<NoteDTO> GetByCategory(int _categoryId)
         {
-            DALResponse<NoteDTO> dALResponse = new(true);
+            List<NoteDTO> result = new();
+
+            if (_categoryId == 1)
+            {
+                return result;
+            }
+
             if (_categoryId != 2)
             {
-                return dALResponse;
+                result.Add(new(0, "", "", 0, 0));
+                return result;
             }
 
-            NoteDTO noteDTO = new(1, "", "", _categoryId);
-            dALResponse.AddItem(noteDTO);
+            result.Add(new(1, "", "", _categoryId, 1));
 
-            return dALResponse;
+            return result;
         }
 
-        public DALResponse<NoteDTO> GetById(int _noteId)
+        public NoteDTO GetById(int _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> GetByPerson(int _personId)
+        public List<NoteDTO> GetByPerson(int _personId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> GetByTag(int _tagId)
+        public List<NoteDTO> GetByTag(int _tagId)
         {
             throw new NotImplementedException();
         }
 
-        public DALResponse<NoteDTO> GetByTitle(string _Title)
-        {
-            DALResponse<NoteDTO> response = new(true);
+        int GetByTitleCals = 0;
 
-            if (_Title == "School")
+        public NoteDTO GetByTitle(string _Title)
+        {
+
+            if (_Title == "School" && GetByTitleCals > 0)
             {
-               NoteDTO note = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1);
-                note.TryAddTagDTO(new(11, "fontys"));
-                note.TryAddTagDTO(new(12, "eindhoven"));
-                response.AddItem(note);
+               NoteDTO note = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1, 1);
+                note.tagList.Add(new(11, "fontys"));
+                note.tagList.Add(new(12, "eindhoven"));
+
+                return note;
             }
-            else if (_Title == "Gaming")
+            else if (_Title == "Gaming" && GetByTitleCals > 0)
             {
-                response.AddItem(new(21, "Gaming", "Ik ga zaterdag gamen", 1));
+                return new(21, "Gaming", "Ik ga zaterdag gamen", 1, 1);
             }
 
-            return response;
+            GetByTitleCals++;
+
+            return new(0, "", "", 0, 0);
         }
 
-        public DALResponse<NoteDTO> Update(NoteDTO _note)
+        public NoteDTO Update(int id, string _title, string _text, int _categoryId)
         {
             throw new NotImplementedException();
         }

@@ -5,13 +5,17 @@ namespace NoteBaseLogicInterface
 {
     public interface INoteProcessor
     {
-        Response<Note> Create(Note _note);
-        Response<Note> GetById(int _noteId);
-        Response<Note> GetByPerson(int _personId);
-        Response<Note> GetByTitle(string _Title);
-        Response<Note> GetByCategory(int _categoryId);
-        Response<Note> GetByTag(int _tagId);
-        Response<Note> Update(Note _note);
-        Response<Note> Delete(Note _note, int _PersonId);
+        public bool IsValidTitle(string _title);
+        public bool IsValidText(string _title);
+        public bool IsTitleUnique(string _title);
+        public bool DoesNoteExits(int _id);
+        Note Create(string _title, string _text, int _categoryId, int _personId);
+        Note GetById(int _noteId);
+        List<Note> GetByPerson(int _personId);
+        Note GetByTitle(string _Title);
+        List<Note> GetByCategory(int _categoryId);
+        List<Note> GetByTag(int _tagId);
+        Note Update(int _id, string _title, string _text, int _categoryId, int _personId, List<Tag> _tags);
+        void Delete(Note _note, int _PersonId);
     }
 }

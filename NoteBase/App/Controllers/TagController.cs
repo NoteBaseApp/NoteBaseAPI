@@ -26,29 +26,19 @@ namespace App.Controllers
 
         public IActionResult Index(int id)
         {
-            try
+            Tag tag = tagProcessor.GetById(id);
+
+            ViewBag.Tag = tag;
+
+            List<Note> notes = noteProcessor.GetByTag(id);
+
+            List<NoteModel> noteModels = new();
+
+            foreach (Note note in notes)
             {
-                Tag tag = tagProcessor.GetById(id);
-
-                ViewBag.Tag = tag;
-
-                List<Note> notes = noteProcessor.GetByTag(id);
-
-                List<NoteModel> noteModels = new();
-
-                foreach (Note note in notes)
-                {
-                    noteModels.Add(new NoteModel(note));
-                }
-
-                ViewBag.Succeeded = true;
-                return View(noteModels);
+                noteModels.Add(new NoteModel(note));
             }
-            catch (Exception)
-            {
-                ViewBag.Succeeded = false;
-                return View();
-            }
+            return View(noteModels);
         }
     }
 }

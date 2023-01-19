@@ -32,28 +32,21 @@ namespace App.Controllers
         // GET: Category/Details/5
         public ActionResult Details(int id)
         {
-            try
-            {
-                Category category = categoryProcessor.GetById(id);
+            Category category = categoryProcessor.GetById(id);
 
-                if (category.ID == 0)
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
-
-                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
-
-                ViewBag.Succeeded = true;
-
-                return View(new CategoryModel(category));
-            }
-            catch (Exception)
+            if (category.ID == 0)
             {
                 ViewBag.Succeeded = false;
+                ViewBag.Message = "Deze categorie bestaat niet";
+
                 return View();
             }
+
+            category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+
+            ViewBag.Succeeded = true;
+
+            return View(new CategoryModel(category));
 
         }
 
@@ -69,67 +62,54 @@ namespace App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
-            try
-            {
-                if (!categoryProcessor.IsValidTitle(collection["Title"]))
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
-                if (!categoryProcessor.IsTitleUnique(collection["Title"]))
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
-
-                this.person = personProcessor.GetByEmail(User.Identity.Name);
-
-                Category category = categoryProcessor.Create(collection["Title"], person.ID);
-
-                if (category.ID == 0)
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
-
-                ViewBag.Succeeded = true;
-
-                //for somereason when redirecting the details try to get the item before it has been added to database
-                return RedirectToAction(nameof(Details), category.ID);
-            }
-            catch(Exception)
+            if (!categoryProcessor.IsValidTitle(collection["Title"]))
             {
                 ViewBag.Succeeded = false;
+                ViewBag.Message = "Titel mag niet leeg zijn";
+
+
                 return View();
             }
+            if (!categoryProcessor.IsTitleUnique(collection["Title"]))
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = "Er bestaat al een categorie met deze titel";
+
+                return View();
+            }
+
+            this.person = personProcessor.GetByEmail(User.Identity.Name);
+
+            Category category = categoryProcessor.Create(collection["Title"], person.ID);
+
+            if (category.ID == 0)
+            {
+                ViewBag.Succeeded = false;
+
+                return View();
+            }
+
+            ViewBag.Succeeded = true;
+
+            //for somereason when redirecting the details try to get the item before it has been added to database
+            return RedirectToAction(nameof(Details), category.ID);
         }
 
         // GET: Category/Edit/5
         public ActionResult Edit(int id)
         {
-            try
-            {
-                Category category = categoryProcessor.GetById(id);
+            Category category = categoryProcessor.GetById(id);
 
-                if (category.ID == 0)
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
-
-                ViewBag.Succeeded = true;
-
-                return View(new CategoryModel(category));
-            }
-            catch (Exception)
+            if (category.ID == 0)
             {
                 ViewBag.Succeeded = false;
+
                 return View();
             }
+
+            ViewBag.Succeeded = true;
+
+            return View(new CategoryModel(category));
         }
 
         // POST: Category/Edit/5
@@ -137,48 +117,43 @@ namespace App.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
         {
-            try
-            {
-                if (!categoryProcessor.IsValidTitle(collection["Title"]))
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
-                if (!categoryProcessor.IsTitleUnique(collection["Title"]))
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
-                if (!categoryProcessor.DoesCategoryExits(id))
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
-
-                this.person = personProcessor.GetByEmail(User.Identity.Name);
-
-                Category category = categoryProcessor.Update(id, collection["Title"], person.ID);
-
-                if (category.ID == 0)
-                {
-                    ViewBag.Succeeded = false;
-
-                    return View();
-                }
-
-                ViewBag.Succeeded = true;
-
-                //diffrent redirect options?
-                return RedirectToAction(nameof(Details), category.ID);
-            }
-            catch (Exception)
+            if (!categoryProcessor.IsValidTitle(collection["Title"]))
             {
                 ViewBag.Succeeded = false;
+                ViewBag.Message = "Titel mag niet leeg zijn";
+
                 return View();
             }
+            if (!categoryProcessor.IsTitleUnique(collection["Title"]))
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = "Er bestaat al een categorie met deze titel";
+
+                return View();
+            }
+            if (!categoryProcessor.DoesCategoryExits(id))
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = "De categorie met dit id bestaat niet";
+
+                return View();
+            }
+
+            this.person = personProcessor.GetByEmail(User.Identity.Name);
+
+            Category category = categoryProcessor.Update(id, collection["Title"], person.ID);
+
+            if (category.ID == 0)
+            {
+                ViewBag.Succeeded = false;
+
+                return View();
+            }
+
+            ViewBag.Succeeded = true;
+
+            //diffrent redirect options?
+            return RedirectToAction(nameof(Details), category.ID);
         }
 
 
@@ -195,19 +170,10 @@ namespace App.Controllers
         public ActionResult Delete(int id, IFormCollection collection)
         {
             ViewBag.Post = true;
-            try
-            {
-                categoryProcessor.Delete(id);
 
-                ViewBag.Succeeded = true;
+            categoryProcessor.Delete(id);
 
-                return View();
-            }
-            catch (Exception)
-            {
-                ViewBag.Succeeded = false;
-                return View();
-            }
+            return View();
 
         }
     }

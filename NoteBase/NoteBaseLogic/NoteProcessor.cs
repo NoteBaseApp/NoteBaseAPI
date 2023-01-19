@@ -21,6 +21,7 @@ namespace NoteBaseLogic
 
         public Note Create(string _title, string _text, int _categoryId, int _personId)
         {
+            //place checks in separate method? or mabye in the Note class
             if (_title == "")
             {
                 throw new ArgumentException("Title can't be empty");

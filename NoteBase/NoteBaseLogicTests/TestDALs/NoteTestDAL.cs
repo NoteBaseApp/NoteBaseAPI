@@ -17,19 +17,9 @@ namespace NoteBaseLogicTests.TestDALs
             return result;
         }
 
-        public void CreateNoteTag(int _noteId, int _tagId)
-        {
-            
-        }
-
         public void Delete(int _noteId)
         {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteNoteTag(int _noteId)
-        {
-            throw new NotImplementedException();
+           
         }
 
         public List<NoteDTO> GetByCategory(int _categoryId)

@@ -20,6 +20,80 @@ namespace NoteBaseLogic
             return _title != "";
         }
 
+        //rename
+        public void CreateTags(string _text, int NoteId)
+        {
+            List<Tag> tags = ExtractTags(_text);
+
+            foreach (Tag newtag in tags)
+            {
+                Tag tag = GetByTitle(newtag.Title);
+
+                if (tag.ID == 0)
+                {
+                    Create(newtag.Title);
+                    tag = GetByTitle(newtag.Title);
+                }
+
+                TagDAL.CreateNoteTag(NoteId, tag.ID);
+            }
+        }
+
+        //rename
+        public void UpdateTags(int _noteId, string _text, int _personId, List<Tag> _tags)
+        {
+            if (_tags.Count > 0)
+            {
+                TagDAL.DeleteNoteTag(_noteId);
+            }
+
+            List<Tag> newTags = ExtractTags(_text);
+
+            foreach (Tag newtag in newTags)
+            {
+                Tag tag = GetByTitle(newtag.Title);
+
+                if (tag.ID == 0)
+                {
+                    Create(newtag.Title);
+                    tag = GetByTitle(newtag.Title);
+                }
+
+                TagDAL.CreateNoteTag(_noteId, tag.ID);
+            }
+
+            foreach (Tag tag in _tags)
+            {
+                //get all tags with same title. if there are non delete the tag
+                if (newTags.Where(t => t.Title == tag.Title).Count() == 0)
+                {
+                    TryDelete(tag.ID, _personId);
+                }
+            }
+        }
+
+        //what if somebody usses a tag with a hashtag in it like #C#
+        private List<Tag> ExtractTags(string _text)
+        {
+            List<Tag> result = new();
+
+            string[] allWords = _text.Split(" ");
+            for (int i = 0; i < allWords.Length; i++)
+            {
+                string word = allWords[i];
+                if (word.StartsWith("#"))
+                {
+                    Tag tag = new(0, word[1..].ToLower());
+                    if (!result.Contains(tag))
+                    {
+                        result.Add(tag);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public Tag Create(string _title)
         {
             if (!IsValidTitle(_title))
@@ -74,6 +148,11 @@ namespace NoteBaseLogic
 
             //else delete it
             TagDAL.Delete(_tagId);
+        }
+
+        public void DeleteNoteTag(int _noteId)
+        {
+            TagDAL.DeleteNoteTag(_noteId);
         }
     }
 }

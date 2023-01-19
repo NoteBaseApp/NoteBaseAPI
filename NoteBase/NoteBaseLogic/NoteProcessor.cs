@@ -36,6 +36,11 @@ namespace NoteBaseLogic
             return GetByTitle(_title).ID == 0;
         }
 
+        public bool IsTitleUnique(string _title, int _id)
+        {
+            return GetByTitle(_title).ID == 0 || GetByTitle(_title).ID == _id;
+        }
+
         public bool DoesNoteExits(int _id)
         {
             return _id != 0 && GetById(_id).ID != 0;
@@ -67,47 +72,10 @@ namespace NoteBaseLogic
             //throw exeption when create fails?
             Note note = new(NoteDAL.Create(_title, _text, _categoryId, _personId));
 
-            //extract method
-            List<Tag> tags = ExtractTags(_text);
-
-            foreach (Tag newtag in tags)
-            {
-                Tag tag = TagProcessor.GetByTitle(newtag.Title);
-
-                if (tag.ID == 0)
-                {
-                    TagProcessor.Create(newtag.Title);
-                    tag = TagProcessor.GetByTitle(newtag.Title);
-                }
-
-                NoteDAL.CreateNoteTag(note.ID, tag.ID);
-            }
-            //
+            TagProcessor.CreateTags(_text, note.ID);
 
             //get by id or not needed
             return GetByTitle(_title);
-        }
-
-        //what if somebody usses a tag with a hashtag in it like #C#
-        private List<Tag> ExtractTags(string _text)
-        {
-            List<Tag> result = new();
-
-            string[] allWords = _text.Split(" ");
-            for (int i = 0; i < allWords.Length; i++)
-            {
-                string word = allWords[i];
-                if (word.StartsWith("#"))
-                {
-                    Tag tag = new(0, word[1..].ToLower());
-                    if (!result.Contains(tag))
-                    {
-                        result.Add(tag);
-                    }
-                }
-            }
-
-            return result;
         }
 
         public Note GetById(int _noteId)
@@ -172,7 +140,7 @@ namespace NoteBaseLogic
                 throw new ArgumentException("Title can't be empty");
             }
 
-            if (!IsTitleUnique(_title))
+            if (!IsTitleUnique(_title, _id))
             {
                 throw new Exception("Note With this title already exists");
             }
@@ -191,35 +159,7 @@ namespace NoteBaseLogic
             //throw exeption when update fails?
             Note note = new(NoteDAL.Update(_id, _title, _text, _categoryId));
             note.PersonId = _personId;
-
-            if (_tags.Count > 0)
-            {
-                NoteDAL.DeleteNoteTag(_id);
-            }
-
-            List<Tag> newTags = ExtractTags(_text);
-
-            foreach (Tag newtag in newTags)
-            {
-                Tag tag = TagProcessor.GetByTitle(newtag.Title);
-
-                if (tag.ID == 0)
-                {
-                    TagProcessor.Create(newtag.Title);
-                    tag = TagProcessor.GetByTitle(newtag.Title);
-                }
-
-                NoteDAL.CreateNoteTag(note.ID, tag.ID);
-            }
-
-            foreach (Tag tag in _tags)
-            {
-                //get all tags with same title. if there are non delete the tag
-                if (newTags.Where(t => t.Title == tag.Title).Count() == 0)
-                {
-                    TagProcessor.TryDelete(tag.ID, _personId);
-                }
-            }
+            TagProcessor.UpdateTags(_id, _text, _personId, _tags);
 
             return GetById(_id);
         }
@@ -234,7 +174,7 @@ namespace NoteBaseLogic
 
             if (_note.TagList.Count > 0)
             {
-                NoteDAL.DeleteNoteTag(_note.ID);
+                TagProcessor.DeleteNoteTag(_note.ID);
             }
 
             NoteDAL.Delete(_note.ID);

@@ -13,8 +13,7 @@ namespace NoteBaseLogicTests.TestDALs
     {
         public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
         {
-            NoteDTO result = new(0, _title, _text, _categoryId);
-            result.PersonId = _personId;
+            NoteDTO result = new(0, _title, _text, _categoryId, _personId);
             return result;
         }
 
@@ -44,11 +43,11 @@ namespace NoteBaseLogicTests.TestDALs
 
             if (_categoryId != 2)
             {
-                result.Add(new(0, "", "", 0));
+                result.Add(new(0, "", "", 0, 0));
                 return result;
             }
 
-            result.Add(new(1, "", "", _categoryId));
+            result.Add(new(1, "", "", _categoryId, 1));
 
             return result;
         }
@@ -75,7 +74,7 @@ namespace NoteBaseLogicTests.TestDALs
 
             if (_Title == "School" && GetByTitleCals > 0)
             {
-               NoteDTO note = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1);
+               NoteDTO note = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1, 1);
                 note.tagList.Add(new(11, "fontys"));
                 note.tagList.Add(new(12, "eindhoven"));
 
@@ -83,12 +82,12 @@ namespace NoteBaseLogicTests.TestDALs
             }
             else if (_Title == "Gaming" && GetByTitleCals > 0)
             {
-                return new(21, "Gaming", "Ik ga zaterdag gamen", 1);
+                return new(21, "Gaming", "Ik ga zaterdag gamen", 1, 1);
             }
 
             GetByTitleCals++;
 
-            return new(0, "", "", 0);
+            return new(0, "", "", 0, 0);
         }
 
         public NoteDTO Update(int id, string _title, string _text, int _categoryId)

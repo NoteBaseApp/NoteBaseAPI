@@ -34,7 +34,7 @@ namespace NoteBaseLogic.Tests
             Note actual = noteProcessor.Create(title, text, categoryId, personId);
 
             //assert
-            Note expected = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1);
+            Note expected = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1, 1);
             expected.TryAddTag(new(11, "fontys"));
             expected.TryAddTag(new(12, "eindhoven"));
 
@@ -57,7 +57,7 @@ namespace NoteBaseLogic.Tests
             Note actual = noteProcessor.Create(title, text, categoryId, personId);
 
             //assert
-            Note expected = new(21, "Gaming", "Ik ga zaterdag gamen", 1);
+            Note expected = new(21, "Gaming", "Ik ga zaterdag gamen", 1, 1);
 
             Assert.AreEqual(expected.ID, actual.ID);
             Assert.AreEqual(expected.Title, actual.Title);

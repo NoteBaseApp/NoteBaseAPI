@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
+using System.Security.Cryptography;
 
 namespace App.Controllers
 {
@@ -182,13 +183,25 @@ namespace App.Controllers
         {
             try
             {
+                this.person = personProcessor.GetByEmail(User.Identity.Name);
+
+                List<Category> categories = categoryProcessor.GetByPerson(person.ID);
+
+                List<CategoryModel> categoryModels = new();
+                foreach (Category category in categories)
+                {
+                    categoryModels.Add(new(category));
+                }
+
+                ViewBag.CategoryList = categoryModels;
+
                 if (!noteProcessor.IsValidTitle(collection["Title"]))
                 {
                     ViewBag.Succeeded = false;
 
                     return View();
                 }
-                if (!noteProcessor.IsTitleUnique(collection["Title"]))
+                if (!noteProcessor.IsTitleUnique(collection["Title"], id))
                 {
                     ViewBag.Succeeded = false;
 
@@ -206,18 +219,6 @@ namespace App.Controllers
 
                     return View();
                 }
-
-                this.person = personProcessor.GetByEmail(User.Identity.Name);
-
-                List<Category> categories = categoryProcessor.GetByPerson(person.ID);
-
-                List<CategoryModel> categoryModels = new();
-                foreach (Category category in categories)
-                {
-                    categoryModels.Add(new(category));
-                }
-
-                ViewBag.CategoryList = categoryModels;
 
                 //retrieve note first to get the tags
                 Note note = noteProcessor.GetById(id);

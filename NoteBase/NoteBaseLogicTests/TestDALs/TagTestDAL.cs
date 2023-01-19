@@ -17,7 +17,7 @@ namespace NoteBaseLogicTests.TestDALs
 
         public void Delete(int _tagId)
         {
-            throw new NotImplementedException();
+            
         }
 
         public TagDTO GetById(int _tagId)
@@ -57,6 +57,16 @@ namespace NoteBaseLogicTests.TestDALs
         public List<TagDTO> GetByPerson(int _PersonId)
         {
             throw new NotImplementedException();
+        }
+
+        public void CreateNoteTag(int _noteId, int _tagId)
+        {
+            
+        }
+
+        public void DeleteNoteTag(int _noteId)
+        {
+            
         }
     }
 }

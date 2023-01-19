@@ -45,34 +45,6 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public void CreateNoteTag(int _noteId, int _tagId)
-        {
-            using (SqlConnection connection = new(ConnString))
-            {
-                string query = @"INSERT INTO NoteTag (NoteID, TagID) VALUES (@NoteID, @TagID)";
-
-                using (SqlCommand command = new(query, connection))
-                {
-                    command.Parameters.AddWithValue("@NoteID", _noteId);
-                    command.Parameters.AddWithValue("@TagID", _tagId);
-                    connection.Open();
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        int rowsAffected = reader.GetInt32(0);
-
-                        if (rowsAffected == 0)
-                        {
-                            throw new Exception("NoteTag could not be Created");
-                        }
-                    }
-                    connection.Close();
-                }
-            }
-        }
-
         public NoteDTO GetById(int _noteId)
         {
             NoteDTO result = new(0, "", "", 0, 0);
@@ -290,29 +262,6 @@ namespace NoteBaseDAL
                     if (rowsAffected == 0)
                     {
                         throw new Exception("Note could not be deleted");
-                    }
-
-                    connection.Close();
-                }
-            }
-        }
-
-        public void DeleteNoteTag(int _noteId)
-        {
-            using (SqlConnection connection = new(ConnString))
-            {
-                string query = @"DELETE FROM NoteTag WHERE NoteID = @NoteID";
-
-                using (SqlCommand command = new(query, connection))
-                {
-                    command.Parameters.AddWithValue("@NoteID", _noteId);
-                    connection.Open();
-
-                    int rowsAffected = command.ExecuteNonQuery();
-
-                    if (rowsAffected == 0)
-                    {
-                        throw new Exception("NoteTag could not be deleted");
                     }
 
                     connection.Close();

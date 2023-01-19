@@ -46,6 +46,7 @@ namespace NoteBaseLogic
             //throw exeption when create fails?
             note = new(NoteDAL.Create(_title, _text, _categoryId, _personId));
 
+            //extract method
             List<Tag> tags = ExtractTags(_text);
 
             foreach (Tag newtag in tags)
@@ -60,7 +61,9 @@ namespace NoteBaseLogic
 
                 NoteDAL.CreateNoteTag(note.ID, tag.ID);
             }
+            //
 
+            //get by id or not needed
             return GetByTitle(_title);
         }
 

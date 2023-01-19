@@ -147,7 +147,7 @@ namespace App.Controllers
             if (category.ID == 0)
             {
                 ViewBag.Succeeded = false;
-                ViewBag.Message = "Deze categorie bestaat niet";
+                ViewBag.Message = "";
 
                 return View();
             }
@@ -163,6 +163,15 @@ namespace App.Controllers
         public ActionResult Delete(int id)
         {
             ViewBag.Post = false;
+
+            if (id == 0)
+            {
+                ViewBag.Succeeded = false;
+                ViewBag.Message = "Deze categorie bestaat niet";
+
+                return View();
+            }
+
             return View();
         }
 

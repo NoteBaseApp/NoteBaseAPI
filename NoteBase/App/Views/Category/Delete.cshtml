@@ -3,7 +3,14 @@
     <div>
         @if (ViewBag.Post)
         {
-            <p>Verwijderen gelukt</p>
+            @if (!ViewBag.Succeeded)
+            {
+                <p>Er is iets mis gegaan: @ViewBag.Message</p>
+            }
+            else
+            {
+                <p>Verwijderen gelukt</p>
+            }
         }
         else
         {

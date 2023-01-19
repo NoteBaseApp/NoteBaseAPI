@@ -87,6 +87,25 @@ namespace App.Controllers
         {
             try
             {
+                if (!noteProcessor.IsValidTitle(collection["Title"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+                if (!noteProcessor.IsTitleUnique(collection["Title"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+                if (!noteProcessor.IsValidText(collection["Text"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+
                 this.person = personProcessor.GetByEmail(User.Identity.Name);
 
                 List<Category> categories = categoryProcessor.GetByPerson(person.ID);
@@ -163,6 +182,31 @@ namespace App.Controllers
         {
             try
             {
+                if (!noteProcessor.IsValidTitle(collection["Title"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+                if (!noteProcessor.IsTitleUnique(collection["Title"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+                if (!noteProcessor.IsValidText(collection["Text"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+                if (!noteProcessor.DoesNoteExits(id))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+
                 this.person = personProcessor.GetByEmail(User.Identity.Name);
 
                 List<Category> categories = categoryProcessor.GetByPerson(person.ID);

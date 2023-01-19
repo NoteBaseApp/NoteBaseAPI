@@ -71,6 +71,19 @@ namespace App.Controllers
         {
             try
             {
+                if (!categoryProcessor.IsValidTitle(collection["Title"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+                if (!categoryProcessor.IsTitleUnique(collection["Title"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+
                 this.person = personProcessor.GetByEmail(User.Identity.Name);
 
                 Category category = categoryProcessor.Create(collection["Title"], person.ID);
@@ -126,6 +139,25 @@ namespace App.Controllers
         {
             try
             {
+                if (!categoryProcessor.IsValidTitle(collection["Title"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+                if (!categoryProcessor.IsTitleUnique(collection["Title"]))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+                if (!categoryProcessor.DoesCategoryExits(id))
+                {
+                    ViewBag.Succeeded = false;
+
+                    return View();
+                }
+
                 this.person = personProcessor.GetByEmail(User.Identity.Name);
 
                 Category category = categoryProcessor.Update(id, collection["Title"], person.ID);

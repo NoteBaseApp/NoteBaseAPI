@@ -5,11 +5,11 @@ namespace NoteBaseInterface
 {
     public interface ITagProcessor
     {
+        bool IsValidTitle(string _title);
         Tag Create(string _title);
         Tag GetById(int _tagId);
         List<Tag> GetByPerson(int _PersonId);
         Tag GetByTitle(string _Title);
-        Tag Update(int _tagId, string _title);
         void TryDelete(int _tagId, int _PersonId);
     }
 }

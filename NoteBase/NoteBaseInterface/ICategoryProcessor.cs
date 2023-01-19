@@ -9,6 +9,9 @@ namespace NoteBaseLogicInterface
 {
     public interface ICategoryProcessor
     {
+        bool IsValidTitle(string _title);
+        bool IsTitleUnique(string _title);
+        bool DoesCategoryExits(int _id);
         Category Create(string _title, int _personId);
         Category GetById(int _catId);
         List<Category> GetByPerson(int _personId);

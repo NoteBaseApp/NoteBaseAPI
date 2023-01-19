@@ -14,9 +14,15 @@ namespace NoteBaseLogic
             TagDAL = _tagDAL;
         }
 
+        public bool IsValidTitle(string _title)
+        {
+            //needs work (entering just spaces should not be seen as valid)
+            return _title != "";
+        }
+
         public Tag Create(string _title)
         {
-            if (_title == "")
+            if (!IsValidTitle(_title))
             {
                 throw new ArgumentException("Title can't be empty");
             }
@@ -50,16 +56,6 @@ namespace NoteBaseLogic
             TagDTO tagDTO = TagDAL.GetByTitle(_title);
 
             return new(tagDTO);
-        }
-
-        public Tag Update(int _id, string _title)
-        {
-            if (_title == "")
-            {
-                throw new ArgumentException("Title can't be empty");
-            }
-
-            return new(TagDAL.Update(_id, _title));
         }
 
         public void TryDelete(int _tagId, int _PersonId)

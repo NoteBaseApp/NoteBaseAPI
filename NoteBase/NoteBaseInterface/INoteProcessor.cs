@@ -5,6 +5,10 @@ namespace NoteBaseLogicInterface
 {
     public interface INoteProcessor
     {
+        public bool IsValidTitle(string _title);
+        public bool IsValidText(string _title);
+        public bool IsTitleUnique(string _title);
+        public bool DoesNoteExits(int _id);
         Note Create(string _title, string _text, int _categoryId, int _personId);
         Note GetById(int _noteId);
         List<Note> GetByPerson(int _personId);

@@ -15,15 +15,30 @@ namespace NoteBaseLogic
             NoteProcessor = _noteProcessor;
         }
 
+        public bool IsValidTitle(string _title)
+        {
+            //needs work (entering just spaces should not be seen as valid)
+            return _title != "";
+        }
+
+        public bool IsTitleUnique(string _title)
+        {
+            return GetByTitle(_title).ID == 0;
+        }
+
+        public bool DoesCategoryExits(int _id)
+        {
+            return _id != 0 && GetById(_id).ID != 0;
+        }
+
         public Category Create(string _title, int _personId)
         {
-            if (_title == "")
+            if (!IsValidTitle(_title))
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            Category cat = GetByTitle(_title);
-            if (cat.ID != 0)
+            if (!IsTitleUnique(_title))
             {
                 throw new Exception("Category With this title already exists");
             }
@@ -60,18 +75,17 @@ namespace NoteBaseLogic
 
         public Category Update(int _id, string _title,int _personId)
         {
-            if (_id == 0)
+            if (!DoesCategoryExits(_id))
             {
                 throw new Exception("Category doesn't exist");
             }
 
-            if (_title == "")
+            if (!IsValidTitle(_title))
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            Category cat = GetByTitle(_title);
-            if (cat.ID != 0)
+            if (!IsTitleUnique(_title))
             {
                 throw new Exception("Category With this title already exists");
             }

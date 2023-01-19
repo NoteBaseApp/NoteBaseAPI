@@ -19,32 +19,53 @@ namespace NoteBaseLogic
             TagProcessor = _tagProcessor;
         }
 
+        public bool IsValidTitle(string _title)
+        {
+            //needs work (entering just spaces should not be seen as valid)
+            return _title != "";
+        }
+
+        public bool IsValidText(string _title)
+        {
+            //needs work (entering just spaces should not be seen as valid)
+            return _title != "";
+        }
+
+        public bool IsTitleUnique(string _title)
+        {
+            return GetByTitle(_title).ID == 0;
+        }
+
+        public bool DoesNoteExits(int _id)
+        {
+            return _id != 0 && GetById(_id).ID != 0;
+        }
+
         public Note Create(string _title, string _text, int _categoryId, int _personId)
         {
-            //place checks in separate method? or mabye in the Note class
-            if (_title == "")
+            if (!IsValidTitle(_title))
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            if (_text == "")
+            if (!IsTitleUnique(_title))
+            {
+                throw new Exception("Note With this title already exists");
+            }
+
+            if (!IsValidText(_text))
             {
                 throw new ArgumentException("Text can't be empty");
             }
 
+            //how to check this. check exists in categoryProcessor
             if (_categoryId == 0)
             {
                 throw new ArgumentException("No valid category was given");
             }
 
-            Note note = GetByTitle(_title);
-            if (note.ID != 0)
-            {
-                throw new Exception("Note With this title already exists");
-            }
-
             //throw exeption when create fails?
-            note = new(NoteDAL.Create(_title, _text, _categoryId, _personId));
+            Note note = new(NoteDAL.Create(_title, _text, _categoryId, _personId));
 
             //extract method
             List<Tag> tags = ExtractTags(_text);
@@ -146,29 +167,29 @@ namespace NoteBaseLogic
 
         public Note Update(int _id, string _title, string _text, int _categoryId, int _personId, List<Tag> _tags)
         {
-            if (_title == "")
+            if (!IsValidTitle(_title))
             {
                 throw new ArgumentException("Title can't be empty");
             }
 
-            if (_text == "")
+            if (!IsTitleUnique(_title))
+            {
+                throw new Exception("Note With this title already exists");
+            }
+
+            if (!IsValidText(_text))
             {
                 throw new ArgumentException("Text can't be empty");
             }
 
+            //how to check this. check exists in categoryProcessor
             if (_categoryId == 0)
             {
                 throw new ArgumentException("No valid category was given");
             }
 
-            Note note = GetByTitle(_title);
-            if (note.ID != 0 && note.ID != _id)
-            {
-                throw new Exception("Note With this title already exists");
-            }
-
             //throw exeption when update fails?
-            note = new(NoteDAL.Update(_id, _title, _text, _categoryId));
+            Note note = new(NoteDAL.Update(_id, _title, _text, _categoryId));
             note.PersonId = _personId;
 
             if (_tags.Count > 0)

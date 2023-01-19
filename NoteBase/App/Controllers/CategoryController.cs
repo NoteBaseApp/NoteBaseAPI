@@ -103,6 +103,7 @@ namespace App.Controllers
             if (category.ID == 0)
             {
                 ViewBag.Succeeded = false;
+                ViewBag.Message = "Deze categorie bestaat niet";
 
                 return View();
             }
@@ -146,6 +147,7 @@ namespace App.Controllers
             if (category.ID == 0)
             {
                 ViewBag.Succeeded = false;
+                ViewBag.Message = "Deze categorie bestaat niet";
 
                 return View();
             }

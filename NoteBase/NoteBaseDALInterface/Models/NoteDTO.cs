@@ -9,13 +9,13 @@
         public readonly List<TagDTO> tagList = new();
         public int PersonId { get; set; }
 
-        public NoteDTO(int _id, string _title, string _text, int _categoryId)
+        public NoteDTO(int _id, string _title, string _text, int _categoryId, int _personId)
         {
             ID = _id;
             Title = _title;
             Text = _text;
             CategoryId = _categoryId;
-            //PersonId = _PersonId;
+            PersonId = _personId;
         }
     }
 }

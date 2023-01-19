@@ -18,12 +18,13 @@ namespace NoteBaseLogicInterface.Models
         public IReadOnlyList<Tag> TagList { get { return tagList; } }
         public int PersonId { get; set; }
 
-        public Note(int _id, string _title, string _text, int _categoryId)
+        public Note(int _id, string _title, string _text, int _categoryId, int _personId)
         {
             ID = _id;
             Title = _title;
             Text = _text;
             CategoryId = _categoryId;
+            PersonId = _personId;
         }
 
         public Note(NoteDTO _noteDTO)

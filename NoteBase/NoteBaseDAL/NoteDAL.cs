@@ -17,7 +17,7 @@ namespace NoteBaseDAL
 
         public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
         {
-            NoteDTO result = new(0, _title, _text, _categoryId);
+            NoteDTO result = new(0, _title, _text, _categoryId, _personId);
 
             try
             {
@@ -37,10 +37,7 @@ namespace NoteBaseDAL
 
                         if(reader.Read())
                         {
-                            result = new((Int32)reader.GetDecimal(0), _title, _text, _categoryId)
-                            {
-                                PersonId = _personId
-                            };
+                            result = new((Int32)reader.GetDecimal(0), _title, _text, _categoryId, _personId);
                         }
 
                         connection.Close();
@@ -94,13 +91,13 @@ namespace NoteBaseDAL
 
         public NoteDTO GetById(int _noteId)
         {
-            NoteDTO result = new(0, "", "", 0);
+            NoteDTO result = new(0, "", "", 0, 0);
 
             try
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryID From Note WHERE ID = @ID";
+                    string query = @"SELECT ID, Title, Text, CategoryID, PersonId From Note WHERE ID = @ID";
 
                     using (SqlCommand command = new(query, connection))
                     {
@@ -111,7 +108,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
                             List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
@@ -142,7 +139,7 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryId FROM Note WHERE PersonId = @PersonId";
+                    string query = @"SELECT ID, Title, Text, CategoryId, PersonId FROM Note WHERE PersonId = @PersonId";
 
                     using (SqlCommand command = new(query, connection))
                     {
@@ -153,7 +150,7 @@ namespace NoteBaseDAL
 
                         while (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
                             List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
@@ -178,13 +175,13 @@ namespace NoteBaseDAL
 
         public NoteDTO GetByTitle(string _title)
         {
-            NoteDTO result = new(0, "", "", 0);
+            NoteDTO result = new(0, "", "", 0, 0);
 
             try
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryID From Note WHERE Title = @Title";
+                    string query = @"SELECT ID, Title, Text, CategoryID, PersonId From Note WHERE Title = @Title";
 
                     using (SqlCommand command = new(query, connection))
                     {
@@ -195,7 +192,7 @@ namespace NoteBaseDAL
 
                         if (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
                             List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
@@ -226,7 +223,7 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryId FROM Note WHERE CategoryId = @categoryId";
+                    string query = @"SELECT ID, Title, Text, CategoryId, PersonId FROM Note WHERE CategoryId = @categoryId";
 
                     using (SqlCommand command = new(query, connection))
                     {
@@ -237,7 +234,7 @@ namespace NoteBaseDAL
 
                         while (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
                             List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
@@ -268,7 +265,7 @@ namespace NoteBaseDAL
             {
                 using (SqlConnection connection = new(ConnString))
                 {
-                    string query = @"SELECT ID, Title, Text, CategoryId FROM TagNotes WHERE TagID = @tagId";
+                    string query = @"SELECT ID, Title, Text, CategoryId, PersonId FROM TagNotes WHERE TagID = @tagId";
 
                     using (SqlCommand command = new(query, connection))
                     {
@@ -279,7 +276,7 @@ namespace NoteBaseDAL
 
                         while (reader.Read())
                         {
-                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), 0);
+                            NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
                             List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
@@ -304,7 +301,7 @@ namespace NoteBaseDAL
 
         public NoteDTO Update(int _id, string _title, string _text, int _categoryId)
         {
-            NoteDTO result = new(_id, _title, _text, _categoryId);
+            NoteDTO result = new(_id, _title, _text, _categoryId, 0);
 
             try
             {

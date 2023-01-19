@@ -166,6 +166,7 @@ namespace NoteBaseLogic
 
             //throw exeption when update fails?
             note = new(NoteDAL.Update(_id, _title, _text, _categoryId));
+            note.PersonId = _personId;
 
             if (_tags.Count > 0)
             {

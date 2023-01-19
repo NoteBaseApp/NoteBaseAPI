@@ -30,36 +30,20 @@ namespace App.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            try
+            this.person = personProcessor.GetByEmail(User.Identity.Name);
+
+            ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
+            List<Category> categories = categoryProcessor.GetByPerson(person.ID);
+            List<CategoryModel> categoryModels = new();
+
+            foreach (Category category in categories)
             {
-                this.person = personProcessor.GetByEmail(User.Identity.Name);
-
-                ICategoryProcessor categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
-                List<Category> categories = categoryProcessor.GetByPerson(person.ID);
-                List<CategoryModel> categoryModels = new();
-
-                foreach (Category category in categories)
-                {
-                    category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
                 
-                    categoryModels.Add(new(category));
-                }
-
-                if (categoryModels.Count == 0)
-                {
-                    ViewBag.Succeeded = false;
-                    return View(categoryModels);
-                }
-
-                ViewBag.Succeeded = true;
-
-                return View(categoryModels);
+                categoryModels.Add(new(category));
             }
-            catch (Exception)
-            {
-                ViewBag.Succeeded = false;
-                return View();
-            }
+
+            return View(categoryModels);
         }
 
         public IActionResult Privacy()

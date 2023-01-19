@@ -150,7 +150,6 @@ namespace NoteBaseDAL
 
         public void Delete(int _catId)
         {
-
             using (SqlConnection connection = new(ConnString))
             {
                 string query = @"DELETE FROM Category WHERE ID = @catId";

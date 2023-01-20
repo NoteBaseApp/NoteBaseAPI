@@ -87,16 +87,16 @@ namespace NoteBaseLogic
 
         public List<Note> GetByPerson(int _personId)
         {
-            List<Note> result = new();
+            List<Note> noteList = new();
 
             List<NoteDTO> noteDTOs = NoteDAL.GetByPerson(_personId);
 
             foreach (NoteDTO noteDTO in noteDTOs)
             {
-                result.Add(new(noteDTO));
+                noteList.Add(new(noteDTO));
             }
 
-            return result;
+            return noteList;
         }
 
 
@@ -109,28 +109,28 @@ namespace NoteBaseLogic
 
         public List<Note> GetByCategory(int _catId)
         {
-            List<Note> result = new();
+            List<Note> noteList = new();
 
             List<NoteDTO> noteDTOs = NoteDAL.GetByCategory(_catId);
             foreach (NoteDTO noteDTO in noteDTOs)
             {
-                result.Add(new(noteDTO));
+                noteList.Add(new(noteDTO));
             }
 
-            return result;
+            return noteList;
         }
 
         public List<Note> GetByTag(int _tagId)
         {
-            List<Note> result = new();
+            List<Note> noteList = new();
 
             List<NoteDTO> noteDTOs = NoteDAL.GetByTag(_tagId);
             foreach (NoteDTO noteDTO in noteDTOs)
             {
-                result.Add(new(noteDTO));
+                noteList.Add(new(noteDTO));
             }
 
-            return result;
+            return noteList;
         }
 
         public Note Update(int _id, string _title, string _text, int _categoryId, int _personId, List<Tag> _tags)
@@ -182,7 +182,7 @@ namespace NoteBaseLogic
 
             foreach (Tag tag in _tagList)
             {
-                TagProcessor.TryDelete(tag.ID, _PersonId);
+                TagProcessor.DeleteWhenUnused(tag.ID, _PersonId);
             }
             //
         }

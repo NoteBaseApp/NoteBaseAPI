@@ -55,15 +55,15 @@ namespace NoteBaseLogic
 
         public List<Category> GetByPerson(int _personId)
         {
-            List<Category> result = new();
+            List<Category> categoryList = new();
 
             List<CategoryDTO> catDTOs = CategoryDAL.GetByPerson(_personId);
             foreach (CategoryDTO categoryDTO in catDTOs)
             {
-                result.Add(new(categoryDTO));
+                categoryList.Add(new(categoryDTO));
             }
 
-            return result;
+            return categoryList;
         }
 
         public Category GetByTitle(string _title)
@@ -95,8 +95,8 @@ namespace NoteBaseLogic
 
         public void Delete(int _catId)
         {
-            List<Note> notes = NoteProcessor.GetByCategory(_catId);
-            if (notes.Count > 0)
+            List<Note> noteList = NoteProcessor.GetByCategory(_catId);
+            if (noteList.Count > 0)
             {
                 throw new Exception("Notes exist with this category");
             }

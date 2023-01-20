@@ -67,7 +67,7 @@ namespace NoteBaseLogic
                 //get all tags with same title. if there are non delete the tag
                 if (newTags.Where(t => t.Title == tag.Title).Count() == 0)
                 {
-                    TryDelete(tag.ID, _personId);
+                    DeleteWhenUnused(tag.ID, _personId);
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace NoteBaseLogic
         //what if somebody usses a tag with a hashtag in it like #C#
         private List<Tag> ExtractTags(string _text)
         {
-            List<Tag> result = new();
+            List<Tag> NewTagList = new();
 
             string[] allWords = _text.Split(" ");
             for (int i = 0; i < allWords.Length; i++)
@@ -84,14 +84,14 @@ namespace NoteBaseLogic
                 if (word.StartsWith("#"))
                 {
                     Tag tag = new(0, word[1..].ToLower());
-                    if (!result.Contains(tag))
+                    if (!NewTagList.Contains(tag))
                     {
-                        result.Add(tag);
+                        NewTagList.Add(tag);
                     }
                 }
             }
 
-            return result;
+            return NewTagList;
         }
 
         public Tag Create(string _title)
@@ -114,15 +114,15 @@ namespace NoteBaseLogic
         //need to remake this for using person id
         public List<Tag> GetByPerson(int _personId)
         {
-            List<Tag> result = new();
+            List<Tag> tagList = new();
 
             List<TagDTO> tagDTOs = TagDAL.GetByPerson(_personId);
             foreach (TagDTO tagDTO in tagDTOs)
             {
-                result.Add(new(tagDTO));
+                tagList.Add(new(tagDTO));
             }
 
-            return result;
+            return tagList;
         }
 
         public Tag GetByTitle(string _title)
@@ -132,13 +132,13 @@ namespace NoteBaseLogic
             return new(tagDTO);
         }
 
-        public void TryDelete(int _tagId, int _PersonId)
+        public void DeleteWhenUnused(int _tagId, int _PersonId)
         {
             //get all used tags by person
-            List<Tag> Tags = GetByPerson(_PersonId);
+            List<Tag> tagList = GetByPerson(_PersonId);
 
             //is tag in use? return
-            foreach (Tag tag in Tags)
+            foreach (Tag tag in tagList)
             {
                 if (tag.ID == _tagId)
                 {

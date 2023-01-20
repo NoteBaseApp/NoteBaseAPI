@@ -185,6 +185,7 @@ namespace App.Controllers
 
             categoryProcessor.Delete(id);
 
+            ViewBag.Succeeded = true;
             return View();
 
         }

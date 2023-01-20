@@ -42,7 +42,8 @@ namespace App.Controllers
                 return View();
             }
 
-            category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
+            INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
+            category.noteList = noteProcessor.GetByCategory(id);
 
             ViewBag.Succeeded = true;
 

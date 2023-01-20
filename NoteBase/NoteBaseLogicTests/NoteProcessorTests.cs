@@ -35,8 +35,8 @@ namespace NoteBaseLogic.Tests
 
             //assert
             Note expected = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1, 1);
-            expected.TryAddTag(new(11, "fontys"));
-            expected.TryAddTag(new(12, "eindhoven"));
+            expected.tagList.Add(new(11, "fontys"));
+            expected.tagList.Add(new(12, "eindhoven"));
 
             Assert.AreEqual(expected.ID, actual.ID);
             Assert.AreEqual(expected.Title, actual.Title);

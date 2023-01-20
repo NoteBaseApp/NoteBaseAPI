@@ -197,7 +197,7 @@ namespace App.Controllers
             //retrieve note first to get the tags
             Note note = noteProcessor.GetById(id);
 
-            note = noteProcessor.Update(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]), person.ID, note.TagList.ToList());
+            note = noteProcessor.Update(id, collection["Title"], collection["Text"], Int32.Parse(collection["CategoryId"]), person.ID, note.tagList);
 
             if (note.ID == 0)
             {

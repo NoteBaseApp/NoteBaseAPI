@@ -1,6 +1,7 @@
 ﻿using NoteBaseDALInterface.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,14 +10,12 @@ namespace NoteBaseLogicInterface.Models
 {
     public class Note
     {
-        private readonly List<Tag> tagList = new();
-
         public int ID { get; }
         public string Title { get; private set; }
         public string Text { get; private set; }
         public int CategoryId { get; private set; }
-        public IReadOnlyList<Tag> TagList { get { return tagList; } }
         public int PersonId { get; set; }
+        public List<Tag> tagList { get; set; } = new();
 
         public Note(int _id, string _title, string _text, int _categoryId, int _personId)
         {
@@ -38,25 +37,8 @@ namespace NoteBaseLogicInterface.Models
             foreach (TagDTO tagDTO in _noteDTO.tagList)
             {
                 Tag tag = new(tagDTO);
-                if (IsTagCompatible(tag))
-                {
-                    TryAddTag(tag);
-                }
+                tagList.Add(tag);
             }
-        }
-
-        public void TryAddTag(Tag _tag)
-        {
-            if (!IsTagCompatible(_tag))
-            {
-                throw new Exception("Tag already in list");
-            }
-            tagList.Add(_tag);
-        }
-
-        public bool IsTagCompatible(Tag _tag)
-        {
-            return !tagList.Contains(_tag);
         }
     }
 }

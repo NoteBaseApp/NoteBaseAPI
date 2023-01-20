@@ -172,14 +172,14 @@ namespace NoteBaseLogic
                 throw new Exception("Note doesn't exist");
             }
 
-            if (_note.TagList.Count > 0)
+            if (_note.tagList.Count > 0)
             {
                 TagProcessor.DeleteNoteTag(_note.ID);
             }
 
             NoteDAL.Delete(_note.ID);
 
-            foreach (Tag tag in _note.TagList)
+            foreach (Tag tag in _note.tagList)
             {
                 TagProcessor.TryDelete(tag.ID, _PersonId);
             }

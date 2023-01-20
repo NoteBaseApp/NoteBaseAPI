@@ -164,25 +164,27 @@ namespace NoteBaseLogic
             return GetById(_id);
         }
 
-        public void Delete(Note _note, int _PersonId)
+        public void Delete(int _noteId, List<Tag> _tagList, int _PersonId)
         {
-            Note note = GetById(_note.ID);
+            Note note = GetById(_noteId);
             if (note.ID == 0)
             {
                 throw new Exception("Note doesn't exist");
             }
 
-            if (_note.tagList.Count > 0)
+            //should this be in the tagprocessor?
+            if (_tagList.Count > 0)
             {
-                TagProcessor.DeleteNoteTag(_note.ID);
+                TagProcessor.DeleteNoteTag(_noteId);
             }
 
-            NoteDAL.Delete(_note.ID);
+            NoteDAL.Delete(_noteId);
 
-            foreach (Tag tag in _note.tagList)
+            foreach (Tag tag in _tagList)
             {
                 TagProcessor.TryDelete(tag.ID, _PersonId);
             }
+            //
         }
     }
 }

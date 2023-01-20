@@ -19,12 +19,5 @@ namespace NoteBaseLogicInterface.Models
             Name = _Name;
             Email = _Email;
         }
-
-        public Person(PersonDTO personDTO)
-        {
-            ID = personDTO.ID;
-            Name = personDTO.Name;
-            Email = personDTO.Email;
-        }
     }
 }

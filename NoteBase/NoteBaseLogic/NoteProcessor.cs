@@ -69,8 +69,8 @@ namespace NoteBaseLogic
                 throw new ArgumentException("No valid category was given");
             }
 
-            //throw exeption when create fails?
-            Note note = new(NoteDAL.Create(_title, _text, _categoryId, _personId));
+            NoteDTO noteDTO = NoteDAL.Create(_title, _text, _categoryId, _personId);
+            Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
 
             TagProcessor.CreateTags(_text, note.ID);
 
@@ -81,8 +81,13 @@ namespace NoteBaseLogic
         public Note GetById(int _noteId)
         {
             NoteDTO noteDTO = NoteDAL.GetById(_noteId);
+            Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
+            foreach (TagDTO item in noteDTO.tagList)
+            {
+                note.tagList.Add(new(item.ID, item.Title));
+            }
 
-            return new(noteDTO);
+            return note;
         }
 
         public List<Note> GetByPerson(int _personId)
@@ -93,7 +98,12 @@ namespace NoteBaseLogic
 
             foreach (NoteDTO noteDTO in noteDTOs)
             {
-                noteList.Add(new(noteDTO));
+                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
+                foreach (TagDTO item in noteDTO.tagList)
+                {
+                    note.tagList.Add(new(item.ID, item.Title));
+                }
+                noteList.Add(note);
             }
 
             return noteList;
@@ -104,7 +114,13 @@ namespace NoteBaseLogic
         {
             NoteDTO noteDTO = NoteDAL.GetByTitle(_Title);
 
-            return new(noteDTO);
+            Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
+            foreach (TagDTO item in noteDTO.tagList)
+            {
+                note.tagList.Add(new(item.ID, item.Title));
+            }
+
+            return note;
         }
 
         public List<Note> GetByCategory(int _catId)
@@ -114,7 +130,12 @@ namespace NoteBaseLogic
             List<NoteDTO> noteDTOs = NoteDAL.GetByCategory(_catId);
             foreach (NoteDTO noteDTO in noteDTOs)
             {
-                noteList.Add(new(noteDTO));
+                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
+                foreach (TagDTO item in noteDTO.tagList)
+                {
+                    note.tagList.Add(new(item.ID, item.Title));
+                }
+                noteList.Add(note);
             }
 
             return noteList;
@@ -127,7 +148,12 @@ namespace NoteBaseLogic
             List<NoteDTO> noteDTOs = NoteDAL.GetByTag(_tagId);
             foreach (NoteDTO noteDTO in noteDTOs)
             {
-                noteList.Add(new(noteDTO));
+                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
+                foreach (TagDTO item in noteDTO.tagList)
+                {
+                    note.tagList.Add(new(item.ID, item.Title));
+                }
+                noteList.Add(note);
             }
 
             return noteList;
@@ -156,9 +182,9 @@ namespace NoteBaseLogic
                 throw new ArgumentException("No valid category was given");
             }
 
-            //throw exeption when update fails?
-            Note note = new(NoteDAL.Update(_id, _title, _text, _categoryId));
-            note.PersonId = _personId;
+            NoteDTO noteDTO = NoteDAL.Update(_id, _title, _text, _categoryId);
+            Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
+
             TagProcessor.UpdateTags(_id, _text, _personId, _tags);
 
             return GetById(_id);

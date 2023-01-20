@@ -101,14 +101,15 @@ namespace NoteBaseLogic
                 throw new ArgumentException("Title can't be empty");
             }
 
-            return new(TagDAL.Create(_title));
+            TagDTO tagDTO = TagDAL.Create(_title);
+            return new(tagDTO.ID, tagDTO.Title);
         }
 
         public Tag GetById(int _tagId)
         {
             TagDTO tagDTO = TagDAL.GetById(_tagId);
 
-            return new(tagDTO);
+            return new(tagDTO.ID, tagDTO.Title);
         }
 
         //need to remake this for using person id
@@ -119,7 +120,7 @@ namespace NoteBaseLogic
             List<TagDTO> tagDTOs = TagDAL.GetByPerson(_personId);
             foreach (TagDTO tagDTO in tagDTOs)
             {
-                tagList.Add(new(tagDTO));
+                tagList.Add(new(tagDTO.ID, tagDTO.Title));
             }
 
             return tagList;
@@ -129,7 +130,7 @@ namespace NoteBaseLogic
         {
             TagDTO tagDTO = TagDAL.GetByTitle(_title);
 
-            return new(tagDTO);
+            return new(tagDTO.ID, tagDTO.Title);
         }
 
         public void DeleteWhenUnused(int _tagId, int _PersonId)

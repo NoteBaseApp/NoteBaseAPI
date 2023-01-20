@@ -25,20 +25,5 @@ namespace NoteBaseLogicInterface.Models
             CategoryId = _categoryId;
             PersonId = _personId;
         }
-
-        public Note(NoteDTO _noteDTO)
-        {
-            ID = _noteDTO.ID;
-            Title = _noteDTO.Title;
-            Text = _noteDTO.Text;
-            CategoryId = _noteDTO.CategoryId;
-            PersonId = _noteDTO.PersonId;
-
-            foreach (TagDTO tagDTO in _noteDTO.tagList)
-            {
-                Tag tag = new(tagDTO);
-                tagList.Add(tag);
-            }
-        }
     }
 }

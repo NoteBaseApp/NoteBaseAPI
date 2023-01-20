@@ -15,12 +15,5 @@ namespace NoteBaseLogicInterface.Models
             Title = _title;
             PersonId = _personId;
         }
-
-        public Category(CategoryDTO _categoryDTO)
-        {
-            ID = _categoryDTO.ID;
-            Title = _categoryDTO.Title;
-            PersonId = _categoryDTO.PersonId;
-        }
     }
 }

@@ -24,8 +24,9 @@ builder.Services.AddAuthentication(options =>
     })
     .AddGoogle(options =>
 {
-    options.ClientId = "62407700538-2b2lfdtiutncmssv005sg6g04enogjdu.apps.googleusercontent.com";
-    options.ClientSecret = "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";
+    /*removed because of security*/
+    options.ClientId = "";
+    options.ClientSecret = "";
 });
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)

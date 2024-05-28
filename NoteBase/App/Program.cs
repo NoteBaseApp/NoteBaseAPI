@@ -3,8 +3,13 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Collections;
+using System.Diagnostics;
+using UI;
 
 var builder = WebApplication.CreateBuilder(args);
+
+EnvLoader.Load(".env");
 
 //builder.Services adding logic here?
 
@@ -24,8 +29,8 @@ builder.Services.AddAuthentication(options =>
     })
     .AddGoogle(options =>
 {
-    options.ClientId = "62407700538-2b2lfdtiutncmssv005sg6g04enogjdu.apps.googleusercontent.com";
-    options.ClientSecret = "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";
+    options.ClientId = Environment.GetEnvironmentVariable("CLIENTID");
+    options.ClientSecret = Environment.GetEnvironmentVariable("CLIENTSECRET");
 });
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)

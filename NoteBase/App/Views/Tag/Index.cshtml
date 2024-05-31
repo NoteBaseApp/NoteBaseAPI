@@ -1,26 +1,20 @@
 ﻿@model List<NoteModel>
 
 <div>
-    @if (!ViewBag.Succeeded)
-    {
-        <p>Er is iets mis gegaan.</p>
-    }
-    else {
-        <h1>@ViewBag.Tag.Title</h1>
-        <div class="note-container">
-            @if (Model.Count() == 0)
+    <h1>@ViewBag.Tag.Title</h1>
+    <div class="note-container">
+        @if (Model.Count() == 0)
+        {
+            <p>Deze Tag heeft geen notities</p>
+        }
+        else
+        {
+            @foreach (NoteModel note in Model)
             {
-                <p>Deze Tag heeft geen notities</p>
+                @Html.Partial("_Note", note)
             }
-            else
-            {
-                @foreach (NoteModel note in Model)
-                {
-                    @Html.Partial("_Note", note)
-                }
-            }
-        </div>
-    }
+        }
+    </div>
 </div>
 <div>
     <a asp-controller="Home" asp-action="Index">Terug naar overzicht</a>

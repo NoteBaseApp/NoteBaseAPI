@@ -3,7 +3,7 @@
 <div>
     @if (!ViewBag.Succeeded)
     {
-        <p>Er is iets mis gegaan.</p>
+        <p>Er is iets mis gegaan: @ViewBag.Message</p>
     }
     else {
         <h1>@Model.Title</h1>

@@ -43,34 +43,35 @@ namespace NoteBaseLogic
                 throw new Exception("Category With this title already exists");
             }
 
-            return new(CategoryDAL.Create(_title, _personId));
+            CategoryDTO catDTO = CategoryDAL.Create(_title, _personId);
+            return new(catDTO.ID, catDTO.Title, catDTO.PersonId);
         }
 
         public Category GetById(int _catId)
         {
             CategoryDTO catDTO = CategoryDAL.GetById(_catId);
 
-            return new(catDTO);
+            return new(catDTO.ID, catDTO.Title, catDTO.PersonId);
         }
 
         public List<Category> GetByPerson(int _personId)
         {
-            List<Category> result = new();
+            List<Category> categoryList = new();
 
             List<CategoryDTO> catDTOs = CategoryDAL.GetByPerson(_personId);
-            foreach (CategoryDTO categoryDTO in catDTOs)
+            foreach (CategoryDTO catDTO in catDTOs)
             {
-                result.Add(new(categoryDTO));
+                categoryList.Add(new(catDTO.ID, catDTO.Title, catDTO.PersonId));
             }
 
-            return result;
+            return categoryList;
         }
 
         public Category GetByTitle(string _title)
         {
             CategoryDTO catDTO = CategoryDAL.GetByTitle(_title);
 
-            return new(catDTO);
+            return new(catDTO.ID, catDTO.Title, catDTO.PersonId);
         }
 
         public Category Update(int _id, string _title,int _personId)
@@ -90,13 +91,14 @@ namespace NoteBaseLogic
                 throw new Exception("Category With this title already exists");
             }
 
-            return new(CategoryDAL.Update(_id, _title, _personId));
+            CategoryDTO catDTO = CategoryDAL.Update(_id, _title, _personId);
+            return new(catDTO.ID, catDTO.Title, catDTO.PersonId);
         }
 
         public void Delete(int _catId)
         {
-            List<Note> notes = NoteProcessor.GetByCategory(_catId);
-            if (notes.Count > 0)
+            List<Note> noteList = NoteProcessor.GetByCategory(_catId);
+            if (noteList.Count > 0)
             {
                 throw new Exception("Notes exist with this category");
             }

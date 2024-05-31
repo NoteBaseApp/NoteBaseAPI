@@ -12,7 +12,7 @@ namespace NoteBaseInterface
         Tag GetById(int _tagId);
         List<Tag> GetByPerson(int _PersonId);
         Tag GetByTitle(string _Title);
-        void TryDelete(int _tagId, int _PersonId);
+        void DeleteWhenUnused(int _tagId, int _PersonId);
         void DeleteNoteTag(int _noteId);
     }
 }

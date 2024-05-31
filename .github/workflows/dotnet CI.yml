@@ -23,6 +23,6 @@ jobs:
     # - name: Restore dependencies 
     #   run: dotnet restore --configuration Release -solution NoteBase/NoteBase.sln
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore -solution NoteBase/NoteBase.sln
     - name: Test
       run: dotnet test --no-build --verbosity normal -solution NoteBase/NoteBase.sln

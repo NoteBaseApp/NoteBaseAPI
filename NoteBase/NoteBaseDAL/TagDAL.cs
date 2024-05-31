@@ -22,7 +22,7 @@ namespace NoteBaseDAL
 
         public TagDTO Create(string _title)
         {
-            TagDTO result = new(0, _title);
+            TagDTO tagDTO = new(0, _title);
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -37,14 +37,14 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        result = new((Int32)reader.GetDecimal(0), _title);
+                        tagDTO = new((Int32)reader.GetDecimal(0), _title);
                     }
 
                     connection.Close();
                 }
             }
 
-            return result;
+            return tagDTO;
         }
 
         public void CreateNoteTag(int _noteId, int _tagId)
@@ -77,7 +77,7 @@ namespace NoteBaseDAL
 
         public TagDTO GetById(int _tagId)
         {
-            TagDTO result = new(0, "");
+            TagDTO tagDTO = new(0, "");
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -92,19 +92,19 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        result = new TagDTO(reader.GetInt32(0), reader.GetString(1));
+                        tagDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
                     }
 
                     connection.Close();
                 }
             }
 
-            return result;
+            return tagDTO;
         }
 
         public List<TagDTO> GetByPerson(int _PersonId)
         {
-            List<TagDTO> result = new();
+            List<TagDTO> tagDTOList = new();
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -121,19 +121,19 @@ namespace NoteBaseDAL
                     {
                         TagDTO tripDTO = new(reader.GetInt32(0), reader.GetString(1));
 
-                        result.Add(tripDTO);
+                        tagDTOList.Add(tripDTO);
                     }
 
                     connection.Close();
                 }
             }
 
-            return result;
+            return tagDTOList;
         }
 
         public List<TagDTO> GetByNote(int _noteId)
         {
-            List<TagDTO> result = new();
+            List<TagDTO> tagDTOList = new();
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -150,19 +150,19 @@ namespace NoteBaseDAL
                     {
                         TagDTO tripDTO = new(reader.GetInt32(0), reader.GetString(1));
 
-                        result.Add(tripDTO);
+                        tagDTOList.Add(tripDTO);
                     }
 
                     connection.Close();
                 }
             }
 
-            return result;
+            return tagDTOList;
         }
 
         public TagDTO GetByTitle(string _Title)
         {
-            TagDTO result = new(0, "");
+            TagDTO tagDTO = new(0, "");
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -177,19 +177,19 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        result = new TagDTO(reader.GetInt32(0), reader.GetString(1));
+                        tagDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
                     }
 
                     connection.Close();
                 }
             }
 
-            return result;
+            return tagDTO;
         }
 
         public TagDTO Update(int _tagId, string _title)
         {
-            TagDTO result = new(_tagId, _title);
+            TagDTO tagDTO = new(_tagId, _title);
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -207,7 +207,7 @@ namespace NoteBaseDAL
                 }
             }
 
-            return result;
+            return tagDTO;
         }
 
         public void Delete(int _tagId)

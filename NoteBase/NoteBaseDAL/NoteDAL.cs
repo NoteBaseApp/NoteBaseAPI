@@ -17,7 +17,7 @@ namespace NoteBaseDAL
 
         public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
         {
-            NoteDTO result = new(0, _title, _text, _categoryId, _personId);
+            NoteDTO noteDTO = new(0, _title, _text, _categoryId, _personId);
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -35,19 +35,19 @@ namespace NoteBaseDAL
 
                     if(reader.Read())
                     {
-                        result = new((Int32)reader.GetDecimal(0), _title, _text, _categoryId, _personId);
+                        noteDTO = new((Int32)reader.GetDecimal(0), _title, _text, _categoryId, _personId);
                     }
 
                     connection.Close();
                 }
             }
 
-            return result;
+            return noteDTO;
         }
 
         public NoteDTO GetById(int _noteId)
         {
-            NoteDTO result = new(0, "", "", 0, 0);
+            NoteDTO noteDTO = new(0, "", "", 0, 0);
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -62,27 +62,25 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
+                        noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
-                        List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
+                        List<TagDTO> tagDTOList = TagDAL.GetByNote(noteDTO.ID);
 
-                        foreach (TagDTO tagDTO in tags)
+                        foreach (TagDTO tagDTO in tagDTOList)
                         {
                             noteDTO.tagList.Add(tagDTO);
                         }
-
-                        result = noteDTO;
                     }
                     connection.Close();
                 }
             }
 
-            return result;
+            return noteDTO;
         }
 
         public List<NoteDTO> GetByPerson(int _personId)
         {
-            List<NoteDTO> result = new();
+            List<NoteDTO> noteDTOList = new();
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -99,25 +97,25 @@ namespace NoteBaseDAL
                     {
                         NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
-                        List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
+                        List<TagDTO> tagDTOList = TagDAL.GetByNote(noteDTO.ID);
 
-                        foreach (TagDTO tagDTO in tags)
+                        foreach (TagDTO tagDTO in tagDTOList)
                         {
                             noteDTO.tagList.Add(tagDTO);
                         }
 
-                        result.Add(noteDTO);
+                        noteDTOList.Add(noteDTO);
                     }
                     connection.Close();
                 }
             }
 
-            return result;
+            return noteDTOList;
         }
 
         public NoteDTO GetByTitle(string _title)
         {
-            NoteDTO result = new(0, "", "", 0, 0);
+            NoteDTO noteDTO = new(0, "", "", 0, 0);
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -132,27 +130,25 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
+                        noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
 
-                        List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
+                        List<TagDTO> tagDTOList = TagDAL.GetByNote(noteDTO.ID);
 
-                        foreach (TagDTO tagDTO in tags)
+                        foreach (TagDTO tagDTO in tagDTOList)
                         {
                             noteDTO.tagList.Add(tagDTO);
                         }
-
-                        result = noteDTO;
                     }
                     connection.Close();
                 }
             }
 
-            return result;
+            return noteDTO;
         }
 
         public List<NoteDTO> GetByCategory(int _catId)
         {
-            List<NoteDTO> result = new();
+            List<NoteDTO> noteDTOList = new();
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -176,18 +172,18 @@ namespace NoteBaseDAL
                             noteDTO.tagList.Add(tagDTO);
                         }
 
-                        result.Add(noteDTO);
+                        noteDTOList.Add(noteDTO);
                     }
                     connection.Close();
                 }
             }
 
-            return result;
+            return noteDTOList;
         }
 
         public List<NoteDTO> GetByTag(int _tagId)
         {
-            List<NoteDTO> result = new();
+            List<NoteDTO> noteDTOList = new();
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -211,18 +207,18 @@ namespace NoteBaseDAL
                             noteDTO.tagList.Add(tagDTO);
                         }
 
-                        result.Add(noteDTO);
+                        noteDTOList.Add(noteDTO);
                     }
                     connection.Close();
                 }
             }
 
-            return result;
+            return noteDTOList;
         }
 
         public NoteDTO Update(int _id, string _title, string _text, int _categoryId)
         {
-            NoteDTO result = new(_id, _title, _text, _categoryId, 0);
+            NoteDTO NoteDTO = new(_id, _title, _text, _categoryId, 0);
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -242,7 +238,7 @@ namespace NoteBaseDAL
                 }
             }
 
-            return result;
+            return NoteDTO;
         }
 
         public void Delete(int _noteId)

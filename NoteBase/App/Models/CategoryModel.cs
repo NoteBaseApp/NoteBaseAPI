@@ -1,6 +1,7 @@
 ﻿using NoteBaseDALInterface.Models;
 using NoteBaseLogicInterface.Models;
 using System.ComponentModel;
+using System.Xml.Linq;
 
 namespace App.Models
 {
@@ -21,15 +22,10 @@ namespace App.Models
             Title = _category.Title;
             PersonId = _category.PersonId;
 
-            foreach (Note note in _category.NoteList)
+            foreach (Note note in _category.noteList)
             {
-                AddNote(new(note));
+                noteList.Add(new(note));
             }
-        }
-
-        private void AddNote(NoteModel _note)
-        {
-            noteList.Add(_note);
         }
     }
 }

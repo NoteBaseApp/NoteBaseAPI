@@ -17,6 +17,6 @@ namespace NoteBaseLogicInterface
         List<Note> GetByCategory(int _categoryId);
         List<Note> GetByTag(int _tagId);
         Note Update(int _id, string _title, string _text, int _categoryId, int _personId, List<Tag> _tags);
-        void Delete(Note _note, int _PersonId);
+        void Delete(int _noteId, List<Tag> _tagList, int _PersonId);
     }
 }

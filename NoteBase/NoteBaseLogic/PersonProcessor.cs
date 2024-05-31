@@ -21,7 +21,7 @@ namespace NoteBaseLogic
         {
             PersonDTO personDTO = PersonDAL.GetByEmail(_email);
 
-            return new(personDTO);
+            return new(personDTO.ID, personDTO.Name, personDTO.Email);
         }
 
         public int Update(int _id, string _name, string _email)

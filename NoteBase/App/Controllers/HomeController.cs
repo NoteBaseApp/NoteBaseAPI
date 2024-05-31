@@ -38,8 +38,9 @@ namespace App.Controllers
 
             foreach (Category category in categories)
             {
-                category.FillNoteList(ProcessorFactory.CreateNoteProcessor(connString));
-                
+                INoteProcessor noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
+                category.noteList = noteProcessor.GetByCategory(category.ID);
+
                 categoryModels.Add(new(category));
             }
 

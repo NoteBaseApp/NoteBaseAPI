@@ -12,11 +12,5 @@ namespace NoteBaseLogicInterface.Models
             ID = _id;
             Title = _title;
         }
-
-        public Tag(TagDTO _tagDTO)
-        {
-            ID = _tagDTO.ID;
-            Title = _tagDTO.Title;
-        }
     }
 }

@@ -27,15 +27,10 @@ namespace App.Models
             Text = _note.Text;
             CategoryId = _note.CategoryId;
 
-            foreach (Tag tag in _note.TagList)
+            foreach (Tag tag in _note.tagList)
             {
-                AddTag(new(tag));
+                tagList.Add(new(tag));
             }
-        }
-
-        private void AddTag(TagModel _tag)
-        {
-            tagList.Add(_tag);
         }
     }
 }

@@ -10,7 +10,7 @@ WORKDIR /src
 #print current directory
 RUN ls
 
-RUN dotnet build "NoteBase/App/UI.csproj" -c Release -o /app/build
+RUN dotnet build "NoteBase/App/UI.csproj" -c Release -o /app/build --no-cache
 
 FROM build AS publish
 RUN dotnet publish "NoteBase/App/UI.csproj" -c Release -o /app/publish /p:UseAppHost=false

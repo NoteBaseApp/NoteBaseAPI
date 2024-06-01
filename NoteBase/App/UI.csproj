@@ -24,8 +24,4 @@
     <ProjectReference Include="..\NoteBaseLogicFactory\LogicFactory.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="wwwroot\**" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
 </Project>

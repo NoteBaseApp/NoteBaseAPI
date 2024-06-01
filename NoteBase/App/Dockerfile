@@ -15,7 +15,7 @@ RUN ls
 RUN dotnet build "NoteBase/App/UI.csproj" -c Release -o /app/build --no-cache
 
 FROM build AS publish
-RUN dotnet publish "NoteBase/App/UI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "NoteBase/App/UI.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:EnvironmentName=Development
 
 FROM base AS final
 WORKDIR /app

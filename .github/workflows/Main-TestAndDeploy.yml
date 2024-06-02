@@ -1,15 +1,15 @@
-name: Main Test
+name: Test and deploy application
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  Run-Main-Tests-Workflow:
+  Run-Main-Tests-workflow:
     name: Test the application
     uses: ./.github/workflows/Main-Tests.yml
-  Run-Publish-docker-image:
+  Run-Publish-docker-image-workflow:
     name: Build docker image and deploy to Dockerhub
-    needs: Run-Main-Tests-Workflow
+    needs: Run-Main-Tests-workflow
     if: ${{ success() }}
     uses: ./.github/workflows/Publish-Docker-image.yml

@@ -1,13 +1,15 @@
-name: Publish Docker Image to Docker Hub v2
+name: Publish Docker Image to Docker Hub
 
 on:
-  push:
-    branches: ['main']
+  workflow_run:
+    workflows: [Run Main Test]
+    types:
+      - completed
 
 jobs:
-  build:
+  on-success:
     runs-on: ubuntu-latest
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v3
 
@@ -22,3 +24,8 @@ jobs:
 
       - name: Docker Push
         run: docker push ${{ secrets.DOCKER_USERNAME }}/notebase
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+    - run: echo 'Cannot deploy to docker, Tests have failed'

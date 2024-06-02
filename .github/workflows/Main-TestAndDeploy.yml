@@ -13,3 +13,6 @@ jobs:
     needs: Run-Main-Tests-workflow
     if: ${{ success() }}
     uses: ./.github/workflows/Publish-Docker-image.yml
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

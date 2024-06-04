@@ -56,7 +56,7 @@ namespace NoteBaseAPI.Controllers
             if (!categoryProcessor.DoesCategoryExits(_id))
             {
                 response.Status = APIResponseStatus.Failure;
-                response.Message = "category does not exist.";
+                response.Message = "Category does not exist.";
                 return response;
             }
 

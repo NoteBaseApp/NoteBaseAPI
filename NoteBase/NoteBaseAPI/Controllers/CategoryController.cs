@@ -1,190 +1,164 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
-using NoteBaseLogic;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
-using System;
-using System.Net;
 using System.Security.Cryptography;
 using System.Xml.Linq;
-using UI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NoteBaseAPI.Controllers
 {
-    [Route("api/note")]
+    [Route("api/category")]
     [ApiController]
-    public class NoteController : ControllerBase
+    public class CategoryController : ControllerBase
     {
         private readonly string connString;
         private readonly IPersonProcessor personProcessor; // for when the DoesPersonExist method gets added
-        private readonly INoteProcessor noteProcessor;
+        private readonly ICategoryProcessor categoryProcessor;
 
-        public NoteController() 
+        public CategoryController()
         {
             //connString = Environment.GetEnvironmentVariable("DATABASE_URL");
             connString = "Data Source=172.17.0.3,1433;Initial Catalog=NoteBase;User id=NoteBaseAPI;Password=K00kW3kk3r!;Connect Timeout=300;";
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
-            noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
+            categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
+
 
         }
-        // GET: api/<NoteController>/2
+
+        // GET: api/<CategoryController>/2
         [HttpGet("GetByPerson/{_personId}")]
         public APIResponse GetByPerson(int _personId)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
-            List<Note> notes = noteProcessor.GetByPerson(_personId);
+            List<Category> categories = categoryProcessor.GetByPerson(_personId);
 
-            if (notes == null || notes.Count == 0)
+            if (categories == null || categories.Count == 0)
             {
-
-                response.Message = "No notes where found.";
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "No categories where found.";
                 return response;
             }
 
-            response.ResponseBody = notes;
+            response.ResponseBody = categories;
             return response;
         }
 
-        // GET api/<NoteController>/5
+        // GET api/<CategoryController>/5
         [HttpGet("{_id}")]
         public APIResponse Get(int _id)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
-            if (!noteProcessor.DoesNoteExits(_id))
+            if (!categoryProcessor.DoesCategoryExits(_id))
             {
                 response.Status = APIResponseStatus.Failure;
-                response.Message = "Note does not exist.";
+                response.Message = "category does not exist.";
                 return response;
             }
 
-            Note note = noteProcessor.GetById(_id);
+            Category category = categoryProcessor.GetById(_id);
 
-            response.ResponseBody = note;
+            response.ResponseBody = category;
             return response;
         }
 
-        // POST api/<NoteController>
+        // POST api/<CategoryController>
         [HttpPost]
-        public APIResponse Post([FromBody] NoteRequestParams _note)
+        public APIResponse Post([FromBody] CategoryRequestParams _category)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
-            if (!noteProcessor.IsValidTitle(_note.Title))
+            if (!categoryProcessor.IsValidTitle(_category.Title))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "Title cannot be empty.";
                 return response;
             }
-            if (!noteProcessor.IsTitleUnique(_note.Title))
+            if (!categoryProcessor.IsTitleUnique(_category.Title))
             {
                 response.Status = APIResponseStatus.Failure;
-                response.Message = "Note with this title arleady exists.";
+                response.Message = "Category with this title arleady exists.";
                 return response;
             }
-            if (!noteProcessor.IsValidText(_note.Text))
-            {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Text cannot be empty.";
-                return response;
-            }
-            if (_note.CategoryId == 0)
-            {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid CategoryId.";
-                return response;
-            }
-            if (_note.PersonId == 0)
+            if (_category.PersonId == 0)
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "No valid PersonId.";
                 return response;
             }
 
-            Note note = noteProcessor.Create(_note.Title, _note.Text, _note.CategoryId, _note.PersonId);
+            Category category = categoryProcessor.Create(_category.Title, _category.PersonId);
 
-            if (note.ID == 0)
+            if (category.ID == 0)
             {
                 response.Status = APIResponseStatus.Failure;
-                response.Message = "Note could not be created.";
+                response.Message = "Category could not be created.";
                 return response;
             }
 
-            response.ResponseBody = note;
+            response.ResponseBody = category;
             return response;
         }
 
-        // PUT api/<NoteController>/5
+        // PUT api/<CategoryController>/5
         [HttpPut("{_id}")]
-        public APIResponse Put(int _id, [FromBody] NoteRequestParams _note)
+        public APIResponse Put(int _id, [FromBody] CategoryRequestParams _category)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
-            if (!noteProcessor.DoesNoteExits(_note.ID))
+
+            if (!categoryProcessor.DoesCategoryExits(_id))
             {
                 response.Status = APIResponseStatus.Failure;
-                response.Message = "Note does not exist.";
+                response.Message = "Category does not exist.";
                 return response;
             }
-            if (!noteProcessor.IsValidTitle(_note.Title))
+            if (!categoryProcessor.IsValidTitle(_category.Title))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "Title cannot be empty.";
                 return response;
             }
-            if (!noteProcessor.IsTitleUnique(_note.Title))
+            if (!categoryProcessor.IsTitleUnique(_category.Title))
             {
                 response.Status = APIResponseStatus.Failure;
-                response.Message = "Note with this title arleady exists.";
+                response.Message = "Category with this title arleady exists.";
                 return response;
             }
-            if (!noteProcessor.IsValidText(_note.Text))
-            {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Text cannot be empty.";
-                return response;
-            }
-            if (_note.CategoryId == 0)
-            {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid CategoryId.";
-                return response;
-            }
-            if (_note.PersonId == 0)
+            if (_category.PersonId == 0)
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "No valid PersonId.";
                 return response;
             }
 
-            //retrieve note first to get the tags
-            Note note = noteProcessor.GetById(_id);
-            note = noteProcessor.Update(_note.ID, _note.Title, _note.Text, _note.CategoryId, _note.PersonId, note.tagList);
+            Category category = categoryProcessor.GetById(_id);
+            category = categoryProcessor.Update(_id, _category.Title, _category.PersonId);
 
-            response.ResponseBody = note;
+            response.ResponseBody = category;
             return response;
         }
 
-        // DELETE api/<NoteController>/5
+        // DELETE api/<CategoryController>/5
         [HttpDelete("{_id}")]
         public APIResponse Delete(int _id)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
-            Note note = noteProcessor.GetById(_id);
+            Category category = categoryProcessor.GetById(_id);
 
-            if (note.ID == 0)
+            if (category.ID == 0)
             {
                 response.Status = APIResponseStatus.Failure;
-                response.Message = "Note does not exist.";
+                response.Message = "Category does not exist.";
                 return response;
             }
 
-            noteProcessor.Delete(note.ID, note.tagList, note.PersonId);
+            categoryProcessor.Delete(category.ID);
 
             return response;
         }

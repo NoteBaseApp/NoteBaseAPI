@@ -6,6 +6,7 @@ using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
 using System;
 using System.Net;
+using System.Security.Cryptography;
 using System.Xml.Linq;
 using UI.Models;
 
@@ -17,121 +18,175 @@ namespace NoteBaseAPI.Controllers
     [ApiController]
     public class NoteController : ControllerBase
     {
-        private readonly IConfiguration _config;
         private readonly string connString;
-        private readonly IPersonProcessor personProcessor;
+        private readonly IPersonProcessor personProcessor; // for when the DoesPersonExist method gets added
         private readonly INoteProcessor noteProcessor;
-        private readonly ICategoryProcessor categoryProcessor;
 
-        public NoteController(IConfiguration configuration) 
+        public NoteController() 
         {
-            _config = configuration;
             //connString = Environment.GetEnvironmentVariable("DATABASE_URL");
             connString = "Data Source=172.17.0.4,1433;Initial Catalog=NoteBase;User id=NoteBaseAPI;Password=K00kW3kk3r!;Connect Timeout=300;";
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
-            categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
 
         }
         // GET: api/<NoteController>/2
         [HttpGet("GetByPerson/{_personId}")]
-        public List<Note> GetByPerson(int _personId)
+        public APIResponse GetByPerson(int _personId)
         {
+            APIResponse response = new(APIResponseStatus.Success);
+
             List<Note> notes = noteProcessor.GetByPerson(_personId);
 
-            return notes;
+            if (notes == null || notes.Count == 0)
+            {
+
+                response.Message = "No notes where found";
+                return response;
+            }
+
+            response.ResponseBody = notes;
+            return response;
         }
 
         // GET api/<NoteController>/5
         [HttpGet("{_id}")]
-        public Note Get(int _id)
+        public APIResponse Get(int _id)
         {
-            Note note = noteProcessor.GetById(_id);
+            APIResponse response = new(APIResponseStatus.Success);
 
-
-            if (note.ID == 0)
+            if (!noteProcessor.DoesNoteExits(_id))
             {
-                throw new HttpRequestException("Note not found.");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Note does not exist.";
+                return response;
             }
 
-            return note;
+            Note note = noteProcessor.GetById(_id);
+
+            response.ResponseBody = note;
+            return response;
         }
 
         // POST api/<NoteController>
         [HttpPost]
-        public Note Post([FromBody] NoteRequestParams _note)
+        public APIResponse Post([FromBody] NoteRequestParams _note)
         {
+            APIResponse response = new(APIResponseStatus.Success);
+
             if (!noteProcessor.IsValidTitle(_note.Title))
             {
-                throw new HttpRequestException("Title cannot be empty.");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Title cannot be empty.";
+                return response;
             }
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
-                throw new HttpRequestException("Note with this title arleady exists.");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Note with this title arleady exists.";
+                return response;
             }
             if (!noteProcessor.IsValidText(_note.Text))
             {
-                throw new HttpRequestException("Text cannot be empty");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Text cannot be empty.";
+                return response;
             }
             if (_note.CategoryId == 0)
             {
-                throw new HttpRequestException("CategoryId cannot be empty");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "No valid CategoryId.";
+                return response;
             }
             if (_note.PersonId == 0)
             {
-                throw new HttpRequestException("PersonId cannot be empty");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "No valid PersonId.";
+                return response;
             }
 
             Note note = noteProcessor.Create(_note.Title, _note.Text, _note.CategoryId, _note.PersonId);
 
             if (note.ID == 0)
             {
-                throw new HttpRequestException("Note could not be created");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Note could not be created.";
+                return response;
             }
 
-            return note;
+            response.ResponseBody = note;
+            return response;
         }
 
         // PUT api/<NoteController>/5
         [HttpPut("{_id}")]
-        public void Put(int _id, [FromBody] NoteRequestParams _note)
+        public APIResponse Put(int _id, [FromBody] NoteRequestParams _note)
         {
+            APIResponse response = new(APIResponseStatus.Success);
+
             if (!noteProcessor.DoesNoteExits(_note.ID))
             {
-                throw new HttpRequestException("Note Does not exist.");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Note does not exist.";
+                return response;
             }
             if (!noteProcessor.IsValidTitle(_note.Title))
             {
-                throw new HttpRequestException("Title cannot be empty.");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Title cannot be empty.";
+                return response;
             }
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
-                throw new HttpRequestException("Note with this title arleady exists.");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Note with this title arleady exists.";
+                return response;
             }
             if (!noteProcessor.IsValidText(_note.Text))
             {
-                throw new HttpRequestException("NoteBody cannot be empty");
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Text cannot be empty.";
+                return response;
+            }
+            if (_note.CategoryId == 0)
+            {
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "No valid CategoryId.";
+                return response;
+            }
+            if (_note.PersonId == 0)
+            {
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "No valid PersonId.";
+                return response;
             }
 
             //retrieve note first to get the tags
             Note note = noteProcessor.GetById(_id);
-
             note = noteProcessor.Update(_note.ID, _note.Title, _note.Text, _note.CategoryId, _note.PersonId, note.tagList);
 
-            if (note.ID == 0)
-            {
-                throw new HttpRequestException("Note Does not exist.");
-            }
+            response.ResponseBody = note;
+            return response;
         }
 
         // DELETE api/<NoteController>/5
         [HttpDelete("{_id}")]
-        public void Delete(int _id)
+        public APIResponse Delete(int _id)
         {
+            APIResponse response = new(APIResponseStatus.Success);
+
             Note note = noteProcessor.GetById(_id);
+
+            if (note.ID == 0)
+            {
+                response.Status = APIResponseStatus.Failure;
+                response.Message = "Note does not exist.";
+                return response;
+            }
 
             noteProcessor.Delete(note.ID, note.tagList, note.PersonId);
 
+            return response;
         }
     }
 }

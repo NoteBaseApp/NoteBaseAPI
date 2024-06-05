@@ -1,16 +1,19 @@
-# individueel Semester 2
+#  NoteBaseAPI
 
-Mijn project voor het maken en beheren van notities. Hierbij kan er gebruik gemaakt worden van categorieën en gegenereerde tags.
+## Description
+The backend of my notes organizer application.
 
-de aplicatie bestaat uit 8 projecten:
-- UI:
-    - App (asp.net core MVC)
-- logica:
-    - NotebaseLogicFactory (creëert de logica classes met benodige DALs)
-    - NotebaseLogicInterface (interface voor logica, bezit ook de models)
-    - NotebaseLogic (logica laag die de business logic bevat)
-    - NotebaseLogicTests (unit tests voor logica laag)
-- DAL:
-    - NotebaseDALInterface (interface voor Data access layer, bezit ook de DTO models)
-    - NoteBaseDAL (Data access layer)
-    - NotebaseDALTests (intergratie tests voor Data access layer laag en database)
+## Requirements
+- Have Docker installed.
+- 
+## Project Startup
+
+### Setup database
+- First run the NoteBaseScripts/NoteBaseScript/Mainscript.sql script to create the database.
+- Then run NoteBaseScripts/NoteBaseScript/Views.sql to create the necessary views. At the moment, you need to select and run all view code parts separately.
+
+### Setup Docker container
+Setup the Docker container with the following command, remember to change parameters where necessary:
+```cmd
+$ docker run --name NoteBaseAPI --hostname NoteBaseAPI -e "DATABASE_URL = Data Source={IP},{port};Initial Catalog=NoteBase;User id={UserId};Password={Password};Connect Timeout=300;" -p {port}:80 -d joeyremmers/notebaseAPI
+```

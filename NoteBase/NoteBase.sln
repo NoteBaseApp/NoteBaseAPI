@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicFactory", "NoteBaseLog
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DALInterface", "NoteBaseDALInterface\DALInterface.csproj", "{29E4ACD9-D167-406E-BB40-0C67CF963A54}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "App\UI.csproj", "{3AD046D2-1111-4A16-A172-F133204D4737}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicTests", "NoteBaseLogicTests\LogicTests.csproj", "{FDD277D3-F601-41E7-88C6-F26AE43FAA95}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DALTests", "NoteBaseDALTests\DALTests.csproj", "{A40DB1EA-D3F8-4182-A928-5CBB19FAAAAE}"

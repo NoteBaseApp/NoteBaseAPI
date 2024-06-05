@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 
 namespace NoteBaseAPI.Controllers
 {
-    [Route("api/tag")]
+    [Route("tag")]
     [ApiController]
     public class TagController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace NoteBaseAPI.Controllers
 
         public TagController()
         {
-            connString = "Data Source=172.17.0.3,1433;Initial Catalog=NoteBase;User id=NoteBaseAPI;Password=K00kW3kk3r!;Connect Timeout=300;";
+            connString = Environment.GetEnvironmentVariable("DATABASE_URL");
             tagProcessor = ProcessorFactory.CreateTagProcessor(connString);
         }
 

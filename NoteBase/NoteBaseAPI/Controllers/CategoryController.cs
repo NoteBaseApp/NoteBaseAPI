@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace NoteBaseAPI.Controllers
 {
-    [Route("api/category")]
+    [Route("category")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -20,8 +20,7 @@ namespace NoteBaseAPI.Controllers
 
         public CategoryController()
         {
-            //connString = Environment.GetEnvironmentVariable("DATABASE_URL");
-            connString = "Data Source=172.17.0.3,1433;Initial Catalog=NoteBase;User id=NoteBaseAPI;Password=K00kW3kk3r!;Connect Timeout=300;";
+            connString = Environment.GetEnvironmentVariable("DATABASE_URL");
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
 

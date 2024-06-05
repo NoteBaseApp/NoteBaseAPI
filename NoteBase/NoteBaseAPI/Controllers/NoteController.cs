@@ -14,7 +14,7 @@ using UI.Models;
 
 namespace NoteBaseAPI.Controllers
 {
-    [Route("api/note")]
+    [Route("note")]
     [ApiController]
     public class NoteController : ControllerBase
     {
@@ -24,8 +24,7 @@ namespace NoteBaseAPI.Controllers
 
         public NoteController() 
         {
-            //connString = Environment.GetEnvironmentVariable("DATABASE_URL");
-            connString = "Data Source=172.17.0.3,1433;Initial Catalog=NoteBase;User id=NoteBaseAPI;Password=K00kW3kk3r!;Connect Timeout=300;";
+            connString = Environment.GetEnvironmentVariable("DATABASE_URL");
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
 

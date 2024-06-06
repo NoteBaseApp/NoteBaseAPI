@@ -5,7 +5,7 @@ The backend of my notes organizer application.
 
 ## Requirements
 - Have Docker installed.
-- 
+- have A MSSQL Server.
 ## Project Startup
 
 ### Setup database

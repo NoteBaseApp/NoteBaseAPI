@@ -23,15 +23,15 @@ namespace NoteBaseLogic
 
         public bool IsTitleUnique(string _title)
         {
-            return GetByTitle(_title).ID == 0;
+            return GetByTitle(_title).ID == Guid.Parse("00000000-0000-0000-0000-000000000000");
         }
 
-        public bool DoesCategoryExits(int _id)
+        public bool DoesCategoryExits(Guid _id)
         {
-            return _id != 0 && GetById(_id).ID != 0;
+            return _id != Guid.Parse("00000000-0000-0000-0000-000000000000") && GetById(_id).ID != Guid.Parse("00000000-0000-0000-0000-000000000000");
         }
 
-        public Category Create(string _title, int _personId)
+        public Category Create(string _title, Guid _personId)
         {
             if (!IsValidTitle(_title))
             {
@@ -47,14 +47,14 @@ namespace NoteBaseLogic
             return new(catDTO.ID, catDTO.Title, catDTO.PersonId);
         }
 
-        public Category GetById(int _catId)
+        public Category GetById(Guid _catId)
         {
             CategoryDTO catDTO = CategoryDAL.GetById(_catId);
 
             return new(catDTO.ID, catDTO.Title, catDTO.PersonId);
         }
 
-        public List<Category> GetByPerson(int _personId)
+        public List<Category> GetByPerson(Guid _personId)
         {
             List<Category> categoryList = new();
 
@@ -74,7 +74,7 @@ namespace NoteBaseLogic
             return new(catDTO.ID, catDTO.Title, catDTO.PersonId);
         }
 
-        public Category Update(int _id, string _title,int _personId)
+        public Category Update(Guid _id, string _title, Guid _personId)
         {
             if (!DoesCategoryExits(_id))
             {
@@ -95,7 +95,7 @@ namespace NoteBaseLogic
             return new(catDTO.ID, catDTO.Title, catDTO.PersonId);
         }
 
-        public void Delete(int _catId)
+        public void Delete(Guid _catId)
         {
             List<Note> noteList = NoteProcessor.GetByCategory(_catId);
             if (noteList.Count > 0)
@@ -105,7 +105,7 @@ namespace NoteBaseLogic
 
 
             Category cat = GetById(_catId);
-            if (cat.ID == 0)
+            if (cat.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 throw new Exception("Category doesn't exist");
             }

@@ -24,12 +24,12 @@ namespace NoteBaseLogic
             return new(personDTO.ID, personDTO.Name, personDTO.Email);
         }
 
-        public int Update(int _id, string _name, string _email)
+        public int Update(Guid _id, string _name, string _email)
         {
             throw new NotImplementedException();
         }
 
-        public int Delete(int _personId)
+        public int Delete(Guid _personId)
         {
             throw new NotImplementedException();
         }

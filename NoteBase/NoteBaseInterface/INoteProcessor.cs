@@ -8,15 +8,15 @@ namespace NoteBaseLogicInterface
         public bool IsValidTitle(string _title);
         public bool IsValidText(string _title);
         public bool IsTitleUnique(string _title);
-        public bool IsTitleUnique(string _title, int _id);
-        public bool DoesNoteExits(int _id);
-        Note Create(string _title, string _text, int _categoryId, int _personId);
-        Note GetById(int _noteId);
-        List<Note> GetByPerson(int _personId);
+        public bool IsTitleUnique(string _title, Guid _id);
+        public bool DoesNoteExits(Guid _id);
+        Note Create(string _title, string _text, Guid _categoryId, Guid _personId);
+        Note GetById(Guid _noteId);
+        List<Note> GetByPerson(Guid _personId);
         Note GetByTitle(string _Title);
-        List<Note> GetByCategory(int _categoryId);
-        List<Note> GetByTag(int _tagId);
-        Note Update(int _id, string _title, string _text, int _categoryId, int _personId, List<Tag> _tags);
-        void Delete(int _noteId, List<Tag> _tagList, int _PersonId);
+        List<Note> GetByCategory(Guid _categoryId);
+        List<Note> GetByTag(Guid _tagId);
+        Note Update(Guid _id, string _title, string _text, Guid _categoryId, Guid _personId, List<Tag> _tags);
+        void Delete(Guid _noteId, List<Tag> _tagList, Guid _PersonId);
     }
 }

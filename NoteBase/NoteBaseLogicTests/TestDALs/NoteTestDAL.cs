@@ -11,48 +11,48 @@ namespace NoteBaseLogicTests.TestDALs
 {
     internal class NoteTestDAL : INoteDAL
     {
-        public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
+        public NoteDTO Create(string _title, string _text, Guid _categoryId, Guid _personId)
         {
-            NoteDTO result = new(0, _title, _text, _categoryId, _personId);
+            NoteDTO result = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), _title, _text, _categoryId, _personId);
             return result;
         }
 
-        public void Delete(int _noteId)
+        public void Delete(Guid _noteId)
         {
            
         }
 
-        public List<NoteDTO> GetByCategory(int _categoryId)
+        public List<NoteDTO> GetByCategory(Guid _categoryId)
         {
             List<NoteDTO> result = new();
 
-            if (_categoryId == 1)
+            if (_categoryId == Guid.Parse("3fceb4e1-6fa5-41c0-9fbf-77cec3b7aec9"))
             {
                 return result;
             }
 
-            if (_categoryId != 2)
+            if (_categoryId != Guid.Parse("2344dd8f-8a22-4fe2-bfd9-74bde5d42395"))
             {
-                result.Add(new(0, "", "", 0, 0));
+                result.Add(new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "", "", Guid.Parse("00000000-0000-0000-0000-000000000000"), Guid.Parse("00000000-0000-0000-0000-000000000000")));
                 return result;
             }
 
-            result.Add(new(1, "", "", _categoryId, 1));
+            result.Add(new(Guid.Parse("59d242ee-f05f-4ce1-a9ff-7c52d993ff58"), "", "", _categoryId, Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f")));
 
             return result;
         }
 
-        public NoteDTO GetById(int _noteId)
+        public NoteDTO GetById(Guid _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public List<NoteDTO> GetByPerson(int _personId)
+        public List<NoteDTO> GetByPerson(Guid _personId)
         {
             throw new NotImplementedException();
         }
 
-        public List<NoteDTO> GetByTag(int _tagId)
+        public List<NoteDTO> GetByTag(Guid _tagId)
         {
             throw new NotImplementedException();
         }
@@ -64,23 +64,23 @@ namespace NoteBaseLogicTests.TestDALs
 
             if (_Title == "School" && GetByTitleCals > 0)
             {
-               NoteDTO note = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1, 1);
-                note.tagList.Add(new(11, "fontys"));
-                note.tagList.Add(new(12, "eindhoven"));
+               NoteDTO note = new(Guid.Parse("555660fe-82c2-42ac-88e7-887102331de3"), "School", "Ik zit op #Fontys in #Eindhoven", Guid.Parse("3fceb4e1-6fa5-41c0-9fbf-77cec3b7aec9"), Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f"));
+                note.tagList.Add(new(Guid.Parse("df47ed24-14b9-42da-b2c5-0966e31eca84"), "fontys"));
+                note.tagList.Add(new(Guid.Parse("82c14bf7-53a4-4587-8eab-0aa59b0a48c9"), "eindhoven"));
 
                 return note;
             }
             else if (_Title == "Gaming" && GetByTitleCals > 0)
             {
-                return new(21, "Gaming", "Ik ga zaterdag gamen", 1, 1);
+                return new(Guid.Parse("f8486f1a-6fd4-47ed-b4b0-3804f7fadce1"), "Gaming", "Ik ga zaterdag gamen", Guid.Parse("3fceb4e1-6fa5-41c0-9fbf-77cec3b7aec9"), Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f"));
             }
 
             GetByTitleCals++;
 
-            return new(0, "", "", 0, 0);
+            return new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "", "", Guid.Parse("00000000-0000-0000-0000-000000000000"), Guid.Parse("00000000-0000-0000-0000-000000000000"));
         }
 
-        public NoteDTO Update(int id, string _title, string _text, int _categoryId)
+        public NoteDTO Update(Guid id, string _title, string _text, Guid _categoryId)
         {
             throw new NotImplementedException();
         }

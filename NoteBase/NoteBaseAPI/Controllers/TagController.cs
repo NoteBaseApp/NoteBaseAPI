@@ -26,7 +26,7 @@ namespace NoteBaseAPI.Controllers
 
         // GET: api/<TagController>/5
         [HttpGet("GetByPerson/{_personId}")]
-        public APIResponse GetByPerson(int _personId)
+        public APIResponse GetByPerson(Guid _personId)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
@@ -51,7 +51,7 @@ namespace NoteBaseAPI.Controllers
 
             Tag tag = tagProcessor.GetByTitle(_Title);
 
-            if (tag.ID == 0)
+            if (tag.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "Tag does not exist.";
@@ -64,13 +64,13 @@ namespace NoteBaseAPI.Controllers
 
         // GET api/<TagController>/5
         [HttpGet("{_id}")]
-        public APIResponse Get(int _id)
+        public APIResponse Get(Guid _id)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
             Tag tag = tagProcessor.GetById(_id);
 
-            if (tag.ID == 0)
+            if (tag.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "Tag does not exist.";

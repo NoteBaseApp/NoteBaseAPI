@@ -4,8 +4,8 @@ namespace NoteBaseAPI.Models
 {
     public class CategoryRequestParams
     {
-        public int ID { get; set; }
+        public Guid ID { get; set; }
         public string Title { get; set; }
-        public int PersonId { get; set; }
+        public Guid PersonId { get; set; }
     }
 }

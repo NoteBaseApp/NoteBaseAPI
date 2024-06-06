@@ -5,7 +5,7 @@ namespace NoteBaseAPI.Models
 {
     public class TagModel
     {
-        public int ID { get; set; }
+        public Guid ID { get; set; }
 
         [DisplayName("Titel")]
         public string Title { get; private set; }

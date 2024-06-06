@@ -31,7 +31,7 @@ namespace NoteBaseAPI.Controllers
         }
         // GET: api/<NoteController>/2
         [HttpGet("GetByPerson/{_personId}")]
-        public APIResponse GetByPerson(int _personId)
+        public APIResponse GetByPerson(Guid _personId)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
@@ -50,7 +50,7 @@ namespace NoteBaseAPI.Controllers
 
         // GET api/<NoteController>/5
         [HttpGet("{_id}")]
-        public APIResponse Get(int _id)
+        public APIResponse Get(Guid _id)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
@@ -91,13 +91,13 @@ namespace NoteBaseAPI.Controllers
                 response.Message = "Text cannot be empty.";
                 return response;
             }
-            if (_note.CategoryId == 0)
+            if (_note.CategoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "No valid CategoryId.";
                 return response;
             }
-            if (_note.PersonId == 0)
+            if (_note.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "No valid PersonId.";
@@ -106,7 +106,7 @@ namespace NoteBaseAPI.Controllers
 
             Note note = noteProcessor.Create(_note.Title, _note.Text, _note.CategoryId, _note.PersonId);
 
-            if (note.ID == 0)
+            if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "Note could not be created.";
@@ -119,7 +119,7 @@ namespace NoteBaseAPI.Controllers
 
         // PUT api/<NoteController>/5
         [HttpPut("{_id}")]
-        public APIResponse Put(int _id, [FromBody] NoteRequestParams _note)
+        public APIResponse Put(Guid _id, [FromBody] NoteRequestParams _note)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
@@ -147,13 +147,13 @@ namespace NoteBaseAPI.Controllers
                 response.Message = "Text cannot be empty.";
                 return response;
             }
-            if (_note.CategoryId == 0)
+            if (_note.CategoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "No valid CategoryId.";
                 return response;
             }
-            if (_note.PersonId == 0)
+            if (_note.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "No valid PersonId.";
@@ -170,13 +170,13 @@ namespace NoteBaseAPI.Controllers
 
         // DELETE api/<NoteController>/5
         [HttpDelete("{_id}")]
-        public APIResponse Delete(int _id)
+        public APIResponse Delete(Guid _id)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
             Note note = noteProcessor.GetById(_id);
 
-            if (note.ID == 0)
+            if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "Note does not exist.";

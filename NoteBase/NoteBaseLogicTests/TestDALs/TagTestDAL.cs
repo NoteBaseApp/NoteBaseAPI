@@ -12,15 +12,15 @@ namespace NoteBaseLogicTests.TestDALs
     {
         public TagDTO Create(string _title)
         {
-            return new(0, _title);
+            return new(Guid.Parse("00000000-0000-0000-0000-000000000000"), _title);
         }
 
-        public void Delete(int _tagId)
+        public void Delete(Guid _tagId)
         {
             
         }
 
-        public TagDTO GetById(int _tagId)
+        public TagDTO GetById(Guid _tagId)
         {
             throw new NotImplementedException();
         }
@@ -34,37 +34,37 @@ namespace NoteBaseLogicTests.TestDALs
         {
             if (_Title == "fontys")
             {
-                return new(11, "fontys");
+                return new(Guid.Parse("74f05b9d-da24-42a1-8c09-2f3e9b014c93"), "fontys");
             } 
             else if (_Title == "eindhoven")
             {
-                return new(12, "fontys");
+                return new(Guid.Parse("627a015d-64e4-4be7-9758-aecefaa2dc24"), "fontys");
             }
 
-            return new(0, "");
+            return new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "");
         }
 
-        public List<TagDTO> GetByNote(int _noteId)
+        public List<TagDTO> GetByNote(Guid _noteId)
         {
             throw new NotImplementedException();
         }
 
-        public TagDTO Update(int _id, string _title)
+        public TagDTO Update(Guid _id, string _title)
         {
             throw new NotImplementedException();
         }
 
-        public List<TagDTO> GetByPerson(int _PersonId)
+        public List<TagDTO> GetByPerson(Guid _PersonId)
         {
             throw new NotImplementedException();
         }
 
-        public void CreateNoteTag(int _noteId, int _tagId)
+        public void CreateNoteTag(Guid _noteId, Guid _tagId)
         {
             
         }
 
-        public void DeleteNoteTag(int _noteId)
+        public void DeleteNoteTag(Guid _noteId)
         {
             
         }

@@ -33,20 +33,20 @@ namespace NoteBaseLogic
 
         public bool IsTitleUnique(string _title)
         {
-            return GetByTitle(_title).ID == 0;
+            return GetByTitle(_title).ID == Guid.Parse("00000000-0000-0000-0000-000000000000");
         }
 
-        public bool IsTitleUnique(string _title, int _id)
+        public bool IsTitleUnique(string _title, Guid _id)
         {
-            return GetByTitle(_title).ID == 0 || GetByTitle(_title).ID == _id;
+            return GetByTitle(_title).ID == Guid.Parse("00000000-0000-0000-0000-000000000000") || GetByTitle(_title).ID == _id;
         }
 
-        public bool DoesNoteExits(int _id)
+        public bool DoesNoteExits(Guid _id)
         {
-            return _id != 0 && GetById(_id).ID != 0;
+            return _id != Guid.Parse("00000000-0000-0000-0000-000000000000") && GetById(_id).ID != Guid.Parse("00000000-0000-0000-0000-000000000000");
         }
 
-        public Note Create(string _title, string _text, int _categoryId, int _personId)
+        public Note Create(string _title, string _text, Guid _categoryId, Guid _personId)
         {
             if (!IsValidTitle(_title))
             {
@@ -64,7 +64,7 @@ namespace NoteBaseLogic
             }
 
             //how to check this. check exists in categoryProcessor
-            if (_categoryId == 0)
+            if (_categoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 throw new ArgumentException("No valid category was given");
             }
@@ -78,7 +78,7 @@ namespace NoteBaseLogic
             return GetByTitle(_title);
         }
 
-        public Note GetById(int _noteId)
+        public Note GetById(Guid _noteId)
         {
             NoteDTO noteDTO = NoteDAL.GetById(_noteId);
             Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
@@ -90,7 +90,7 @@ namespace NoteBaseLogic
             return note;
         }
 
-        public List<Note> GetByPerson(int _personId)
+        public List<Note> GetByPerson(Guid _personId)
         {
             List<Note> noteList = new();
 
@@ -123,7 +123,7 @@ namespace NoteBaseLogic
             return note;
         }
 
-        public List<Note> GetByCategory(int _catId)
+        public List<Note> GetByCategory(Guid _catId)
         {
             List<Note> noteList = new();
 
@@ -141,7 +141,7 @@ namespace NoteBaseLogic
             return noteList;
         }
 
-        public List<Note> GetByTag(int _tagId)
+        public List<Note> GetByTag(Guid _tagId)
         {
             List<Note> noteList = new();
 
@@ -159,7 +159,7 @@ namespace NoteBaseLogic
             return noteList;
         }
 
-        public Note Update(int _id, string _title, string _text, int _categoryId, int _personId, List<Tag> _tags)
+        public Note Update(Guid _id, string _title, string _text, Guid _categoryId, Guid _personId, List<Tag> _tags)
         {
             if (!IsValidTitle(_title))
             {
@@ -177,7 +177,7 @@ namespace NoteBaseLogic
             }
 
             //how to check this. check exists in categoryProcessor
-            if (_categoryId == 0)
+            if (_categoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 throw new ArgumentException("No valid category was given");
             }
@@ -190,10 +190,10 @@ namespace NoteBaseLogic
             return GetById(_id);
         }
 
-        public void Delete(int _noteId, List<Tag> _tagList, int _PersonId)
+        public void Delete(Guid _noteId, List<Tag> _tagList, Guid _PersonId)
         {
             Note note = GetById(_noteId);
-            if (note.ID == 0)
+            if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 throw new Exception("Note doesn't exist");
             }

@@ -43,7 +43,7 @@ namespace NoteBaseDAL
 
         public PersonDTO GetByEmail(string _personEmail)
         {
-            PersonDTO result = new(0, "", "");
+            PersonDTO result = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "", "");
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -58,7 +58,7 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        result = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
+                        result = new(reader.GetGuid(0), reader.GetString(1), reader.GetString(2));
                     }
 
                     connection.Close();
@@ -69,12 +69,12 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public int Update(int _id, string _name, string _email)
+        public int Update(Guid _id, string _name, string _email)
         {
             throw new NotImplementedException();
         }
 
-        public int Delete(int _personId)
+        public int Delete(Guid _personId)
         {
             throw new NotImplementedException();
         }

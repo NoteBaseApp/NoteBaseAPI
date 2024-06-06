@@ -18,9 +18,9 @@ namespace NoteBaseDAL
             ConnString = _connString;
         }
 
-        public CategoryDTO Create(string _title, int _personId)
+        public CategoryDTO Create(string _title, Guid _personId)
         {
-            CategoryDTO result = new(0, _title, _personId);
+            CategoryDTO result = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), _title, _personId);
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -36,7 +36,7 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        result = new((Int32)reader.GetDecimal(0), _title, _personId);
+                        result = new(reader.GetGuid(0), _title, _personId);
                     }
 
                     connection.Close();
@@ -45,9 +45,9 @@ namespace NoteBaseDAL
 
             return result;
         }
-        public CategoryDTO GetById(int _catId)
+        public CategoryDTO GetById(Guid _catId)
         {
-            CategoryDTO result = new(0, "", 0);
+            CategoryDTO result = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "", Guid.Parse("00000000-0000-0000-0000-000000000000"));
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -62,7 +62,7 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
+                        result = new(reader.GetGuid(0), reader.GetString(1), reader.GetGuid(2));
                     }
                     connection.Close();
                 }
@@ -71,7 +71,7 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public List<CategoryDTO> GetByPerson(int _personId)
+        public List<CategoryDTO> GetByPerson(Guid _personId)
         {
             List<CategoryDTO> result = new();
 
@@ -88,7 +88,7 @@ namespace NoteBaseDAL
 
                     while (reader.Read())
                     {
-                        CategoryDTO categoryDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
+                        CategoryDTO categoryDTO = new(reader.GetGuid(0), reader.GetString(1), reader.GetGuid(2));
 
                         result.Add(categoryDTO);
                     }
@@ -101,7 +101,7 @@ namespace NoteBaseDAL
 
         public CategoryDTO GetByTitle(string _title)
         {
-            CategoryDTO result = new(0, "", 0);
+            CategoryDTO result = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "", Guid.Parse("00000000-0000-0000-0000-000000000000"));
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -116,7 +116,7 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        result = new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
+                        result = new(reader.GetGuid(0), reader.GetString(1), reader.GetGuid(2));
                     }
                     connection.Close();
                 }
@@ -125,7 +125,7 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public CategoryDTO Update(int _id, string _title, int _personId)
+        public CategoryDTO Update(Guid _id, string _title, Guid _personId)
         {
             CategoryDTO result = new(_id, _title, _personId);
 
@@ -148,7 +148,7 @@ namespace NoteBaseDAL
             return result;
         }
 
-        public void Delete(int _catId)
+        public void Delete(Guid _catId)
         {
             using (SqlConnection connection = new(ConnString))
             {

@@ -27,16 +27,16 @@ namespace NoteBaseLogic.Tests
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
             string title = "School";
             string text = "Ik zit op #Fontys in #Eindhoven";
-            int categoryId = 1;
-            int personId = 1;
+            Guid categoryId = Guid.Parse("3fceb4e1-6fa5-41c0-9fbf-77cec3b7aec9");
+            Guid personId = Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f");
 
             //act
             Note actual = noteProcessor.Create(title, text, categoryId, personId);
 
             //assert
-            Note expected = new(20, "School", "Ik zit op #Fontys in #Eindhoven", 1, 1);
-            expected.tagList.Add(new(11, "fontys"));
-            expected.tagList.Add(new(12, "eindhoven"));
+            Note expected = new(Guid.Parse("555660fe-82c2-42ac-88e7-887102331de3"), "School", "Ik zit op #Fontys in #Eindhoven", Guid.Parse("3fceb4e1-6fa5-41c0-9fbf-77cec3b7aec9"), Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f"));
+            expected.tagList.Add(new(Guid.Parse("74f05b9d-da24-42a1-8c09-2f3e9b014c93"), "fontys"));
+            expected.tagList.Add(new(Guid.Parse("82c14bf7-53a4-4587-8eab-0aa59b0a48c9"), "eindhoven"));
 
             Assert.AreEqual(expected.ID, actual.ID);
             Assert.AreEqual(expected.Title, actual.Title);
@@ -50,14 +50,14 @@ namespace NoteBaseLogic.Tests
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
             string title = "Gaming";
             string text = "Ik ga zaterdag gamen";
-            int categoryId = 1;
-            int personId = 1;
+            Guid categoryId = Guid.Parse("3fceb4e1-6fa5-41c0-9fbf-77cec3b7aec9");
+            Guid personId = Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f");
 
             //act
             Note actual = noteProcessor.Create(title, text, categoryId, personId);
 
             //assert
-            Note expected = new(21, "Gaming", "Ik ga zaterdag gamen", 1, 1);
+            Note expected = new(Guid.Parse("f8486f1a-6fd4-47ed-b4b0-3804f7fadce1"), "Gaming", "Ik ga zaterdag gamen", Guid.Parse("3fceb4e1-6fa5-41c0-9fbf-77cec3b7aec9"), Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f"));
 
             Assert.AreEqual(expected.ID, actual.ID);
             Assert.AreEqual(expected.Title, actual.Title);
@@ -73,8 +73,8 @@ namespace NoteBaseLogic.Tests
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
             string title = "Huiswerk";
             string text = "Ik heb #programeer huiswerk";
-            int categoryId = 0;
-            int personId = 1;
+            Guid categoryId = Guid.Parse("00000000-0000-0000-0000-000000000000");
+            Guid personId = Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f");
 
             //act
             noteProcessor.Create(title, text, categoryId, personId);
@@ -89,8 +89,8 @@ namespace NoteBaseLogic.Tests
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
             string title = "";
             string text = "Ik heb #programeer huiswerk";
-            int categoryId = 1;
-            int personId = 1;
+            Guid categoryId = Guid.Parse("3fceb4e1-6fa5-41c0-9fbf-77cec3b7aec9");
+            Guid personId = Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f");
 
             //act
             noteProcessor.Create(title, text, categoryId, personId);
@@ -105,8 +105,8 @@ namespace NoteBaseLogic.Tests
             INoteProcessor noteProcessor = Factory.CreateNoteProcessor();
             string title = "Huiswerk";
             string text = "";
-            int categoryId = 1;
-            int personId = 1;
+            Guid categoryId = Guid.Parse("3fceb4e1-6fa5-41c0-9fbf-77cec3b7aec9");
+            Guid personId = Guid.Parse("4e8d41a5-790a-4a11-b6c2-b4d37b6fd38f");
 
             //act
             noteProcessor.Create(title, text, categoryId, personId);

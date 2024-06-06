@@ -33,7 +33,7 @@ namespace NoteBaseAPI.Controllers
 
             Person person = personProcessor.GetByEmail(_email);
 
-            if (person.ID == 0)
+            if (person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "Person does not exist.";

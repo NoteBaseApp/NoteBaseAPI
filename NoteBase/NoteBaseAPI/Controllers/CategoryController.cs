@@ -29,7 +29,7 @@ namespace NoteBaseAPI.Controllers
 
         // GET: api/<CategoryController>/2
         [HttpGet("GetByPerson/{_personId}")]
-        public APIResponse GetByPerson(int _personId)
+        public APIResponse GetByPerson(Guid _personId)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
@@ -48,7 +48,7 @@ namespace NoteBaseAPI.Controllers
 
         // GET api/<CategoryController>/5
         [HttpGet("{_id}")]
-        public APIResponse Get(int _id)
+        public APIResponse Get(Guid _id)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
@@ -83,7 +83,7 @@ namespace NoteBaseAPI.Controllers
                 response.Message = "Category with this title arleady exists.";
                 return response;
             }
-            if (_category.PersonId == 0)
+            if (_category.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "No valid PersonId.";
@@ -92,7 +92,7 @@ namespace NoteBaseAPI.Controllers
 
             Category category = categoryProcessor.Create(_category.Title, _category.PersonId);
 
-            if (category.ID == 0)
+            if (category.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "Category could not be created.";
@@ -105,7 +105,7 @@ namespace NoteBaseAPI.Controllers
 
         // PUT api/<CategoryController>/5
         [HttpPut("{_id}")]
-        public APIResponse Put(int _id, [FromBody] CategoryRequestParams _category)
+        public APIResponse Put(Guid _id, [FromBody] CategoryRequestParams _category)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
@@ -128,7 +128,7 @@ namespace NoteBaseAPI.Controllers
                 response.Message = "Category with this title arleady exists.";
                 return response;
             }
-            if (_category.PersonId == 0)
+            if (_category.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "No valid PersonId.";
@@ -144,13 +144,13 @@ namespace NoteBaseAPI.Controllers
 
         // DELETE api/<CategoryController>/5
         [HttpDelete("{_id}")]
-        public APIResponse Delete(int _id)
+        public APIResponse Delete(Guid _id)
         {
             APIResponse response = new(APIResponseStatus.Success);
 
             Category category = categoryProcessor.GetById(_id);
 
-            if (category.ID == 0)
+            if (category.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 response.Status = APIResponseStatus.Failure;
                 response.Message = "Category does not exist.";

@@ -22,7 +22,7 @@ namespace NoteBaseDAL
 
         public TagDTO Create(string _title)
         {
-            TagDTO tagDTO = new(0, _title);
+            TagDTO tagDTO = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), _title);
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -37,7 +37,7 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        tagDTO = new((Int32)reader.GetDecimal(0), _title);
+                        tagDTO = new(reader.GetGuid(0), _title);
                     }
 
                     connection.Close();
@@ -47,7 +47,7 @@ namespace NoteBaseDAL
             return tagDTO;
         }
 
-        public void CreateNoteTag(int _noteId, int _tagId)
+        public void CreateNoteTag(Guid _noteId, Guid _tagId)
         {
             using (SqlConnection connection = new(ConnString))
             {
@@ -75,9 +75,9 @@ namespace NoteBaseDAL
             }
         }
 
-        public TagDTO GetById(int _tagId)
+        public TagDTO GetById(Guid _tagId)
         {
-            TagDTO tagDTO = new(0, "");
+            TagDTO tagDTO = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "");
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -92,7 +92,7 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        tagDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
+                        tagDTO = new TagDTO(reader.GetGuid(0), reader.GetString(1));
                     }
 
                     connection.Close();
@@ -102,7 +102,7 @@ namespace NoteBaseDAL
             return tagDTO;
         }
 
-        public List<TagDTO> GetByPerson(int _PersonId)
+        public List<TagDTO> GetByPerson(Guid _PersonId)
         {
             List<TagDTO> tagDTOList = new();
 
@@ -119,7 +119,7 @@ namespace NoteBaseDAL
 
                     while (reader.Read())
                     {
-                        TagDTO tripDTO = new(reader.GetInt32(0), reader.GetString(1));
+                        TagDTO tripDTO = new(reader.GetGuid(0), reader.GetString(1));
 
                         tagDTOList.Add(tripDTO);
                     }
@@ -131,7 +131,7 @@ namespace NoteBaseDAL
             return tagDTOList;
         }
 
-        public List<TagDTO> GetByNote(int _noteId)
+        public List<TagDTO> GetByNote(Guid _noteId)
         {
             List<TagDTO> tagDTOList = new();
 
@@ -148,7 +148,7 @@ namespace NoteBaseDAL
 
                     while (reader.Read())
                     {
-                        TagDTO tripDTO = new(reader.GetInt32(0), reader.GetString(1));
+                        TagDTO tripDTO = new(reader.GetGuid(0), reader.GetString(1));
 
                         tagDTOList.Add(tripDTO);
                     }
@@ -162,7 +162,7 @@ namespace NoteBaseDAL
 
         public TagDTO GetByTitle(string _Title)
         {
-            TagDTO tagDTO = new(0, "");
+            TagDTO tagDTO = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "");
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -177,7 +177,7 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        tagDTO = new TagDTO(reader.GetInt32(0), reader.GetString(1));
+                        tagDTO = new TagDTO(reader.GetGuid(0), reader.GetString(1));
                     }
 
                     connection.Close();
@@ -187,7 +187,7 @@ namespace NoteBaseDAL
             return tagDTO;
         }
 
-        public TagDTO Update(int _tagId, string _title)
+        public TagDTO Update(Guid _tagId, string _title)
         {
             TagDTO tagDTO = new(_tagId, _title);
 
@@ -210,7 +210,7 @@ namespace NoteBaseDAL
             return tagDTO;
         }
 
-        public void Delete(int _tagId)
+        public void Delete(Guid _tagId)
         {
             using (SqlConnection connection = new(ConnString))
             {
@@ -228,7 +228,7 @@ namespace NoteBaseDAL
             }
         }
 
-        public void DeleteNoteTag(int _noteId)
+        public void DeleteNoteTag(Guid _noteId)
         {
             using (SqlConnection connection = new(ConnString))
             {

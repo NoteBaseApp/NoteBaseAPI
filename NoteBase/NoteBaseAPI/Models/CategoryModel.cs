@@ -9,12 +9,12 @@ namespace NoteBaseAPI.Models
     {
         private readonly List<NoteModel> noteList = new();
 
-        public int ID { get; set; }
+        public Guid ID { get; set; }
 
         [DisplayName("Titel")]
         public string Title { get; private set; }
         public IReadOnlyList<NoteModel> NoteList { get { return noteList; } }
-        public int PersonId { get; set; }
+        public Guid PersonId { get; set; }
 
         public CategoryModel(Category _category)
         {

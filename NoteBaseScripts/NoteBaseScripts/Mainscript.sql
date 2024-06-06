@@ -1,6 +1,6 @@
 USE MASTER
 
-CREATE DATABASE NoteBaseTest
+CREATE DATABASE NoteBase
 /* DROP DATABASE NoteBase */
 GO
 USE  NoteBase

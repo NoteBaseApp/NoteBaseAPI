@@ -7,12 +7,12 @@ namespace NoteBaseAPI.Models
     {
         private readonly List<TagModel> tagList = new();
 
-        public int ID { get; set; }
+        public Guid ID { get; set; }
         public string Title { get; private set; }
         public string Text { get; private set; }
-        public int CategoryId { get; private set; }
+        public Guid CategoryId { get; private set; }
         public IReadOnlyList<TagModel> TagList { get { return tagList; } }
-        public int PersonId { get; set; }
+        public Guid PersonId { get; set; }
 
         public NoteModel(Note _note)
         {

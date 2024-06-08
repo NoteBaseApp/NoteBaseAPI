@@ -15,9 +15,9 @@ namespace NoteBaseDAL
             TagDAL = new(_connString);
         }
 
-        public NoteDTO Create(string _title, string _text, int _categoryId, int _personId)
+        public NoteDTO Create(string _title, string _text, Guid _categoryId, Guid _personId)
         {
-            NoteDTO noteDTO = new(0, _title, _text, _categoryId, _personId);
+            NoteDTO noteDTO = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), _title, _text, _categoryId, _personId);
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -35,7 +35,7 @@ namespace NoteBaseDAL
 
                     if(reader.Read())
                     {
-                        noteDTO = new((Int32)reader.GetDecimal(0), _title, _text, _categoryId, _personId);
+                        noteDTO = new(reader.GetGuid(0), _title, _text, _categoryId, _personId);
                     }
 
                     connection.Close();
@@ -45,9 +45,9 @@ namespace NoteBaseDAL
             return noteDTO;
         }
 
-        public NoteDTO GetById(int _noteId)
+        public NoteDTO GetById(Guid _noteId)
         {
-            NoteDTO noteDTO = new(0, "", "", 0, 0);
+            NoteDTO noteDTO = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "", "", Guid.Parse("00000000-0000-0000-0000-000000000000"), Guid.Parse("00000000-0000-0000-0000-000000000000"));
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -62,7 +62,7 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
+                        noteDTO = new(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetGuid(3), reader.GetGuid(4));
 
                         List<TagDTO> tagDTOList = TagDAL.GetByNote(noteDTO.ID);
 
@@ -78,7 +78,7 @@ namespace NoteBaseDAL
             return noteDTO;
         }
 
-        public List<NoteDTO> GetByPerson(int _personId)
+        public List<NoteDTO> GetByPerson(Guid _personId)
         {
             List<NoteDTO> noteDTOList = new();
 
@@ -95,7 +95,7 @@ namespace NoteBaseDAL
 
                     while (reader.Read())
                     {
-                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
+                        NoteDTO noteDTO = new(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetGuid(3), reader.GetGuid(4));
 
                         List<TagDTO> tagDTOList = TagDAL.GetByNote(noteDTO.ID);
 
@@ -115,7 +115,7 @@ namespace NoteBaseDAL
 
         public NoteDTO GetByTitle(string _title)
         {
-            NoteDTO noteDTO = new(0, "", "", 0, 0);
+            NoteDTO noteDTO = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), "", "", Guid.Parse("00000000-0000-0000-0000-000000000000"), Guid.Parse("00000000-0000-0000-0000-000000000000"));
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -130,7 +130,7 @@ namespace NoteBaseDAL
 
                     if (reader.Read())
                     {
-                        noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
+                        noteDTO = new(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetGuid(3), reader.GetGuid(4));
 
                         List<TagDTO> tagDTOList = TagDAL.GetByNote(noteDTO.ID);
 
@@ -146,7 +146,7 @@ namespace NoteBaseDAL
             return noteDTO;
         }
 
-        public List<NoteDTO> GetByCategory(int _catId)
+        public List<NoteDTO> GetByCategory(Guid _catId)
         {
             List<NoteDTO> noteDTOList = new();
 
@@ -163,7 +163,7 @@ namespace NoteBaseDAL
 
                     while (reader.Read())
                     {
-                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
+                        NoteDTO noteDTO = new(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetGuid(3), reader.GetGuid(4));
 
                         List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
@@ -181,7 +181,7 @@ namespace NoteBaseDAL
             return noteDTOList;
         }
 
-        public List<NoteDTO> GetByTag(int _tagId)
+        public List<NoteDTO> GetByTag(Guid _tagId)
         {
             List<NoteDTO> noteDTOList = new();
 
@@ -198,7 +198,7 @@ namespace NoteBaseDAL
 
                     while (reader.Read())
                     {
-                        NoteDTO noteDTO = new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4));
+                        NoteDTO noteDTO = new(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetGuid(3), reader.GetGuid(4));
 
                         List<TagDTO> tags = TagDAL.GetByNote(noteDTO.ID);
 
@@ -216,9 +216,9 @@ namespace NoteBaseDAL
             return noteDTOList;
         }
 
-        public NoteDTO Update(int _id, string _title, string _text, int _categoryId)
+        public NoteDTO Update(Guid _id, string _title, string _text, Guid _categoryId)
         {
-            NoteDTO NoteDTO = new(_id, _title, _text, _categoryId, 0);
+            NoteDTO NoteDTO = new(_id, _title, _text, _categoryId, Guid.Parse("00000000-0000-0000-0000-000000000000"));
 
             using (SqlConnection connection = new(ConnString))
             {
@@ -241,7 +241,7 @@ namespace NoteBaseDAL
             return NoteDTO;
         }
 
-        public void Delete(int _noteId)
+        public void Delete(Guid _noteId)
         {
             using (SqlConnection connection = new(ConnString))
             {

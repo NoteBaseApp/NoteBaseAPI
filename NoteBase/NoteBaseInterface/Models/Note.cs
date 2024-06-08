@@ -10,14 +10,14 @@ namespace NoteBaseLogicInterface.Models
 {
     public class Note
     {
-        public int ID { get; }
+        public Guid ID { get; }
         public string Title { get; private set; }
         public string Text { get; private set; }
-        public int CategoryId { get; private set; }
-        public int PersonId { get; set; }
+        public Guid CategoryId { get; private set; }
+        public Guid PersonId { get; set; }
         public List<Tag> tagList { get; set; } = new();
 
-        public Note(int _id, string _title, string _text, int _categoryId, int _personId)
+        public Note(Guid _id, string _title, string _text, Guid _categoryId, Guid _personId)
         {
             ID = _id;
             Title = _title;

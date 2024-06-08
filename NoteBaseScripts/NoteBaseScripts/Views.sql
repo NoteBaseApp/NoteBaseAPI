@@ -41,23 +41,3 @@ FROM Tag AS T
 JOIN NoteTag AS NT
 	ON T.ID = NT.TagID
 /*DROP VIEW PersonCategories*/
-
-SELECT T.ID, T.Title
-FROM Tag AS T
-
-SELECT * 
-FROM Tag
-
-DELETE FROM Note 
-WHERE ID = 1021
-
-SELECT ID, Title FROM NoteTags
-WHERE PersonId = 1;
-
-SELECT ID, Title, Text, CategoryID FROM PersonNotes
-WHERE Email = 'JoeyJoeyRemmers@gmail.com';
-
-SELECT ID, Title  FROM PersonCategories
-WHERE PersonID = 1;
-
-UPDATE Category SET Title = '' WHERE ID = 1

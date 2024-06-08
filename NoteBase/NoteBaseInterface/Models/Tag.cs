@@ -4,10 +4,10 @@ namespace NoteBaseLogicInterface.Models
 {
     public class Tag
     {
-        public int ID { get; }
+        public Guid ID { get; }
         public string Title { get; private set; }
 
-        public Tag(int _id, string _title)
+        public Tag(Guid _id, string _title)
         {
             ID = _id;
             Title = _title;

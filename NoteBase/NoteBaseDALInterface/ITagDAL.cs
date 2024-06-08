@@ -5,13 +5,13 @@ namespace NoteBaseDALInterface
     public interface ITagDAL
     {
         TagDTO Create(string _title);
-        void CreateNoteTag(int _noteId, int _tagId);
-        TagDTO GetById(int _tagId);
-        List<TagDTO> GetByPerson(int _PersonId);
-        List<TagDTO> GetByNote(int _noteId);
+        void CreateNoteTag(Guid _noteId, Guid _tagId);
+        TagDTO GetById(Guid _tagId);
+        List<TagDTO> GetByPerson(Guid _PersonId);
+        List<TagDTO> GetByNote(Guid _noteId);
         TagDTO GetByTitle(string _Title);
-        TagDTO Update(int _id,string _title);
-        void Delete(int _tagId);
-        void DeleteNoteTag(int _noteId);
+        TagDTO Update(Guid _id,string _title);
+        void Delete(Guid _tagId);
+        void DeleteNoteTag(Guid _noteId);
     }
 }

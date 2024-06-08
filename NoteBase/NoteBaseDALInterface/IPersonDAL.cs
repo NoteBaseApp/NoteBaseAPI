@@ -11,7 +11,7 @@ namespace NoteBaseDALInterface
     {
         public int Create(string _name, string _email);
         public PersonDTO GetByEmail(string _personEmail);
-        public int Update(int _id, string _name, string _email);
-        public int Delete(int _personId);
+        public int Update(Guid _id, string _name, string _email);
+        public int Delete(Guid _personId);
     }
 }

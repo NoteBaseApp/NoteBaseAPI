@@ -21,7 +21,7 @@ namespace NoteBaseLogic
         }
 
         //rename
-        public void CreateTags(string _text, int NoteId)
+        public void CreateTags(string _text, Guid NoteId)
         {
             List<Tag> tags = ExtractTags(_text);
 
@@ -29,7 +29,7 @@ namespace NoteBaseLogic
             {
                 Tag tag = GetByTitle(newtag.Title);
 
-                if (tag.ID == 0)
+                if (tag.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
                 {
                     Create(newtag.Title);
                     tag = GetByTitle(newtag.Title);
@@ -40,7 +40,7 @@ namespace NoteBaseLogic
         }
 
         //rename
-        public void UpdateTags(int _noteId, string _text, int _personId, List<Tag> _tags)
+        public void UpdateTags(Guid _noteId, string _text, Guid _personId, List<Tag> _tags)
         {
             if (_tags.Count > 0)
             {
@@ -53,7 +53,7 @@ namespace NoteBaseLogic
             {
                 Tag tag = GetByTitle(newtag.Title);
 
-                if (tag.ID == 0)
+                if (tag.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
                 {
                     Create(newtag.Title);
                     tag = GetByTitle(newtag.Title);
@@ -83,7 +83,7 @@ namespace NoteBaseLogic
                 string word = allWords[i];
                 if (word.StartsWith("#"))
                 {
-                    Tag tag = new(0, word[1..].ToLower());
+                    Tag tag = new(Guid.Parse("00000000-0000-0000-0000-000000000000"), word[1..].ToLower());
                     if (!NewTagList.Contains(tag))
                     {
                         NewTagList.Add(tag);
@@ -105,7 +105,7 @@ namespace NoteBaseLogic
             return new(tagDTO.ID, tagDTO.Title);
         }
 
-        public Tag GetById(int _tagId)
+        public Tag GetById(Guid _tagId)
         {
             TagDTO tagDTO = TagDAL.GetById(_tagId);
 
@@ -113,7 +113,7 @@ namespace NoteBaseLogic
         }
 
         //need to remake this for using person id
-        public List<Tag> GetByPerson(int _personId)
+        public List<Tag> GetByPerson(Guid _personId)
         {
             List<Tag> tagList = new();
 
@@ -133,7 +133,7 @@ namespace NoteBaseLogic
             return new(tagDTO.ID, tagDTO.Title);
         }
 
-        public void DeleteWhenUnused(int _tagId, int _PersonId)
+        public void DeleteWhenUnused(Guid _tagId, Guid _PersonId)
         {
             //get all used tags by person
             List<Tag> tagList = GetByPerson(_PersonId);
@@ -151,7 +151,7 @@ namespace NoteBaseLogic
             TagDAL.Delete(_tagId);
         }
 
-        public void DeleteNoteTag(int _noteId)
+        public void DeleteNoteTag(Guid _noteId)
         {
             TagDAL.DeleteNoteTag(_noteId);
         }

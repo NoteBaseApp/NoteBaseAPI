@@ -15,5 +15,5 @@ The backend of my notes organizer application.
 ### Setup Docker container
 Setup the Docker container with the following command, remember to change parameters where necessary:
 ```cmd
-docker run --name NoteBaseAPI --hostname NoteBaseAPI -e "DATABASE_URL = Data Source={IP},{port};Initial Catalog=NoteBase;User id={UserId};Password={Password};Connect Timeout=300;" -p {port}:80 -d joeyremmers/notebase-api
+docker run --name NoteBaseAPI --hostname NoteBaseAPI -e "DATA_SOURCE={IP},{port}" -e "INITIAL_CATALOG=NoteBase" -e "DB_USER_ID={SQL UserId}" -e "DB_PASSWORD={SQL Password}" -p {port}:80 -d joeyremmers/notebase-api
 ```

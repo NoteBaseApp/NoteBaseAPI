@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NoteBaseAPI;
 using System.Text.Json.Serialization;
 
@@ -6,6 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 EnvLoader.Load(".env");
 
 // Add services to the container.
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.Authority = Environment.GetEnvironmentVariable("AUTH0_AUTHORITY"); ;
+    options.Audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE"); ;
+});
 
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>
@@ -28,6 +38,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

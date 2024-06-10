@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
@@ -10,6 +11,7 @@ using System.Xml.Linq;
 
 namespace NoteBaseAPI.Controllers
 {
+    [Authorize]
     [Route("category")]
     [ApiController]
     public class CategoryController : ControllerBase

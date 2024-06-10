@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
 using NoteBaseLogic;
 using NoteBaseLogicFactory;
@@ -14,6 +15,7 @@ using UI.Models;
 
 namespace NoteBaseAPI.Controllers
 {
+    [Authorize]
     [Route("note")]
     [ApiController]
     public class NoteController : ControllerBase

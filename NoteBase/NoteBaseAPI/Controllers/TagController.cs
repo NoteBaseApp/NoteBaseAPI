@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
 using NoteBaseInterface;
 using NoteBaseLogic;
@@ -11,6 +12,7 @@ using System.Security.Cryptography;
 
 namespace NoteBaseAPI.Controllers
 {
+    [Authorize]
     [Route("tag")]
     [ApiController]
     public class TagController : ControllerBase

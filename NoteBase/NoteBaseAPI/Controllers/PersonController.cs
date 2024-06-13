@@ -32,21 +32,16 @@ namespace NoteBaseAPI.Controllers
 
         // GET api/<PersonController>/example@gmail.com
         [HttpGet("{_email}")]
-        public APIResponse Get(string _email)
+        public IActionResult Get(string _email)
         {
-            APIResponse response = new(APIResponseStatus.Success);
-
             Person person = personProcessor.GetByEmail(_email);
 
             if (person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Person does not exist.";
-                return response;
+                return NotFound(new Error("DoesNotExist", "Person does not exist."));
             }
 
-            response.ResponseBody = person;
-            return response;
+            return Ok(person);
         }
 
         /* // POST api/<PersonController>

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Jwt;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NoteBaseAPI.Models;
 using NoteBaseLogic;
 using NoteBaseLogicFactory;
@@ -24,10 +26,10 @@ namespace NoteBaseAPI.Controllers
 
         public NoteController() 
         {
-            string DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
-            string INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
-            string DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
-            string DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            string? DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
+            string? INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
+            string? DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
+            string? DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
@@ -35,21 +37,30 @@ namespace NoteBaseAPI.Controllers
         }
         // GET: api/<NoteController>/2
         [HttpGet("GetByPerson/{_personId}")]
-        public APIResponse GetByPerson(Guid _personId)
+        public IActionResult GetByPerson(Guid _personId)
         {
-            APIResponse response = new(APIResponseStatus.Success);
+            HttpRequestMessage request = new HttpRequestMessage();
+            string authHeader = Request.Headers["authorization"];
+            string token = !string.IsNullOrEmpty(authHeader) ? authHeader.Split(' ')[1] : null;
 
-            List<Note> notes = noteProcessor.GetByPerson(_personId);
-
-            if (notes == null || notes.Count == 0)
+            if (token == null)
             {
-
-                response.Message = "No notes where found.";
-                return response;
+                return Unauthorized();
             }
 
-            response.ResponseBody = notes;
-            return response;
+            try
+            {
+                Token tokenData = Jwt.JsonWebToken.DecodeToObject<Token>(token, Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_SECRET"), true);
+                Person person = personProcessor.GetByEmail(tokenData.token);
+
+                List<Note> notes = noteProcessor.GetByPerson(person.ID);
+
+                return Ok(notes);
+            }
+            catch (SignatureVerificationException)
+            {
+                return Forbid();
+            }
         }
 
         // GET api/<NoteController>/5
@@ -190,6 +201,11 @@ namespace NoteBaseAPI.Controllers
             noteProcessor.Delete(note.ID, note.tagList, note.PersonId);
 
             return response;
+        }
+
+        public class Token
+        {
+            public string token { get; set; }
         }
     }
 }

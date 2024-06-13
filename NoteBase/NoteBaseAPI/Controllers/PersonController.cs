@@ -21,10 +21,10 @@ namespace NoteBaseAPI.Controllers
 
         public PersonController()
         {
-            string DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
-            string INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
-            string DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
-            string DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            string? DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
+            string? INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
+            string? DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
+            string? DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);

@@ -16,5 +16,5 @@ The backend of my notes organizer application.
 ### 2. Setup Docker container
 Setup the Docker container with the following command, remember to replace all {parameters}. E.g DATA_SOURCE={IP},{port} becomes DATA_SOURCE=172.0.0.1,6969:
 ```cmd
-docker run --name NoteBaseAPI --hostname NoteBaseAPI -e "DATA_SOURCE={IP},{port}" -e "INITIAL_CATALOG=NoteBase" -e "DB_USER_ID={SQL UserId}" -e "DB_PASSWORD={SQL Password}" -e "JWT_ACCESS_TOKEN_SECRET={jwt token}" -e "JWT_ISSUER={link}" -e "JWT_AUDIENCE={link}" -p {port}:80 -d joeyremmers/notebase-api
+docker run --name NoteBaseAPI --hostname NoteBaseAPI -e "DATA_SOURCE={IP},{port}" -e "INITIAL_CATALOG=NoteBase" -e "DB_USER_ID={SQL UserId}" -e "DB_PASSWORD={SQL Password}" -e "JWT_ACCESS_TOKEN_SECRET={string}" -e "JWT_ISSUER={link}" -e "JWT_AUDIENCE={link}" -p {port}:80 -d joeyremmers/notebase-api
 ```

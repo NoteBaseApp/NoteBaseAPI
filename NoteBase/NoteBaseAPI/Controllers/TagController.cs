@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
 using NoteBaseInterface;
-using NoteBaseLogic;
 using NoteBaseLogicFactory;
-using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
-using System.Security.Cryptography;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,16 +18,16 @@ namespace NoteBaseAPI.Controllers
 
         public TagController()
         {
-            string DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
-            string INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
-            string DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
-            string DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            string? DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
+            string? INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
+            string? DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
+            string? DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             tagProcessor = ProcessorFactory.CreateTagProcessor(connString);
         }
 
-        // GET: api/<TagController>/5
         [HttpGet("GetByPerson/{_personId}")]
+        [Authorize]
         public IActionResult GetByPerson(Guid _personId)
         {
             List<Tag> tag = tagProcessor.GetByPerson(_personId);
@@ -37,8 +35,8 @@ namespace NoteBaseAPI.Controllers
             return Ok(tag);
         }
 
-        // GET: api/<TagController>/
         [HttpGet("GetByTitle/{_Title}")]
+        [Authorize]
         public IActionResult GetByTitle(string _Title)
         {
             Tag tag = tagProcessor.GetByTitle(_Title);
@@ -51,8 +49,8 @@ namespace NoteBaseAPI.Controllers
             return Ok(tag);
         }
 
-        // GET api/<TagController>/5
         [HttpGet("{_id}")]
+        [Authorize]
         public IActionResult Get(Guid _id)
         {
             Tag tag = tagProcessor.GetById(_id);

@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
-using System.Security.Cryptography;
-using System.Xml.Linq;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,10 +20,10 @@ namespace NoteBaseAPI.Controllers
 
         public CategoryController()
         {
-            string DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
-            string INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
-            string DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
-            string DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            string? DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
+            string? INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
+            string? DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
+            string? DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
@@ -31,17 +31,24 @@ namespace NoteBaseAPI.Controllers
 
         }
 
-        // GET: api/<CategoryController>/2
-        [HttpGet("GetByPerson/{_personId}")]
-        public IActionResult GetByPerson(Guid _personId)
+        [HttpGet("GetByPerson")]
+        [Authorize]
+        public IActionResult GetByPerson()
         {
-            List<Category> categories = categoryProcessor.GetByPerson(_personId);
+            Person? person = GetCurrentUser();
+
+            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+            {
+                return NotFound(new Error("DoesNotExist", "User does not exist."));
+            }
+
+            List<Category> categories = categoryProcessor.GetByPerson(person.ID);
 
             return Ok(categories);
         }
 
-        // GET api/<CategoryController>/5
         [HttpGet("{_id}")]
+        [Authorize]
         public IActionResult Get(Guid _id)
         {
             if (!categoryProcessor.DoesCategoryExits(_id))
@@ -49,29 +56,34 @@ namespace NoteBaseAPI.Controllers
                 return NotFound(new Error("DoesNotExist", "Category does not exist."));
             }
 
+            //add ownership check
+
             Category category = categoryProcessor.GetById(_id);
 
             return Ok(category);
         }
 
-        // POST api/<CategoryController>
         [HttpPost]
+        [Authorize]
         public IActionResult Post([FromBody] CategoryRequestParams _category)
         {
+            Person? person = GetCurrentUser();
+
+            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+            {
+                return NotFound(new Error("DoesNotExist", "User does not exist."));
+            }
+
             if (!categoryProcessor.IsValidTitle(_category.Title))
             {
-                return BadRequest(new Error("InValidTitle", "Title cannot be empty."));
+                return BadRequest(new Error("NoValidTitle", "Title cannot be empty."));
             }
             if (!categoryProcessor.IsTitleUnique(_category.Title))
             {
                 return BadRequest(new Error("AlreadyExists", "Category with this title arleady exists."));
             }
-            if (_category.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return BadRequest(new Error("NoValidId", "No valid PersonId."));
-            }
 
-            Category category = categoryProcessor.Create(_category.Title, _category.PersonId);
+            Category category = categoryProcessor.Create(_category.Title, person.ID);
 
             if (category.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
@@ -81,35 +93,41 @@ namespace NoteBaseAPI.Controllers
             return Ok(category);
         }
 
-        // PUT api/<CategoryController>/5
-        [HttpPut("{_id}")]
-        public IActionResult Put(Guid _id, [FromBody] CategoryRequestParams _category)
+        [HttpPut]
+        [Authorize]
+        public IActionResult Put([FromBody] CategoryRequestParams _category)
         {
-            if (!categoryProcessor.DoesCategoryExits(_id))
+            Person? person = GetCurrentUser();
+
+            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+            {
+                return NotFound(new Error("DoesNotExist", "User does not exist."));
+            }
+
+            if (!categoryProcessor.DoesCategoryExits(_category.ID))
             {
                 return NotFound(new Error("DoesNotExist", "Category does not exist."));
             }
+
+            //add ownership check
+
             if (!categoryProcessor.IsValidTitle(_category.Title))
             {
-                return BadRequest(new Error("InValidTitle", "Title cannot be empty."));
+                return BadRequest(new Error("NoValidTitle", "Title cannot be empty."));
             }
             if (!categoryProcessor.IsTitleUnique(_category.Title))
             {
                 return BadRequest(new Error("AlreadyExists", "Category with this title arleady exists."));
             }
-            if (_category.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return BadRequest(new Error("NoValidId", "No valid PersonId."));
-            }
 
-            Category category = categoryProcessor.GetById(_id);
-            category = categoryProcessor.Update(_id, _category.Title, _category.PersonId);
+            Category category = categoryProcessor.GetById(_category.ID);
+            category = categoryProcessor.Update(_category.ID, _category.Title, person.ID);
 
             return Ok(category);
         }
 
-        // DELETE api/<CategoryController>/5
         [HttpDelete("{_id}")]
+        [Authorize]
         public IActionResult Delete(Guid _id)
         {
             Category category = categoryProcessor.GetById(_id);
@@ -119,9 +137,25 @@ namespace NoteBaseAPI.Controllers
                 return NotFound(new Error("DoesNotExist", "Category does not exist."));
             }
 
+            //add ownership check
+
             categoryProcessor.Delete(category.ID);
 
             return Ok();
+        }
+
+        private Person? GetCurrentUser()
+        {
+            ClaimsIdentity? identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity == null || identity.Claims.Count() <= 0)
+            {
+                return null;
+            }
+
+            IEnumerable<Claim> userClaims = identity.Claims;
+
+            return personProcessor.GetByEmail(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value);
         }
     }
 }

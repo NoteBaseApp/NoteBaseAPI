@@ -1,11 +1,8 @@
-﻿using System.ComponentModel;
-
-namespace NoteBaseAPI.Models
+﻿namespace NoteBaseAPI.Models
 {
     public class CategoryRequestParams
     {
-        public Guid ID { get; set; }
-        public string Title { get; set; }
-        public Guid PersonId { get; set; }
+        public Guid ID { get; set; } = new Guid("00000000-0000-0000-0000-000000000000");
+        public string Title { get; set; } = "";
     }
 }

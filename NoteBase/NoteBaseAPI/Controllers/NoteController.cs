@@ -1,15 +1,10 @@
-﻿using Jwt;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using NoteBaseAPI.Models;
-using NoteBaseLogic;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
-using System;
-using System.Net;
-using System.Security.Cryptography;
-using System.Xml.Linq;
+using System.Security.Claims;
 using UI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -36,35 +31,25 @@ namespace NoteBaseAPI.Controllers
 
         }
         // GET: api/<NoteController>/2
-        [HttpGet("GetByPerson/{_personId}")]
-        public IActionResult GetByPerson(Guid _personId)
+        [HttpGet("GetByPerson")]
+        [Authorize]
+        public IActionResult GetByPerson()
         {
-            HttpRequestMessage request = new HttpRequestMessage();
-            string authHeader = Request.Headers["authorization"];
-            string token = !string.IsNullOrEmpty(authHeader) ? authHeader.Split(' ')[1] : null;
+            Person person = GetCurrentUser();
 
-            if (token == null)
+            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                return Unauthorized();
+                return NotFound("User not found.");
             }
 
-            try
-            {
-                Token tokenData = Jwt.JsonWebToken.DecodeToObject<Token>(token, Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_SECRET"), true);
-                Person person = personProcessor.GetByEmail(tokenData.token);
+            List<Note> notes = noteProcessor.GetByPerson(person.ID);
 
-                List<Note> notes = noteProcessor.GetByPerson(person.ID);
-
-                return Ok(notes);
-            }
-            catch (SignatureVerificationException)
-            {
-                return Forbid();
-            }
+            return Ok(notes);
         }
 
         // GET api/<NoteController>/5
         [HttpGet("{_id}")]
+        [Authorize]
         public APIResponse Get(Guid _id)
         {
             APIResponse response = new(APIResponseStatus.Success);
@@ -84,6 +69,7 @@ namespace NoteBaseAPI.Controllers
 
         // POST api/<NoteController>
         [HttpPost]
+        [Authorize]
         public APIResponse Post([FromBody] NoteRequestParams _note)
         {
             APIResponse response = new(APIResponseStatus.Success);
@@ -134,6 +120,7 @@ namespace NoteBaseAPI.Controllers
 
         // PUT api/<NoteController>/5
         [HttpPut("{_id}")]
+        [Authorize]
         public APIResponse Put(Guid _id, [FromBody] NoteRequestParams _note)
         {
             APIResponse response = new(APIResponseStatus.Success);
@@ -185,6 +172,7 @@ namespace NoteBaseAPI.Controllers
 
         // DELETE api/<NoteController>/5
         [HttpDelete("{_id}")]
+        [Authorize]
         public APIResponse Delete(Guid _id)
         {
             APIResponse response = new(APIResponseStatus.Success);
@@ -203,9 +191,18 @@ namespace NoteBaseAPI.Controllers
             return response;
         }
 
-        public class Token
+        private Person GetCurrentUser()
         {
-            public string token { get; set; }
+            ClaimsIdentity? identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity == null || identity.Claims.Count() <= 0)
+            {
+                return null;
+            }
+
+            IEnumerable<Claim> userClaims = identity.Claims;
+
+            return personProcessor.GetByEmail(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value);
         }
     }
 }

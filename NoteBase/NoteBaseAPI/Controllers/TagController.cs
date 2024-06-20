@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
 using NoteBaseInterface;
 using NoteBaseLogic;
@@ -30,6 +31,7 @@ namespace NoteBaseAPI.Controllers
 
         // GET: api/<TagController>/5
         [HttpGet("GetByPerson/{_personId}")]
+        [Authorize]
         public APIResponse GetByPerson(Guid _personId)
         {
             APIResponse response = new(APIResponseStatus.Success);
@@ -49,6 +51,7 @@ namespace NoteBaseAPI.Controllers
 
         // GET: api/<TagController>/
         [HttpGet("GetByTitle/{_Title}")]
+        [Authorize]
         public APIResponse GetByTitle(string _Title)
         {
             APIResponse response = new(APIResponseStatus.Success);

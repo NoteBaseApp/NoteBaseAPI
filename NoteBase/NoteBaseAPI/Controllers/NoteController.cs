@@ -35,161 +35,108 @@ namespace NoteBaseAPI.Controllers
         }
         // GET: api/<NoteController>/2
         [HttpGet("GetByPerson/{_personId}")]
-        public APIResponse GetByPerson(Guid _personId)
+        public IActionResult GetByPerson(Guid _personId)
         {
-            APIResponse response = new(APIResponseStatus.Success);
-
             List<Note> notes = noteProcessor.GetByPerson(_personId);
 
-            if (notes == null || notes.Count == 0)
-            {
-
-                response.Message = "No notes where found.";
-                return response;
-            }
-
-            response.ResponseBody = notes;
-            return response;
+            return Ok(notes);
         }
 
         // GET api/<NoteController>/5
         [HttpGet("{_id}")]
-        public APIResponse Get(Guid _id)
+        public IActionResult Get(Guid _id)
         {
-            APIResponse response = new(APIResponseStatus.Success);
-
             if (!noteProcessor.DoesNoteExits(_id))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note does not exist.";
-                return response;
+                return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
 
             Note note = noteProcessor.GetById(_id);
 
-            response.ResponseBody = note;
-            return response;
+            return Ok(note);
         }
 
         // POST api/<NoteController>
         [HttpPost]
-        public APIResponse Post([FromBody] NoteRequestParams _note)
+        public IActionResult Post([FromBody] NoteRequestParams _note)
         {
-            APIResponse response = new(APIResponseStatus.Success);
-
             if (!noteProcessor.IsValidTitle(_note.Title))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Title cannot be empty.";
-                return response;
+                return BadRequest(new Error("InValidTitle", "Title cannot be empty."));
             }
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note with this title arleady exists.";
-                return response;
+                return BadRequest(new Error("AlreadyExists", "Category with this title arleady exists."));
             }
             if (!noteProcessor.IsValidText(_note.Text))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Text cannot be empty.";
-                return response;
+                return BadRequest(new Error("InValidText", "Text cannot be empty."));
             }
             if (_note.CategoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid CategoryId.";
-                return response;
+                return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }
             if (_note.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid PersonId.";
-                return response;
+                return BadRequest(new Error("NoValidId", "No valid PersonId."));
             }
 
             Note note = noteProcessor.Create(_note.Title, _note.Text, _note.CategoryId, _note.PersonId);
 
             if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note could not be created.";
-                return response;
+                throw new Exception("Category could not be created.");
             }
 
-            response.ResponseBody = note;
-            return response;
+            return Ok(note);
         }
 
         // PUT api/<NoteController>/5
         [HttpPut("{_id}")]
-        public APIResponse Put(Guid _id, [FromBody] NoteRequestParams _note)
+        public IActionResult Put(Guid _id, [FromBody] NoteRequestParams _note)
         {
-            APIResponse response = new(APIResponseStatus.Success);
-
             if (!noteProcessor.DoesNoteExits(_note.ID))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note does not exist.";
-                return response;
-            }
-            if (!noteProcessor.IsValidTitle(_note.Title))
-            {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Title cannot be empty.";
-                return response;
+                return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note with this title arleady exists.";
-                return response;
+                return BadRequest(new Error("AlreadyExists", "Category with this title arleady exists."));
             }
             if (!noteProcessor.IsValidText(_note.Text))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Text cannot be empty.";
-                return response;
+                return BadRequest(new Error("InValidText", "Text cannot be empty."));
             }
             if (_note.CategoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid CategoryId.";
-                return response;
+                return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }
             if (_note.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid PersonId.";
-                return response;
+                return BadRequest(new Error("NoValidId", "No valid PersonId."));
             }
 
             //retrieve note first to get the tags
             Note note = noteProcessor.GetById(_id);
             note = noteProcessor.Update(_note.ID, _note.Title, _note.Text, _note.CategoryId, _note.PersonId, note.tagList);
 
-            response.ResponseBody = note;
-            return response;
+            return Ok(note);
         }
 
         // DELETE api/<NoteController>/5
         [HttpDelete("{_id}")]
-        public APIResponse Delete(Guid _id)
+        public IActionResult Delete(Guid _id)
         {
-            APIResponse response = new(APIResponseStatus.Success);
-
             Note note = noteProcessor.GetById(_id);
 
             if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note does not exist.";
-                return response;
+                return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
 
             noteProcessor.Delete(note.ID, note.tagList, note.PersonId);
 
-            return response;
+            return Ok();
         }
     }
 }

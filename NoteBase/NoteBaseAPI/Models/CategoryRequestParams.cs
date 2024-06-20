@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace NoteBaseAPI.Models
+﻿namespace NoteBaseAPI.Models
 {
     public class CategoryRequestParams
     {

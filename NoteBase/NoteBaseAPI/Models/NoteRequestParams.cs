@@ -1,4 +1,4 @@
-﻿namespace UI.Models
+﻿namespace NoteBaseAPI.Models
 {
     public class NoteRequestParams
     {

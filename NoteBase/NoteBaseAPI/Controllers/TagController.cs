@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
 using NoteBaseInterface;
-using NoteBaseLogic;
 using NoteBaseLogicFactory;
-using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
-using System.Security.Cryptography;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

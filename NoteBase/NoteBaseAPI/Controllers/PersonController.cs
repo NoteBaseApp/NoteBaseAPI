@@ -29,8 +29,7 @@ namespace NoteBaseAPI.Controllers
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
         }
 
-        // GET api/<PersonController>/example@gmail.com
-        [HttpGet("{_email}")]
+        /* [HttpGet("{_email}")]
         public IActionResult Get(string _email)
         {
             Person person = personProcessor.GetByEmail(_email);
@@ -41,16 +40,14 @@ namespace NoteBaseAPI.Controllers
             }
 
             return Ok(person);
-        }
+        } */
 
-        /* // POST api/<PersonController>
-        [HttpPost]
+        /* [HttpPost]
         public void Post([FromBody] string value)
         {
             throw new NotImplementedException();
         }
 
-        // PUT api/<PersonController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {

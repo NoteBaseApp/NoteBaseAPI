@@ -34,7 +34,7 @@ namespace NoteBaseAPI.Controllers
         [AllowAnonymous]
         public IActionResult Login([FromBody] String _userToken)
         {
-            Person user = Authenticate(_userToken);
+            Person? user = Authenticate(_userToken);
 
             if (user == null)
             {
@@ -66,7 +66,7 @@ namespace NoteBaseAPI.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private Person Authenticate(string _userToken)
+        private Person? Authenticate(string _userToken)
         {
             Person currentUser = personProcessor.GetByEmail(_userToken);
 

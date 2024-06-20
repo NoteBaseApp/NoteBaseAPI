@@ -30,16 +30,16 @@ namespace NoteBaseAPI.Controllers
             noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
 
         }
-        // GET: api/<NoteController>/2
+
         [HttpGet("GetByPerson")]
         [Authorize]
         public IActionResult GetByPerson()
         {
-            Person person = GetCurrentUser();
+            Person? person = GetCurrentUser();
 
             if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                return NotFound("User not found.");
+                return NotFound(new Error("DoesNotExist", "User does not exist."));
             }
 
             List<Note> notes = noteProcessor.GetByPerson(person.ID);
@@ -47,7 +47,6 @@ namespace NoteBaseAPI.Controllers
             return Ok(notes);
         }
 
-        // GET api/<NoteController>/5
         [HttpGet("{_id}")]
         [Authorize]
         public IActionResult Get(Guid _id)
@@ -57,19 +56,27 @@ namespace NoteBaseAPI.Controllers
                 return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
 
+            //add ownership check
+
             Note note = noteProcessor.GetById(_id);
 
             return Ok(note);
         }
 
-        // POST api/<NoteController>
         [HttpPost]
         [Authorize]
         public IActionResult Post([FromBody] NoteRequestParams _note)
         {
+            Person? person = GetCurrentUser();
+
+            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+            {
+                return NotFound(new Error("DoesNotExist", "User does not exist."));
+            }
+
             if (!noteProcessor.IsValidTitle(_note.Title))
             {
-                return BadRequest(new Error("InValidTitle", "Title cannot be empty."));
+                return BadRequest(new Error("NoValidTitle", "Title cannot be empty."));
             }
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
@@ -77,18 +84,14 @@ namespace NoteBaseAPI.Controllers
             }
             if (!noteProcessor.IsValidText(_note.Text))
             {
-                return BadRequest(new Error("InValidText", "Text cannot be empty."));
+                return BadRequest(new Error("NoValidText", "Text cannot be empty."));
             }
             if (_note.CategoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }
-            if (_note.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return BadRequest(new Error("NoValidId", "No valid PersonId."));
-            }
 
-            Note note = noteProcessor.Create(_note.Title, _note.Text, _note.CategoryId, _note.PersonId);
+            Note note = noteProcessor.Create(_note.Title, _note.Text, _note.CategoryId, person.ID);
 
             if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
@@ -98,40 +101,49 @@ namespace NoteBaseAPI.Controllers
             return Ok(note);
         }
 
-        // PUT api/<NoteController>/5
-        [HttpPut("{_id}")]
+        [HttpPut]
         [Authorize]
-        public IActionResult Put(Guid _id, [FromBody] NoteRequestParams _note)
+        public IActionResult Put([FromBody] NoteRequestParams _note)
         {
+            Person? person = GetCurrentUser();
+
+            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+            {
+                return NotFound(new Error("DoesNotExist", "User does not exist."));
+            }
+
+            if (_note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+            {
+                return BadRequest(new Error("NoValidId", "No valid ID"));
+            }
+
             if (!noteProcessor.DoesNoteExits(_note.ID))
             {
                 return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
+
+            //add ownership check
+
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
                 return BadRequest(new Error("AlreadyExists", "Category with this title arleady exists."));
             }
             if (!noteProcessor.IsValidText(_note.Text))
             {
-                return BadRequest(new Error("InValidText", "Text cannot be empty."));
+                return BadRequest(new Error("NoValidText", "Text cannot be empty."));
             }
             if (_note.CategoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }
-            if (_note.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return BadRequest(new Error("NoValidId", "No valid PersonId."));
-            }
 
             //retrieve note first to get the tags
-            Note note = noteProcessor.GetById(_id);
-            note = noteProcessor.Update(_note.ID, _note.Title, _note.Text, _note.CategoryId, _note.PersonId, note.tagList);
+            Note note = noteProcessor.GetById(_note.ID);
+            note = noteProcessor.Update(_note.ID, _note.Title, _note.Text, _note.CategoryId, person.ID, note.tagList);
 
             return Ok(note);
         }
 
-        // DELETE api/<NoteController>/5
         [HttpDelete("{_id}")]
         [Authorize]
         public IActionResult Delete(Guid _id)
@@ -143,12 +155,14 @@ namespace NoteBaseAPI.Controllers
                 return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
 
+            //add ownership check
+
             noteProcessor.Delete(note.ID, note.tagList, note.PersonId);
 
             return Ok();
         }
 
-        private Person GetCurrentUser()
+        private Person? GetCurrentUser()
         {
             ClaimsIdentity? identity = HttpContext.User.Identity as ClaimsIdentity;
 

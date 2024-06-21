@@ -4,6 +4,7 @@ using NoteBaseAPI.Models;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
+using System;
 using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -27,7 +28,6 @@ namespace NoteBaseAPI.Controllers
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
-
         }
 
         [HttpGet("GetByPerson")]
@@ -36,10 +36,11 @@ namespace NoteBaseAPI.Controllers
         {
             Person? person = GetCurrentUser();
 
-            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+            //should be obsolete because it already gets checkt when creating the jwt accestoken
+            /* if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 return NotFound(new Error("DoesNotExist", "User does not exist."));
-            }
+            } */
 
             List<Note> notes = noteProcessor.GetByPerson(person.ID);
 
@@ -50,14 +51,19 @@ namespace NoteBaseAPI.Controllers
         [Authorize]
         public IActionResult Get(Guid _id)
         {
+            Person? person = GetCurrentUser();
+
             if (!noteProcessor.DoesNoteExits(_id))
             {
                 return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
 
-            //add ownership check
-
             Note note = noteProcessor.GetById(_id);
+
+            if (note.PersonId != person.ID)
+            {
+                return Forbid();
+            }
 
             return Ok(note);
         }
@@ -68,18 +74,13 @@ namespace NoteBaseAPI.Controllers
         {
             Person? person = GetCurrentUser();
 
-            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return NotFound(new Error("DoesNotExist", "User does not exist."));
-            }
-
             if (!noteProcessor.IsValidTitle(_note.Title))
             {
                 return BadRequest(new Error("NoValidTitle", "Title cannot be empty."));
             }
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
-                return BadRequest(new Error("AlreadyExists", "Category with this title arleady exists."));
+                return BadRequest(new Error("AlreadyExists", "Note with this title arleady exists."));
             }
             if (!noteProcessor.IsValidText(_note.Text))
             {
@@ -106,22 +107,18 @@ namespace NoteBaseAPI.Controllers
         {
             Person? person = GetCurrentUser();
 
-            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return NotFound(new Error("DoesNotExist", "User does not exist."));
-            }
-
-            if (_note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return BadRequest(new Error("NoValidId", "No valid ID"));
-            }
-
             if (!noteProcessor.DoesNoteExits(_note.ID))
             {
                 return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
 
-            //add ownership check
+            //retrieve note first to get the tags (and for ownership check)
+            Note note = noteProcessor.GetById(_note.ID);
+
+            if (note.PersonId != person.ID)
+            {
+                return Forbid();
+            }
 
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
@@ -136,8 +133,6 @@ namespace NoteBaseAPI.Controllers
                 return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }
 
-            //retrieve note first to get the tags
-            Note note = noteProcessor.GetById(_note.ID);
             note = noteProcessor.Update(_note.ID, _note.Title, _note.Text, _note.CategoryId, person.ID, note.tagList);
 
             return Ok(note);
@@ -147,6 +142,8 @@ namespace NoteBaseAPI.Controllers
         [Authorize]
         public IActionResult Delete(Guid _id)
         {
+            Person? person = GetCurrentUser();
+
             Note note = noteProcessor.GetById(_id);
 
             if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
@@ -154,7 +151,10 @@ namespace NoteBaseAPI.Controllers
                 return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
 
-            //add ownership check
+            if (note.PersonId != person.ID)
+            {
+                return Forbid();
+            }
 
             noteProcessor.Delete(note.ID, note.tagList, note.PersonId);
 

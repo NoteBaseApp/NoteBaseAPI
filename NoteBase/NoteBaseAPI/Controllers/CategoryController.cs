@@ -4,6 +4,7 @@ using NoteBaseAPI.Models;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
+using System;
 using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,6 +18,7 @@ namespace NoteBaseAPI.Controllers
         private readonly string connString;
         private readonly IPersonProcessor personProcessor; // for when the DoesPersonExist method gets added
         private readonly ICategoryProcessor categoryProcessor;
+        private readonly INoteProcessor noteProcessor;
 
         public CategoryController()
         {
@@ -27,8 +29,7 @@ namespace NoteBaseAPI.Controllers
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
-
-
+            noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
         }
 
         [HttpGet("GetByPerson")]
@@ -36,11 +37,6 @@ namespace NoteBaseAPI.Controllers
         public IActionResult GetByPerson()
         {
             Person? person = GetCurrentUser();
-
-            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return NotFound(new Error("DoesNotExist", "User does not exist."));
-            }
 
             List<Category> categories = categoryProcessor.GetByPerson(person.ID);
 
@@ -51,14 +47,21 @@ namespace NoteBaseAPI.Controllers
         [Authorize]
         public IActionResult Get(Guid _id)
         {
+            Person? person = GetCurrentUser();
+
             if (!categoryProcessor.DoesCategoryExits(_id))
             {
                 return NotFound(new Error("DoesNotExist", "Category does not exist."));
             }
 
-            //add ownership check
-
             Category category = categoryProcessor.GetById(_id);
+
+            if (category.PersonId != person.ID)
+            {
+                return Forbid();
+            }
+
+            category.noteList = noteProcessor.GetByCategory(category.ID);
 
             return Ok(category);
         }
@@ -68,11 +71,6 @@ namespace NoteBaseAPI.Controllers
         public IActionResult Post([FromBody] CategoryRequestParams _category)
         {
             Person? person = GetCurrentUser();
-
-            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return NotFound(new Error("DoesNotExist", "User does not exist."));
-            }
 
             if (!categoryProcessor.IsValidTitle(_category.Title))
             {
@@ -99,17 +97,17 @@ namespace NoteBaseAPI.Controllers
         {
             Person? person = GetCurrentUser();
 
-            if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                return NotFound(new Error("DoesNotExist", "User does not exist."));
-            }
-
             if (!categoryProcessor.DoesCategoryExits(_category.ID))
             {
                 return NotFound(new Error("DoesNotExist", "Category does not exist."));
             }
 
-            //add ownership check
+            Category category = categoryProcessor.GetById(_category.ID);
+
+            if (category.PersonId != person.ID)
+            {
+                return Forbid();
+            }
 
             if (!categoryProcessor.IsValidTitle(_category.Title))
             {
@@ -120,7 +118,6 @@ namespace NoteBaseAPI.Controllers
                 return BadRequest(new Error("AlreadyExists", "Category with this title arleady exists."));
             }
 
-            Category category = categoryProcessor.GetById(_category.ID);
             category = categoryProcessor.Update(_category.ID, _category.Title, person.ID);
 
             return Ok(category);
@@ -130,6 +127,8 @@ namespace NoteBaseAPI.Controllers
         [Authorize]
         public IActionResult Delete(Guid _id)
         {
+            Person? person = GetCurrentUser();
+
             Category category = categoryProcessor.GetById(_id);
 
             if (category.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
@@ -137,7 +136,10 @@ namespace NoteBaseAPI.Controllers
                 return NotFound(new Error("DoesNotExist", "Category does not exist."));
             }
 
-            //add ownership check
+            if (category.PersonId != person.ID)
+            {
+                return Forbid();
+            }
 
             categoryProcessor.Delete(category.ID);
 

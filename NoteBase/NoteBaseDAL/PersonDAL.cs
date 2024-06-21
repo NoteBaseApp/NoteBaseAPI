@@ -24,7 +24,7 @@ namespace NoteBaseDAL
 
             using (SqlConnection connection = new(ConnString))
             {
-                string query = @"INSERT INTO Person (Name, Email) VALUES (@Name, @Email)";
+                string query = @"INSERT INTO Person (Name, Email) output INSERTED.ID VALUES (@Name, @Email)";
 
                 using (SqlCommand command = new(query, connection))
                 {

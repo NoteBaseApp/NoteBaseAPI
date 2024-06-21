@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
 using NoteBaseInterface;
+using NoteBaseLogic;
 using NoteBaseLogicFactory;
+using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,6 +18,7 @@ namespace NoteBaseAPI.Controllers
     {
         private readonly string connString;
         private readonly ITagProcessor tagProcessor;
+        private readonly IPersonProcessor personProcessor;
 
         public TagController()
         {
@@ -24,13 +28,16 @@ namespace NoteBaseAPI.Controllers
             string? DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             tagProcessor = ProcessorFactory.CreateTagProcessor(connString);
+            personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
         }
 
-        [HttpGet("GetByPerson/{_personId}")]
+        [HttpGet("GetByPerson")]
         [Authorize]
-        public IActionResult GetByPerson(Guid _personId)
+        public IActionResult GetByPerson()
         {
-            List<Tag> tag = tagProcessor.GetByPerson(_personId);
+            Person? person = GetCurrentUser();
+
+            List<Tag> tag = tagProcessor.GetByPerson(person.ID);
 
             return Ok(tag);
         }
@@ -61,6 +68,19 @@ namespace NoteBaseAPI.Controllers
             }
 
             return Ok();
+        }
+
+        private Person? GetCurrentUser()
+        {
+            ClaimsIdentity? identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity == null || identity.Claims.Count() <= 0)
+            {
+                return null;
+            }
+            IEnumerable<Claim> userClaims = identity.Claims;
+
+            return personProcessor.GetByEmail(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value);
         }
     }
 }

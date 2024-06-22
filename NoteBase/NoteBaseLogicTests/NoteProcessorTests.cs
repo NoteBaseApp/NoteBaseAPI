@@ -1,17 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using NoteBaseDALInterface.Models;
-using NoteBaseDALInterface;
-using NoteBaseLogic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NoteBaseDAL;
 using NoteBaseLogicInterface.Models;
-using NoteBaseInterface;
-using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicTests.TestDALs;
 

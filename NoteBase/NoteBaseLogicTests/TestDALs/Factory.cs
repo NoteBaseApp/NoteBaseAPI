@@ -11,7 +11,7 @@ namespace NoteBaseLogicTests.TestDALs
 
         public static TagProcessor CreateTagProcessor()
         {
-            return new TagProcessor(new TagTestDAL());
+            return new TagProcessor(new TagTestDAL(), new NoteTestDAL());
         }
 
         public static PersonProcessor CreatePersonProcessor()

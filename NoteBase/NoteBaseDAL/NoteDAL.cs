@@ -181,18 +181,17 @@ namespace NoteBaseDAL
             return noteDTOList;
         }
 
-        public List<NoteDTO> GetByTag(Guid _tagId, Guid _personId)
+        public List<NoteDTO> GetByTag(Guid _tagId)
         {
             List<NoteDTO> noteDTOList = new();
 
             using (SqlConnection connection = new(ConnString))
             {
-                string query = @"SELECT ID, Title, Text, CategoryId, PersonId FROM TagNotes WHERE TagID = @tagId AND PersonID = @personId";
+                string query = @"SELECT ID, Title, Text, CategoryId, PersonId FROM TagNotes WHERE TagID = @tagId";
 
                 using (SqlCommand command = new(query, connection))
                 {
                     command.Parameters.AddWithValue("@tagId", _tagId);
-                    command.Parameters.AddWithValue("@personId", _personId);
                     connection.Open();
 
                     SqlDataReader reader = command.ExecuteReader();

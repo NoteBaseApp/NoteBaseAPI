@@ -13,7 +13,7 @@ namespace NoteBaseLogicInterface
         Tag GetById(Guid _tagId);
         List<Tag> GetByPerson(Guid _PersonId);
         Tag GetByTitle(string _Title);
-        void DeleteWhenUnused(Guid _tagId, Guid _PersonId);
+        void DeleteWhenUnused(Guid _tagId);
         void DeleteNoteTag(Guid _noteId);
     }
 }

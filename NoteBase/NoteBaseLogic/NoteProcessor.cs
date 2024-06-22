@@ -144,15 +144,18 @@ namespace NoteBaseLogic
         {
             List<Note> noteList = new();
 
-            List<NoteDTO> noteDTOs = NoteDAL.GetByTag(_tagId, _personId);
+            List<NoteDTO> noteDTOs = NoteDAL.GetByTag(_tagId);
             foreach (NoteDTO noteDTO in noteDTOs)
             {
-                Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
-                foreach (TagDTO item in noteDTO.tagList)
+                if (noteDTO.PersonId == _personId)
                 {
-                    note.tagList.Add(new(item.ID, item.Title));
+                    Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);
+                    foreach (TagDTO item in noteDTO.tagList)
+                    {
+                        note.tagList.Add(new(item.ID, item.Title));
+                    }
+                    noteList.Add(note);
                 }
-                noteList.Add(note);
             }
 
             return noteList;
@@ -207,7 +210,7 @@ namespace NoteBaseLogic
 
             foreach (Tag tag in _tagList)
             {
-                TagProcessor.DeleteWhenUnused(tag.ID, _PersonId);
+                TagProcessor.DeleteWhenUnused(tag.ID);
             }
             //
         }

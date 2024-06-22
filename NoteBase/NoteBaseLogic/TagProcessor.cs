@@ -8,10 +8,12 @@ namespace NoteBaseLogic
     public class TagProcessor : ITagProcessor
     {
         private readonly ITagDAL TagDAL;
+        private readonly INoteDAL NoteDAL;
 
-        public TagProcessor(ITagDAL _tagDAL)
+        public TagProcessor(ITagDAL _tagDAL, INoteDAL _noteDAL)
         {
             TagDAL = _tagDAL;
+            NoteDAL = _noteDAL;
         }
 
         public bool IsValidTitle(string _title)
@@ -72,7 +74,7 @@ namespace NoteBaseLogic
                 //get all tags with same title. if there are non delete the tag
                 if (newTags.Where(t => t.Title == tag.Title).Count() == 0)
                 {
-                    DeleteWhenUnused(tag.ID, _personId);
+                    DeleteWhenUnused(tag.ID);
                 }
             }
         }
@@ -138,18 +140,15 @@ namespace NoteBaseLogic
             return new(tagDTO.ID, tagDTO.Title);
         }
 
-        public void DeleteWhenUnused(Guid _tagId, Guid _PersonId)
+        public void DeleteWhenUnused(Guid _tagId)
         {
-            //get all used tags by person
-            List<Tag> tagList = GetByPerson(_PersonId);
+            //get all notes that use this tag
+            List<NoteDTO> tagList = NoteDAL.GetByTag(_tagId);
 
             //is tag in use? return
-            foreach (Tag tag in tagList)
+            if (tagList.Count > 0)
             {
-                if (tag.ID == _tagId)
-                {
-                    return;
-                }
+                return;
             }
 
             //else delete it

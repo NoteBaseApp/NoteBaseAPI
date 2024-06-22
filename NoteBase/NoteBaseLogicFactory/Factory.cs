@@ -12,7 +12,7 @@ namespace NoteBaseLogicFactory
 
         public static TagProcessor CreateTagProcessor(string _connstring)
         {
-            return new TagProcessor(new TagDAL(_connstring));
+            return new TagProcessor(new TagDAL(_connstring), new NoteDAL(_connstring));
         }
 
         public static PersonProcessor CreatePersonProcessor(string _connstring)

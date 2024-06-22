@@ -26,7 +26,7 @@ namespace NoteBaseDAL
 
             using (SqlConnection connection = new(ConnString))
             {
-                string query = @"INSERT INTO Tag (Title) VALUES (@Title); SELECT SCOPE_IDENTITY();";
+                string query = @"INSERT INTO Tag (Title) output INSERTED.ID VALUES (@Title);";
 
                 using (SqlCommand command = new(query, connection))
                 {

@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
-using NoteBaseLogic;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
-using System;
-using System.Net;
-using System.Security.Cryptography;
-using System.Xml.Linq;
-using UI.Models;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,175 +17,195 @@ namespace NoteBaseAPI.Controllers
         private readonly string connString;
         private readonly IPersonProcessor personProcessor; // for when the DoesPersonExist method gets added
         private readonly INoteProcessor noteProcessor;
+        private readonly ITagProcessor tagProcessor;
+        private readonly ICategoryProcessor categoryProcessor;
 
         public NoteController() 
         {
-            string DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
-            string INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
-            string DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
-            string DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            string? DATA_SOURCE = Environment.GetEnvironmentVariable("DATA_SOURCE");
+            string? INITIAL_CATALOG = Environment.GetEnvironmentVariable("INITIAL_CATALOG");
+            string? DB_USER_ID = Environment.GetEnvironmentVariable("DB_USER_ID");
+            string? DB_PASSWORD = Environment.GetEnvironmentVariable("DB_PASSWORD");
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
-
+            tagProcessor = ProcessorFactory.CreateTagProcessor(connString);
+            categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
         }
-        // GET: api/<NoteController>/2
-        [HttpGet("GetByPerson/{_personId}")]
-        public APIResponse GetByPerson(Guid _personId)
+
+        [HttpGet("GetByPerson")]
+        [Authorize]
+        public IActionResult GetByPerson()
         {
-            APIResponse response = new(APIResponseStatus.Success);
+            Person? person = GetCurrentUser();
 
-            List<Note> notes = noteProcessor.GetByPerson(_personId);
-
-            if (notes == null || notes.Count == 0)
+            //should be obsolete because it already gets checkt when creating the jwt accestoken
+            /* if (person == null || person.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
+                return NotFound(new Error("DoesNotExist", "User does not exist."));
+            } */
 
-                response.Message = "No notes where found.";
-                return response;
+            List<Note> notes = noteProcessor.GetByPerson(person.ID);
+
+            return Ok(notes);
+        }
+
+        [HttpGet("GetByTag/{_tagId}")]
+        [Authorize]
+        public IActionResult GetByTag(Guid _tagId)
+        {
+            Person? person = GetCurrentUser();
+
+            if (!tagProcessor.DoesTagExits(_tagId))
+            {
+                return NotFound(new Error("DoesNotExist", "Tag does not exist."));
             }
 
-            response.ResponseBody = notes;
-            return response;
+            List<Note> notes = noteProcessor.GetByTag(_tagId, person.ID);
+
+            return Ok(notes);
         }
 
-        // GET api/<NoteController>/5
         [HttpGet("{_id}")]
-        public APIResponse Get(Guid _id)
+        [Authorize]
+        public IActionResult Get(Guid _id)
         {
-            APIResponse response = new(APIResponseStatus.Success);
+            Person? person = GetCurrentUser();
 
             if (!noteProcessor.DoesNoteExits(_id))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note does not exist.";
-                return response;
+                return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
 
             Note note = noteProcessor.GetById(_id);
 
-            response.ResponseBody = note;
-            return response;
+            if (note.PersonId != person.ID)
+            {
+                return Forbid();
+            }
+
+            return Ok(note);
         }
 
-        // POST api/<NoteController>
         [HttpPost]
-        public APIResponse Post([FromBody] NoteRequestParams _note)
+        [Authorize]
+        public IActionResult Post([FromBody] NoteRequestParams _note)
         {
-            APIResponse response = new(APIResponseStatus.Success);
+            Person? person = GetCurrentUser();
 
             if (!noteProcessor.IsValidTitle(_note.Title))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Title cannot be empty.";
-                return response;
+                return BadRequest(new Error("NoValidTitle", "Title cannot be empty."));
             }
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note with this title arleady exists.";
-                return response;
+                return BadRequest(new Error("AlreadyExists", "Note with this title arleady exists."));
             }
             if (!noteProcessor.IsValidText(_note.Text))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Text cannot be empty.";
-                return response;
+                return BadRequest(new Error("NoValidText", "Text cannot be empty."));
             }
             if (_note.CategoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid CategoryId.";
-                return response;
-            }
-            if (_note.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-            {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid PersonId.";
-                return response;
+                return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }
 
-            Note note = noteProcessor.Create(_note.Title, _note.Text, _note.CategoryId, _note.PersonId);
+            Category category = categoryProcessor.GetById(_note.CategoryId);
+
+            if (category.PersonId != person.ID)
+            {
+                return BadRequest(new Error("NoValidId", "No valid CategoryId."));
+            }
+
+            Note note = noteProcessor.Create(_note.Title, _note.Text, _note.CategoryId, person.ID);
 
             if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note could not be created.";
-                return response;
+                throw new Exception("Category could not be created.");
             }
 
-            response.ResponseBody = note;
-            return response;
+            return Ok(note);
         }
 
-        // PUT api/<NoteController>/5
-        [HttpPut("{_id}")]
-        public APIResponse Put(Guid _id, [FromBody] NoteRequestParams _note)
+        [HttpPut]
+        [Authorize]
+        public IActionResult Put([FromBody] NoteRequestParams _note)
         {
-            APIResponse response = new(APIResponseStatus.Success);
+            Person? person = GetCurrentUser();
 
             if (!noteProcessor.DoesNoteExits(_note.ID))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note does not exist.";
-                return response;
+                return NotFound(new Error("DoesNotExist", "Note does not exist."));
             }
-            if (!noteProcessor.IsValidTitle(_note.Title))
+
+            //retrieve note first to get the tags (and for ownership check)
+            Note note = noteProcessor.GetById(_note.ID);
+
+            if (note.PersonId != person.ID)
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Title cannot be empty.";
-                return response;
+                return Forbid();
             }
+
             if (!noteProcessor.IsTitleUnique(_note.Title))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note with this title arleady exists.";
-                return response;
+                return BadRequest(new Error("AlreadyExists", "Category with this title arleady exists."));
             }
             if (!noteProcessor.IsValidText(_note.Text))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Text cannot be empty.";
-                return response;
+                return BadRequest(new Error("NoValidText", "Text cannot be empty."));
             }
             if (_note.CategoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid CategoryId.";
-                return response;
+                return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }
-            if (_note.PersonId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+
+            Category category = categoryProcessor.GetById(_note.CategoryId);
+
+            if (category.PersonId != person.ID)
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "No valid PersonId.";
-                return response;
+                return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }
 
-            //retrieve note first to get the tags
-            Note note = noteProcessor.GetById(_id);
-            note = noteProcessor.Update(_note.ID, _note.Title, _note.Text, _note.CategoryId, _note.PersonId, note.tagList);
+            note = noteProcessor.Update(_note.ID, _note.Title, _note.Text, _note.CategoryId, person.ID, note.tagList);
 
-            response.ResponseBody = note;
-            return response;
+            return Ok(note);
         }
 
-        // DELETE api/<NoteController>/5
         [HttpDelete("{_id}")]
-        public APIResponse Delete(Guid _id)
+        [Authorize]
+        public IActionResult Delete(Guid _id)
         {
-            APIResponse response = new(APIResponseStatus.Success);
+            Person? person = GetCurrentUser();
 
             Note note = noteProcessor.GetById(_id);
 
             if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                response.Status = APIResponseStatus.Failure;
-                response.Message = "Note does not exist.";
-                return response;
+                return NotFound(new Error("DoesNotExist", "Note does not exist."));
+            }
+
+            if (note.PersonId != person.ID)
+            {
+                return Forbid();
             }
 
             noteProcessor.Delete(note.ID, note.tagList, note.PersonId);
 
-            return response;
+            return Ok();
+        }
+
+        private Person? GetCurrentUser()
+        {
+            ClaimsIdentity? identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity == null || identity.Claims.Count() <= 0)
+            {
+                return null;
+            }
+
+            IEnumerable<Claim> userClaims = identity.Claims;
+
+            return personProcessor.GetByEmail(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value);
         }
     }
 }

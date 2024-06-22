@@ -18,6 +18,7 @@ namespace NoteBaseAPI.Controllers
         private readonly IPersonProcessor personProcessor; // for when the DoesPersonExist method gets added
         private readonly INoteProcessor noteProcessor;
         private readonly ITagProcessor tagProcessor;
+        private readonly ICategoryProcessor categoryProcessor;
 
         public NoteController() 
         {
@@ -29,6 +30,7 @@ namespace NoteBaseAPI.Controllers
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
             tagProcessor = ProcessorFactory.CreateTagProcessor(connString);
+            categoryProcessor = ProcessorFactory.CreateCategoryProcessor(connString);
         }
 
         [HttpGet("GetByPerson")]
@@ -108,6 +110,13 @@ namespace NoteBaseAPI.Controllers
                 return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }
 
+            Category category = categoryProcessor.GetById(_note.CategoryId);
+
+            if (category.PersonId != person.ID)
+            {
+                return BadRequest(new Error("NoValidId", "No valid CategoryId."));
+            }
+
             Note note = noteProcessor.Create(_note.Title, _note.Text, _note.CategoryId, person.ID);
 
             if (note.ID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
@@ -146,6 +155,13 @@ namespace NoteBaseAPI.Controllers
                 return BadRequest(new Error("NoValidText", "Text cannot be empty."));
             }
             if (_note.CategoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+            {
+                return BadRequest(new Error("NoValidId", "No valid CategoryId."));
+            }
+
+            Category category = categoryProcessor.GetById(_note.CategoryId);
+
+            if (category.PersonId != person.ID)
             {
                 return BadRequest(new Error("NoValidId", "No valid CategoryId."));
             }

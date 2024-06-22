@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NoteBaseAPI.Models;
-using NoteBaseInterface;
-using NoteBaseLogic;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;

@@ -4,7 +4,6 @@ using NoteBaseAPI.Models;
 using NoteBaseLogicFactory;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
-using System;
 using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,6 +17,7 @@ namespace NoteBaseAPI.Controllers
         private readonly string connString;
         private readonly IPersonProcessor personProcessor; // for when the DoesPersonExist method gets added
         private readonly INoteProcessor noteProcessor;
+        private readonly ITagProcessor tagProcessor;
 
         public NoteController() 
         {
@@ -28,6 +28,7 @@ namespace NoteBaseAPI.Controllers
             connString = $"Data Source={DATA_SOURCE};Initial Catalog={INITIAL_CATALOG};User id={DB_USER_ID};Password={DB_PASSWORD};Connect Timeout=300;";
             personProcessor = ProcessorFactory.CreatePersonProcessor(connString);
             noteProcessor = ProcessorFactory.CreateNoteProcessor(connString);
+            tagProcessor = ProcessorFactory.CreateTagProcessor(connString);
         }
 
         [HttpGet("GetByPerson")]
@@ -43,6 +44,22 @@ namespace NoteBaseAPI.Controllers
             } */
 
             List<Note> notes = noteProcessor.GetByPerson(person.ID);
+
+            return Ok(notes);
+        }
+
+        [HttpGet("GetByTag/{_tagId}")]
+        [Authorize]
+        public IActionResult GetByTag(Guid _tagId)
+        {
+            Person? person = GetCurrentUser();
+
+            if (!tagProcessor.DoesTagExits(_tagId))
+            {
+                return NotFound(new Error("DoesNotExist", "Tag does not exist."));
+            }
+
+            List<Note> notes = noteProcessor.GetByTag(_tagId, person.ID);
 
             return Ok(notes);
         }

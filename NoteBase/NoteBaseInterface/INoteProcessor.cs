@@ -15,7 +15,7 @@ namespace NoteBaseLogicInterface
         List<Note> GetByPerson(Guid _personId);
         Note GetByTitle(string _Title);
         List<Note> GetByCategory(Guid _categoryId);
-        List<Note> GetByTag(Guid _tagId);
+        List<Note> GetByTag(Guid _tagId, Guid _personId);
         Note Update(Guid _id, string _title, string _text, Guid _categoryId, Guid _personId, List<Tag> _tags);
         void Delete(Guid _noteId, List<Tag> _tagList, Guid _PersonId);
     }

@@ -1,7 +1,7 @@
 ﻿using NoteBaseDALInterface.Models;
 using NoteBaseDALInterface;
-using NoteBaseInterface;
 using NoteBaseLogicInterface.Models;
+using NoteBaseLogicInterface;
 
 namespace NoteBaseLogic
 {
@@ -18,6 +18,11 @@ namespace NoteBaseLogic
         {
             //needs work (entering just spaces should not be seen as valid)
             return _title != "";
+        }
+
+        public bool DoesTagExits(Guid _id)
+        {
+            return _id != Guid.Parse("00000000-0000-0000-0000-000000000000") && GetById(_id).ID != Guid.Parse("00000000-0000-0000-0000-000000000000");
         }
 
         //rename

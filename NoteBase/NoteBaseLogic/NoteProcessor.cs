@@ -1,6 +1,5 @@
 ﻿using NoteBaseDALInterface;
 using NoteBaseDALInterface.Models;
-using NoteBaseInterface;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
 using System.Text.RegularExpressions;
@@ -141,11 +140,11 @@ namespace NoteBaseLogic
             return noteList;
         }
 
-        public List<Note> GetByTag(Guid _tagId)
+        public List<Note> GetByTag(Guid _tagId, Guid _personId)
         {
             List<Note> noteList = new();
 
-            List<NoteDTO> noteDTOs = NoteDAL.GetByTag(_tagId);
+            List<NoteDTO> noteDTOs = NoteDAL.GetByTag(_tagId, _personId);
             foreach (NoteDTO noteDTO in noteDTOs)
             {
                 Note note = new(noteDTO.ID, noteDTO.Title, noteDTO.Text, noteDTO.CategoryId, noteDTO.PersonId);

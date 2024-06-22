@@ -1,14 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NoteBaseDALInterface;
-using NoteBaseLogic;
 using NoteBaseLogicInterface;
 using NoteBaseLogicInterface.Models;
 using NoteBaseLogicTests.TestDALs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NoteBaseLogic.Tests
 {

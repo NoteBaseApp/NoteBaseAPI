@@ -4,7 +4,6 @@ using NoteBaseDALInterface;
 using NoteBaseDALInterface.Models;
 using NoteBaseLogicInterface.Models;
 using NoteBaseLogicFactory;
-using NoteBaseInterface;
 
 namespace NoteBaseLogic.Tests
 {

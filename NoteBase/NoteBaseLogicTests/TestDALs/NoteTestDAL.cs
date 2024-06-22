@@ -52,7 +52,7 @@ namespace NoteBaseLogicTests.TestDALs
             throw new NotImplementedException();
         }
 
-        public List<NoteDTO> GetByTag(Guid _tagId)
+        public List<NoteDTO> GetByTag(Guid _tagId, Guid _PersonId)
         {
             throw new NotImplementedException();
         }

@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 EnvLoader.Load(".env");
 
 // Add services to the container.
+builder.Services.AddCors();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -43,6 +44,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(
+        options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().WithHeaders("Authorization")
+    );
 
 app.UseHttpsRedirection();
 

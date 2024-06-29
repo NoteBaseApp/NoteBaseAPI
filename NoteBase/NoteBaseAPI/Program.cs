@@ -46,7 +46,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(
-        options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().WithHeaders("Authorization")
+        options => options.WithOrigins("http://localhost:5173","https://notebase.joeyremmers.nl").AllowAnyMethod().WithHeaders("Authorization")
     );
 
 app.UseHttpsRedirection();

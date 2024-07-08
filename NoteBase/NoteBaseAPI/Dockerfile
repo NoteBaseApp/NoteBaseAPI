@@ -10,10 +10,10 @@ WORKDIR /src
 #print current directory
 RUN ls
 
-RUN dotnet build "NoteBaseAPI/NoteBaseAPI.csproj" -c Release -o /app/build --no-cache
+RUN dotnet build "NoteBase/NoteBaseAPI/NoteBaseAPI.csproj" -c Release -o /app/build --no-cache
 
 FROM build AS publish
-RUN dotnet publish "NoteBaseAPI/NoteBaseAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "NoteBase/NoteBaseAPI/NoteBaseAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

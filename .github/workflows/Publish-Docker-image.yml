@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
     
       - name: Build the Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/notebase-api -f NoteBase/NoteBaseAPI/Dockerfile ./ --no-cache
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/notebase-api -f NoteBase/Dockerfile ./ --no-cache
     
       - name: Docker Push
         run: docker push ${{ secrets.DOCKER_USERNAME }}/notebase-api

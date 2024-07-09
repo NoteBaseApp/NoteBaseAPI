@@ -30,9 +30,9 @@ namespace NoteBaseAPI.Controllers
         }
 
         //not sure what the param wil be, because i dont know that i will get from the Google auth
-        [HttpPost("login")]
+        [HttpPost("auth")]
         [AllowAnonymous]
-        public IActionResult Login([FromBody] String _userToken)
+        public IActionResult Auth([FromBody] String _userToken)
         {
             Person? user = Authenticate(_userToken);
 
